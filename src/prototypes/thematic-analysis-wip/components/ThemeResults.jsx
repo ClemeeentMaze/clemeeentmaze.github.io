@@ -97,14 +97,15 @@ const MOCK_UNCATEGORIZED_HIGHLIGHTS = [
 
 /**
  * AI-generated themes for the results view
+ * Highlight counts should add up to 8 (total highlights from blocks)
  */
 const GENERATED_THEMES = [
-  { id: 'theme-1', name: 'Navigation and discoverability needs improvement', color: '#EF4444' },
-  { id: 'theme-2', name: 'Filter functionality is intuitive but limited', color: '#F59E0B' },
-  { id: 'theme-3', name: 'Mobile experience praised for responsiveness', color: '#10B981' },
-  { id: 'theme-4', name: 'Onboarding and documentation gaps identified', color: '#3B82F6' },
-  { id: 'theme-5', name: 'Power users want keyboard shortcuts', color: '#8B5CF6' },
-  { id: 'theme-6', name: 'Learning curve steeper than expected', color: '#EC4899' },
+  { id: 'theme-1', name: 'Navigation and discoverability needs improvement', color: '#EF4444', highlightCount: 2 },
+  { id: 'theme-2', name: 'Filter functionality is intuitive but limited', color: '#F59E0B', highlightCount: 1 },
+  { id: 'theme-3', name: 'Mobile experience praised for responsiveness', color: '#10B981', highlightCount: 1 },
+  { id: 'theme-4', name: 'Onboarding and documentation gaps identified', color: '#3B82F6', highlightCount: 2 },
+  { id: 'theme-5', name: 'Power users want keyboard shortcuts', color: '#8B5CF6', highlightCount: 1 },
+  { id: 'theme-6', name: 'Learning curve steeper than expected', color: '#EC4899', highlightCount: 1 },
 ];
 
 /**
@@ -248,14 +249,14 @@ function MethodSelectionView({ onCancel, onAnalyze }) {
       <Text className="font-semibold text-neutral-900 mb-4">Starting themes</Text>
 
       <Flex gap="MD" className="mb-4">
-        {/* AI Option */}
+        {/* AI Option - uses same border as block list items */}
         <button
           onClick={() => setSelectedMethod('ai')}
           className={`
-            flex-1 p-4 rounded-lg border-2 cursor-pointer transition-all
+            flex-1 p-4 rounded-lg cursor-pointer transition-all bg-white
             ${selectedMethod === 'ai' 
-              ? 'border-[#0568FD] bg-white' 
-              : 'border-[rgba(108,113,140,0.28)] bg-white hover:border-[rgba(108,113,140,0.5)]'
+              ? 'shadow-[inset_0px_0px_0px_1px_#0568fd]' 
+              : 'shadow-[inset_0px_0px_0px_0.5px_rgba(108,113,140,0.28)] hover:shadow-[inset_0px_0px_0px_0.5px_rgba(108,113,140,0.5)]'
             }
           `}
         >
@@ -273,14 +274,14 @@ function MethodSelectionView({ onCancel, onAnalyze }) {
           <Text className="mt-2 font-medium text-left">Find themes with AI</Text>
         </button>
 
-        {/* Manual Option */}
+        {/* Manual Option - uses same border as block list items */}
         <button
           onClick={() => setSelectedMethod('manual')}
           className={`
-            flex-1 p-4 rounded-lg border-2 cursor-pointer transition-all
+            flex-1 p-4 rounded-lg cursor-pointer transition-all bg-white
             ${selectedMethod === 'manual' 
-              ? 'border-[#0568FD] bg-white' 
-              : 'border-[rgba(108,113,140,0.28)] bg-white hover:border-[rgba(108,113,140,0.5)]'
+              ? 'shadow-[inset_0px_0px_0px_1px_#0568fd]' 
+              : 'shadow-[inset_0px_0px_0px_0.5px_rgba(108,113,140,0.28)] hover:shadow-[inset_0px_0px_0px_0.5px_rgba(108,113,140,0.5)]'
             }
           `}
         >
@@ -440,7 +441,7 @@ function ResultsView({ themes, onRunNewAnalysis }) {
       <div className="p-4 border border-[rgba(108,113,140,0.16)] rounded-xl mb-4">
         <Flex alignItems="center" gap="MD">
           <Highlighter size={20} className="text-[#6C718C]" />
-          <Text className="font-medium">86 highlights analyzed</Text>
+          <Text className="font-medium">8 highlights analyzed</Text>
         </Flex>
       </div>
 

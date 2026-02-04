@@ -64,13 +64,19 @@ export function BlockList({
   generatedThemes = [],
 }) {
   // Combine base themes with generated themes
+  // Hide uncategorized when analysis is complete (themes have been generated)
+  const analysisComplete = generatedThemes.length > 0;
+  const baseThemes = analysisComplete 
+    ? MOCK_THEME_LIST.filter(t => t.id !== 'uncategorized')
+    : MOCK_THEME_LIST;
+  
   const allThemes = [
-    ...MOCK_THEME_LIST,
+    ...baseThemes,
     ...generatedThemes.map(theme => ({
       id: theme.id,
       name: theme.name,
       color: theme.color,
-      highlightCount: Math.floor(Math.random() * 10) + 5, // Mock random highlight count
+      highlightCount: theme.highlightCount, // Use the count from the theme data
     })),
   ];
   return (

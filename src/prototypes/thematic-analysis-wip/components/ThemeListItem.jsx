@@ -19,13 +19,6 @@ export function ThemeListItem({ theme, isSelected, onSelect }) {
   const isUncategorized = theme.id === 'uncategorized';
   const isGeneratedTheme = theme.color !== undefined;
   
-  // Get background color for icon - use theme color for generated themes
-  const getIconBgColor = () => {
-    if (isSelected) return 'bg-[#6C718C]';
-    if (isGeneratedTheme) return `${theme.color}15`; // Light version of theme color
-    return 'bg-neutral-100';
-  };
-  
   return (
     <Box
       onClick={() => onSelect(theme.id)}
@@ -40,16 +33,16 @@ export function ThemeListItem({ theme, isSelected, onSelect }) {
       `}
     >
       <Flex gap="SM" alignItems="center">
-        {/* Theme Icon - colored for generated themes */}
+        {/* Theme Icon - colored for generated themes, does NOT change on selection */}
         <div 
           className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
           style={{ 
-            backgroundColor: isSelected ? '#6C718C' : (isGeneratedTheme ? `${theme.color}15` : '#F5F5F5')
+            backgroundColor: isGeneratedTheme ? `${theme.color}15` : '#F5F5F5'
           }}
         >
           <Tag 
             size={20} 
-            style={{ color: isSelected ? 'white' : (isGeneratedTheme ? theme.color : '#6C718C') }}
+            style={{ color: isGeneratedTheme ? theme.color : '#6C718C' }}
           />
         </div>
         
