@@ -2,18 +2,17 @@
  * AI Thematic Analysis Prototype v1
  * 
  * Exploring AI-powered thematic analysis features for qualitative research.
- * Based on the unmoderated builder layout pattern.
  * 
  * Layout Structure:
  * ┌──────────────────────────────────────────────────────────────────────┐
  * │  HEADER (64px) - Back, Study Name, Save State, Preview, Go Live     │
- * ├─────────────┬─────────────────────┬──────────────────────────────────┤
- * │             │                     │                                  │
- * │  LEFT PANEL │   MIDDLE PANEL      │        RIGHT PANEL               │
- * │  Block List │   Block Settings    │        Block Preview             │
- * │  (360px)    │   (flex: 1)         │        (flex: 1, min 400px)      │
- * │             │                     │                                  │
- * └─────────────┴─────────────────────┴──────────────────────────────────┘
+ * ├─────────────┬────────────────────────────────────────────────────────┤
+ * │             │                                                        │
+ * │  LEFT PANEL │              CONTENT AREA                              │
+ * │  Block List │              (flex: 1)                                 │
+ * │  (360px)    │                                                        │
+ * │             │                                                        │
+ * └─────────────┴────────────────────────────────────────────────────────┘
  */
 import { useEffect, useMemo } from 'react';
 import { Flex, Box } from '@framework/components/ariane';
@@ -22,8 +21,6 @@ import { useStatePlayground } from '@framework/hooks/useStatePlayground';
 // Local components
 import { BuilderHeader } from './components/BuilderHeader';
 import { BlockList } from './components/BlockList';
-import { BlockSettings } from './components/BlockSettings';
-import { BlockPreview } from './components/BlockPreview';
 
 // Mock data
 import { BLOCK_TYPES, DEFAULT_USE_CASE, USE_CASES } from './data';
@@ -32,12 +29,11 @@ import { useBlocks } from './hooks/useBlocks';
 /**
  * ThematicAnalysisV1 - Main prototype component
  * 
- * Implements the full-height layout of the Maze study builder:
+ * Implements the full-height layout:
  * - Header (64px fixed)
  * - Content area (fills remaining height):
  *   - Left panel (360px): Block list
- *   - Middle panel (flex): Block settings
- *   - Right panel (flex, min 400px): Block preview
+ *   - Main content (flex): Empty content area
  */
 function ThematicAnalysisV1() {
   const { state } = useStatePlayground();
@@ -47,7 +43,6 @@ function ThematicAnalysisV1() {
     selectedBlock,
     selectedBlockId,
     selectBlock,
-    updateBlock,
     setUseCase,
   } = useBlocks(DEFAULT_USE_CASE);
 
@@ -123,49 +118,27 @@ function ThematicAnalysisV1() {
       
       {/* 
         CONTENT AREA - Fills remaining height
-        Three-panel layout
+        Two-panel layout
       */}
       <Flex className="flex-1 min-h-0 overflow-hidden">
         {/* 
           Left Panel - Block List
-          Fixed width: 360px (border handled inside BlockList)
+          Fixed width: 360px
         */}
         <Box className="w-[360px] min-w-[360px] flex-shrink-0 h-full">
           <BlockList
             blocks={visibleBlocks}
             selectedBlockId={selectedBlockId}
             onSelectBlock={selectBlock}
-            studyMeta={studyMeta}
           />
         </Box>
         
         {/* 
-          Middle Panel - Block Settings
-          Flex: 1 (grows to fill space)
+          Main Content Area
+          Flex: 1 (grows to fill remaining space)
         */}
-        <Box 
-          className="
-            flex-1 
-            border-r border-neutral-200
-            min-w-[320px]
-            h-full
-          "
-        >
-          <BlockSettings block={selectedBlock} onBlockChange={updateBlock} />
-        </Box>
-        
-        {/* 
-          Right Panel - Block Preview
-          Flex: 1 with min-width 400px
-        */}
-        <Box 
-          className="
-            flex-1 
-            min-w-[400px]
-            h-full
-          "
-        >
-          <BlockPreview block={selectedBlock} />
+        <Box className="flex-1 h-full bg-white">
+          {/* Content for selected block will go here */}
         </Box>
       </Flex>
     </Flex>
