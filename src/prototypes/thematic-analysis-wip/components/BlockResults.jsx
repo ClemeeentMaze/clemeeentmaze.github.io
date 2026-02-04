@@ -368,8 +368,8 @@ export function BlockResults({ block, isViewed = false, generatedThemes = [] }) 
         {/* Chart Placeholder */}
         <Box className="bg-[#f8f8fb] rounded-lg h-[200px] mb-8" />
 
-        {/* Themes Empty State - shown for blocks with highlights but before analysis */}
-        {hasHighlights && !showThemesSection && (
+        {/* Themes Empty State - shown for blocks with highlights (except prototype_test) but before analysis */}
+        {hasHighlights && !showThemesSection && block.type !== 'prototype_test' && (
           <div className="mb-8">
             <Flex alignItems="center" gap="SM" className="mb-4">
               <Heading level={3}>Themes</Heading>
@@ -377,12 +377,12 @@ export function BlockResults({ block, isViewed = false, generatedThemes = [] }) 
                 <Info size={16} />
               </button>
             </Flex>
-            <div className="border border-[rgba(108,113,140,0.16)] border-dashed rounded-lg p-8 bg-[#FAFAFA]">
+            <div className="rounded-lg p-8 bg-white shadow-[inset_0px_0px_0px_0.5px_rgba(108,113,140,0.28)]">
               <Flex flexDirection="column" alignItems="center" justifyContent="center" gap="MD" className="text-center">
                 <div className="w-12 h-12 rounded-full bg-[#7C3AED]/10 flex items-center justify-center">
                   <Sparkles size={24} className="text-[#7C3AED]" />
                 </div>
-                <div>
+                <div className="flex flex-col items-center">
                   <Text className="font-medium text-neutral-900 mb-1 block">Discover recurring themes</Text>
                   <Text color="default.main.secondary" className="text-sm block max-w-[320px]">
                     Run thematic analysis to automatically identify patterns and recurring themes across your responses.
