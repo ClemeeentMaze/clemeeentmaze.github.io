@@ -9,7 +9,7 @@
  */
 import { useState } from 'react';
 import { Flex, Box, Text, Heading, IconFigure, ScrollContainer, ActionButton, Icon } from '@framework/components/ariane';
-import { MoreHorizontal, Filter, Play, ChevronLeft, ChevronRight, Table2, Highlighter, Tag, Info, Plus } from 'lucide-react';
+import { MoreHorizontal, Filter, Play, ChevronLeft, ChevronRight, Table2, Highlighter, Tag, Info, Plus, Sparkles } from 'lucide-react';
 import { BLOCK_TYPES } from '../data';
 import { HighlightCard } from './HighlightCard';
 
@@ -367,6 +367,42 @@ export function BlockResults({ block, isViewed = false, generatedThemes = [] }) 
 
         {/* Chart Placeholder */}
         <Box className="bg-[#f8f8fb] rounded-lg h-[200px] mb-8" />
+
+        {/* Themes Empty State - shown for blocks with highlights but before analysis */}
+        {hasHighlights && !showThemesSection && (
+          <div className="mb-8">
+            <Flex alignItems="center" gap="SM" className="mb-4">
+              <Heading level={3}>Themes</Heading>
+              <button className="text-[#6C718C] hover:text-[#535a74]">
+                <Info size={16} />
+              </button>
+            </Flex>
+            <div className="border border-[rgba(108,113,140,0.16)] border-dashed rounded-lg p-8 bg-[#FAFAFA]">
+              <Flex flexDirection="column" alignItems="center" justifyContent="center" gap="MD" className="text-center">
+                <div className="w-12 h-12 rounded-full bg-[#7C3AED]/10 flex items-center justify-center">
+                  <Sparkles size={24} className="text-[#7C3AED]" />
+                </div>
+                <div>
+                  <Text className="font-medium text-neutral-900 mb-1 block">Discover recurring themes</Text>
+                  <Text color="default.main.secondary" className="text-sm block max-w-[320px]">
+                    Run thematic analysis to automatically identify patterns and recurring themes across your responses.
+                  </Text>
+                </div>
+                <ActionButton 
+                  emphasis="primary" 
+                  size="MD" 
+                  icon={<Sparkles size={16} />}
+                  onClick={() => {
+                    // This would navigate to the Themes tab in a real implementation
+                    console.log('Navigate to thematic analysis');
+                  }}
+                >
+                  Start thematic analysis
+                </ActionButton>
+              </Flex>
+            </div>
+          </div>
+        )}
 
         {/* Themes Section - only shown when analysis is complete and block has highlights */}
         {showThemesSection && (
