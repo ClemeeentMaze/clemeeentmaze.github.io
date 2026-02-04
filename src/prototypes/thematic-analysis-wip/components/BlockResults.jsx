@@ -5,27 +5,59 @@
  * - Block title header with response count
  * - Chart/visualization area (placeholder)
  * - Responses table with tabs (All responses / Highlights)
+ * - AI-generated highlights with new indicators
  */
 import { useState } from 'react';
 import { Flex, Box, Text, Heading, IconFigure, ScrollContainer, ActionButton, Icon } from '@framework/components/ariane';
 import { MoreHorizontal, Filter, Play, ChevronLeft, ChevronRight, Table2, Sparkles } from 'lucide-react';
 import { BLOCK_TYPES } from '../data';
+import { HighlightCard } from './HighlightCard';
 
 /**
  * Mock response data
  */
 const MOCK_RESPONSES = [
-  { id: 1, clipDuration: '0:07', participantId: '483697735', responseValue: '8', respondedAt: '17 Dec 2025, 06:22 pm' },
-  { id: 2, clipDuration: '0:12', participantId: '483697736', responseValue: '7', respondedAt: '17 Dec 2025, 05:18 pm' },
-  { id: 3, clipDuration: '0:09', participantId: '483697737', responseValue: '9', respondedAt: '17 Dec 2025, 04:54 pm' },
+  { id: 1, clipDuration: '0:07', participantId: '483697735', responseValue: '8', respondedAt: '17 Dec 2025, 06:22 pm', isNew: true },
+  { id: 2, clipDuration: '0:12', participantId: '483697736', responseValue: '7', respondedAt: '17 Dec 2025, 05:18 pm', isNew: true },
+  { id: 3, clipDuration: '0:09', participantId: '483697737', responseValue: '9', respondedAt: '17 Dec 2025, 04:54 pm', isNew: true },
   { id: 4, clipDuration: '0:15', participantId: '483697738', responseValue: '6', respondedAt: '17 Dec 2025, 03:47 pm' },
   { id: 5, clipDuration: '0:08', participantId: '483697739', responseValue: '8', respondedAt: '17 Dec 2025, 02:44 pm' },
 ];
 
 /**
+ * Mock highlights data - AI-generated from responses
+ */
+const MOCK_HIGHLIGHTS = [
+  {
+    id: 'h1',
+    insight: "Monica is excited about the feature that automatically creates a session and captures information, making it easier to upload and analyze audio or video.",
+    transcript: "Because that would make, that would be fantastic because that's one of the things w...",
+    themes: ['End-to-end'],
+    isNew: true,
+    participantId: '483697735',
+  },
+  {
+    id: 'h2',
+    insight: "User found the filtering feature intuitive but wished for more advanced options like date range filtering.",
+    transcript: "I really like how the filters work, they're pretty intuitive. But I was looking for a way to filter by date range and couldn't find it...",
+    themes: [],
+    isNew: true,
+    participantId: '483697736',
+  },
+  {
+    id: 'h3',
+    insight: "Participant expressed confusion about where to find the export functionality.",
+    transcript: "So I'm trying to export this report, but I can't seem to find where that option is. I've clicked around a few places...",
+    themes: [],
+    isNew: true,
+    participantId: '483697737',
+  },
+];
+
+/**
  * Response table tab button - Inter 16px font
  */
-function ResponseTab({ icon: IconComponent, label, count, isActive, onClick }) {
+function ResponseTab({ icon: IconComponent, label, count, newCount, isActive, onClick }) {
   return (
     <button
       onClick={onClick}
@@ -47,6 +79,11 @@ function ResponseTab({ icon: IconComponent, label, count, isActive, onClick }) {
           ${isActive ? 'bg-[#E8F4FF] text-[#0568FD]' : 'bg-neutral-100 text-[#6C718C]'}
         `}>
           {count}
+        </span>
+      )}
+      {newCount !== undefined && newCount > 0 && (
+        <span className="ml-1 px-1.5 py-0.5 rounded text-sm font-medium bg-[#0568FD] text-white">
+          {newCount} new
         </span>
       )}
     </button>
@@ -79,11 +116,19 @@ function VideoThumbnail({ duration }) {
 /**
  * Response table row
  */
-function ResponseRow({ clipDuration, participantId, responseValue, respondedAt }) {
+function ResponseRow({ clipDuration, participantId, responseValue, respondedAt, isNew }) {
   return (
-    <div className="flex items-center py-4 border-b border-[rgba(108,113,140,0.12)] hover:bg-neutral-50">
-      <div className="w-[140px] px-4">
+    <div className={`
+      flex items-center py-4 border-b border-[rgba(108,113,140,0.12)] hover:bg-neutral-50
+      ${isNew ? 'bg-[#F0FAFF]' : ''}
+    `}>
+      <div className="w-[140px] px-4 relative">
         <VideoThumbnail duration={clipDuration} />
+        {isNew && (
+          <div className="absolute -top-1 -left-1 px-1.5 py-0.5 bg-[#0568FD] text-white text-[10px] font-semibold rounded">
+            New
+          </div>
+        )}
       </div>
       <div className="w-[160px] px-4">
         <Text className="text-[#0568FD] font-medium">{participantId}</Text>
@@ -117,6 +162,9 @@ export function BlockResults({ block }) {
 
   const blockType = BLOCK_TYPES[block.type] || {};
   const responseCount = MOCK_RESPONSES.length;
+  const highlightCount = MOCK_HIGHLIGHTS.length;
+  const newHighlightCount = MOCK_HIGHLIGHTS.filter(h => h.isNew).length;
+  const newResponseCount = MOCK_RESPONSES.filter(r => r.isNew).length;
 
   return (
     <ScrollContainer className="h-full">
@@ -171,14 +219,16 @@ export function BlockResults({ block }) {
             <Flex>
               <ResponseTab 
                 icon={Table2} 
-                label="All responses" 
+                label="All Responses" 
+                newCount={newResponseCount}
                 isActive={activeTab === 'all'} 
                 onClick={() => setActiveTab('all')} 
               />
               <ResponseTab 
                 icon={Sparkles} 
                 label="Highlights" 
-                count={0}
+                count={highlightCount}
+                newCount={newHighlightCount}
                 isActive={activeTab === 'highlights'} 
                 onClick={() => setActiveTab('highlights')} 
               />
@@ -188,34 +238,56 @@ export function BlockResults({ block }) {
             </ActionButton>
           </Flex>
 
-          {/* Table Header - grey background */}
-          <div className="flex items-center py-3 bg-[#F8F8FB] rounded-t-lg text-xs font-semibold text-[#6C718C] uppercase tracking-wide">
-            <div className="w-[140px] px-4">CLIPS</div>
-            <div className="w-[160px] px-4">PARTICIPANT</div>
-            <div className="flex-1 px-4">RESPONSE</div>
-            <div className="w-[180px] px-4">RESPONDED AT</div>
-            <div className="w-[80px] px-4 text-center">ACTIONS</div>
-          </div>
+          {/* All Responses Tab Content */}
+          {activeTab === 'all' && (
+            <>
+              {/* Table Header - grey background */}
+              <div className="flex items-center py-3 bg-[#F8F8FB] rounded-t-lg text-xs font-semibold text-[#6C718C] uppercase tracking-wide">
+                <div className="w-[140px] px-4">CLIPS</div>
+                <div className="w-[160px] px-4">PARTICIPANT</div>
+                <div className="flex-1 px-4">RESPONSE</div>
+                <div className="w-[180px] px-4">RESPONDED AT</div>
+                <div className="w-[80px] px-4 text-center">ACTIONS</div>
+              </div>
 
-          {/* Table Rows */}
-          {MOCK_RESPONSES.map((response) => (
-            <ResponseRow 
-              key={response.id}
-              clipDuration={response.clipDuration}
-              participantId={response.participantId}
-              responseValue={response.responseValue}
-              respondedAt={response.respondedAt}
-            />
-          ))}
+              {/* Table Rows */}
+              {MOCK_RESPONSES.map((response) => (
+                <ResponseRow 
+                  key={response.id}
+                  clipDuration={response.clipDuration}
+                  participantId={response.participantId}
+                  responseValue={response.responseValue}
+                  respondedAt={response.respondedAt}
+                  isNew={response.isNew}
+                />
+              ))}
 
-          {/* Pagination - using ActionButton/Tertiary */}
-          <Flex alignItems="center" justifyContent="center" gap="MD" className="py-4">
-            <ActionButton emphasis="tertiary" size="SM" icon={<ChevronLeft size={16} />} iconOnly />
-            <Text color="default.main.secondary" className="text-sm">
-              Page 1 of 2
-            </Text>
-            <ActionButton emphasis="tertiary" size="SM" icon={<ChevronRight size={16} />} iconOnly />
-          </Flex>
+              {/* Pagination - using ActionButton/Tertiary */}
+              <Flex alignItems="center" justifyContent="center" gap="MD" className="py-4">
+                <ActionButton emphasis="tertiary" size="SM" icon={<ChevronLeft size={16} />} iconOnly />
+                <Text color="default.main.secondary" className="text-sm">
+                  Page 1 of 2
+                </Text>
+                <ActionButton emphasis="tertiary" size="SM" icon={<ChevronRight size={16} />} iconOnly />
+              </Flex>
+            </>
+          )}
+
+          {/* Highlights Tab Content */}
+          {activeTab === 'highlights' && (
+            <Flex flexDirection="column" gap="MD">
+              {MOCK_HIGHLIGHTS.map((highlight) => (
+                <HighlightCard
+                  key={highlight.id}
+                  insight={highlight.insight}
+                  transcript={highlight.transcript}
+                  themes={highlight.themes}
+                  isNew={highlight.isNew}
+                  participantId={highlight.participantId}
+                />
+              ))}
+            </Flex>
+          )}
         </div>
       </Flex>
     </ScrollContainer>

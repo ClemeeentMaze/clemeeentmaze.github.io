@@ -6,6 +6,37 @@
  */
 import { Flex, Box, Text, Heading, ScrollContainer, CTAButton } from '@framework/components/ariane';
 import { Play, Check, Star } from 'lucide-react';
+import { HighlightCard } from './HighlightCard';
+
+/**
+ * Mock uncategorized highlights - these need to be assigned themes
+ */
+const MOCK_UNCATEGORIZED_HIGHLIGHTS = [
+  {
+    id: 'uh1',
+    insight: "Monica is excited about the feature that automatically creates a session and captures information, making it easier to upload and analyze audio or video.",
+    transcript: "Because that would make, that would be fantastic because that's one of the things w...",
+    themes: [],
+    isNew: true,
+    participantId: '483697735',
+  },
+  {
+    id: 'uh2',
+    insight: "User found the filtering feature intuitive but wished for more advanced options like date range filtering.",
+    transcript: "I really like how the filters work, they're pretty intuitive. But I was looking for a way to filter by date range and couldn't find it...",
+    themes: [],
+    isNew: true,
+    participantId: '483697736',
+  },
+  {
+    id: 'uh3',
+    insight: "Participant expressed confusion about where to find the export functionality.",
+    transcript: "So I'm trying to export this report, but I can't seem to find where that option is. I've clicked around a few places...",
+    themes: [],
+    isNew: true,
+    participantId: '483697737',
+  },
+];
 
 /**
  * Progress step indicator
@@ -148,14 +179,33 @@ export function ThemeResults({ theme }) {
             </Flex>
           </>
         ) : (
-          /* Uncategorized view */
+          /* Uncategorized view - shows highlights that need themes */
           <Box>
-            <Text color="default.main.secondary" className="mb-4">
-              {theme.highlightCount} highlights from {theme.sessionCount} sessions need to be categorized.
-            </Text>
-            <Text color="default.main.secondary">
-              Create themes to organize your highlights and identify patterns.
-            </Text>
+            {/* Header with count and new badge */}
+            <Flex alignItems="center" gap="SM" className="mb-6">
+              <Text color="default.main.secondary">
+                {MOCK_UNCATEGORIZED_HIGHLIGHTS.length} highlights need to be categorized
+              </Text>
+              {MOCK_UNCATEGORIZED_HIGHLIGHTS.filter(h => h.isNew).length > 0 && (
+                <span className="px-2 py-0.5 bg-[#0568FD] text-white text-xs font-semibold rounded-full">
+                  {MOCK_UNCATEGORIZED_HIGHLIGHTS.filter(h => h.isNew).length} new
+                </span>
+              )}
+            </Flex>
+
+            {/* Highlight cards */}
+            <Flex flexDirection="column" gap="MD">
+              {MOCK_UNCATEGORIZED_HIGHLIGHTS.map((highlight) => (
+                <HighlightCard
+                  key={highlight.id}
+                  insight={highlight.insight}
+                  transcript={highlight.transcript}
+                  themes={highlight.themes}
+                  isNew={highlight.isNew}
+                  participantId={highlight.participantId}
+                />
+              ))}
+            </Flex>
           </Box>
         )}
       </Flex>

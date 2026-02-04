@@ -30,7 +30,7 @@ const MOCK_PARTICIPANT_LIST = [
  */
 const MOCK_THEME_LIST = [
   { id: 'thematic-analysis', name: 'Thematic analysis', status: 'Not enough sessions' },
-  { id: 'uncategorized', name: 'Uncategorized', highlightCount: 18, sessionCount: '1/1' },
+  { id: 'uncategorized', name: 'Uncategorized', highlightCount: 3, sessionCount: '1/1', newCount: 3 },
 ];
 
 /**
@@ -71,12 +71,13 @@ export function BlockList({
       {/* Scrollable List - changes based on active tab */}
       <ScrollContainer className="flex-1 min-h-0">
         <Flex flexDirection="column" gap="SM" className="p-3">
-          {activeTab === 'results' && blocks.map((block) => (
+          {activeTab === 'results' && blocks.map((block, index) => (
             <BlockListItem
               key={block.id}
               block={block}
               isSelected={selectedBlockId === block.id}
               onSelect={onSelectBlock}
+              newHighlightCount={index === 0 ? 3 : 0} // Mock: first block has 3 new highlights
             />
           ))}
           {activeTab === 'participants' && MOCK_PARTICIPANT_LIST.map((participant) => (

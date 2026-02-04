@@ -44,10 +44,17 @@ export function ThemeListItem({ theme, isSelected, onSelect }) {
         
         {/* Theme Content */}
         <Box className="flex-1 min-w-0 overflow-hidden">
-          {/* Theme Name */}
-          <p className="text-[16px] leading-6 truncate text-black m-0">
-            {theme.name}
-          </p>
+          {/* Theme Name with new badge */}
+          <Flex alignItems="center" gap="XS">
+            <p className="text-[16px] leading-6 truncate text-black m-0">
+              {theme.name}
+            </p>
+            {theme.newCount > 0 && (
+              <span className="px-1.5 py-0.5 bg-[#0568FD] text-white text-[10px] font-semibold rounded-full">
+                {theme.newCount} new
+              </span>
+            )}
+          </Flex>
           
           {/* Status / Count */}
           <Text 

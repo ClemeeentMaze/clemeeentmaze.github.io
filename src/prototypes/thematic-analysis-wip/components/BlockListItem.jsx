@@ -16,15 +16,16 @@ import { BLOCK_TYPES } from '../data';
  * @param {Object} props.block - Block data object
  * @param {boolean} props.isSelected - Whether this block is currently selected
  * @param {Function} props.onSelect - Callback when block is clicked
+ * @param {number} props.newHighlightCount - Number of new highlights for this block
  */
-export function BlockListItem({ block, isSelected, onSelect }) {
+export function BlockListItem({ block, isSelected, onSelect, newHighlightCount = 0 }) {
   const blockType = BLOCK_TYPES[block.type] || {};
   
   return (
     <Box
       onClick={() => onSelect(block.id)}
       className={`
-        bg-white rounded-lg p-4 cursor-pointer
+        relative bg-white rounded-lg p-4 cursor-pointer
         transition-all duration-150
         ${isSelected 
           ? 'shadow-[inset_0px_0px_0px_1px_#0568fd]' 
@@ -33,6 +34,13 @@ export function BlockListItem({ block, isSelected, onSelect }) {
         hover:shadow-[0px_2px_4px_rgba(108,113,140,0.12),inset_0px_0px_0px_0.5px_rgba(108,113,140,0.4)]
       `}
     >
+      {/* New highlight badge */}
+      {newHighlightCount > 0 && (
+        <div className="absolute -top-1.5 -right-1.5 px-1.5 py-0.5 bg-[#0568FD] text-white text-[10px] font-semibold rounded-full">
+          {newHighlightCount} new
+        </div>
+      )}
+      
       <Flex gap="SM" alignItems="center">
         {/* Block Icon - 40x40px squared figure with icon */}
         <IconFigure 
