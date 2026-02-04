@@ -1,0 +1,100 @@
+---
+description: Guidelines for working with Figma designs via MCP
+alwaysApply: true
+---
+
+# Working with Figma Designs (MCP)
+
+When a user shares a Figma design through the Figma MCP tools, your goal is to **recreate the design as faithfully as possible using Ariane Design System components**.
+
+---
+
+## Core Principle
+
+**Always use Ariane components to implement Figma designs.** The design system exists to ensure consistency between prototypes and production. Even if a Figma design uses slightly different styling, map it to the closest Ariane equivalent.
+
+---
+
+## Implementation Process
+
+### 1. Analyze the Design
+
+When receiving a Figma design via MCP:
+- Identify the UI elements (buttons, inputs, cards, text, layout)
+- Note the visual hierarchy and spacing
+- Understand the component states shown (hover, active, disabled, etc.)
+
+### 2. Map to Ariane Components
+
+For each element in the design, find the appropriate Ariane component:
+
+| Figma Element | Ariane Component |
+|---------------|------------------|
+| Primary button | `CTAButton emphasis="primary"` |
+| Secondary button | `ActionButton emphasis="secondary"` |
+| Text input field | `Field` + `TextInputControl` |
+| Dropdown/Select | `SimpleSelect` |
+| Toggle/Switch | `Toggle` |
+| Checkbox | `CheckboxField` or `CheckboxControl` |
+| Card container | `Box` or `HoverCard` |
+| Avatar/Profile pic | `ImageFigure` or `InitialsFigure` |
+| Badge/Tag | `TextBadge` or `Tag` |
+| Body text | `Text` |
+| Headings | `Heading level={1-5}` |
+| Layout containers | `Flex` and `Box` |
+
+### 3. Handle Design Differences
+
+When the Figma design doesn't exactly match Ariane:
+
+**DO:**
+- Use the closest Ariane component and extend with `className` for minor tweaks
+- Match the design's spacing using Ariane tokens (XS, SM, MD, LG, XL, XXL)
+- Preserve the design's visual hierarchy and intent
+
+**DON'T:**
+- Create custom styled elements when an Ariane component exists
+- Ignore the design system in favor of pixel-perfect matching
+- Add inline styles when Tailwind classes work
+
+### 4. Communicate Tradeoffs
+
+If the Figma design requires significant deviation from Ariane:
+- Explain the tradeoff to the designer
+- Suggest the closest Ariane alternative
+- Ask if they want to proceed with a custom implementation
+
+**Example:**
+> "The Figma design shows a custom button style. I can implement this using `CTAButton` with some Tailwind overrides, which keeps it consistent with the design system. Or I can create a fully custom button if you prefer exact matching. Which approach works better for you?"
+
+---
+
+## Quick Reference
+
+When implementing from Figma, always check:
+
+1. **`ariane-design-system.mdc`** - Full component list and usage
+2. **Ariane Components prototype** - Interactive examples of all components
+3. **Spacing tokens** - XS (4px), SM (8px), MD (16px), LG (24px), XL (32px)
+4. **Color tokens** - awake, dormant, critical, warning, success, featured
+
+---
+
+## Example Workflow
+
+**User:** "Here's a Figma design for a settings page" (via MCP)
+
+**AI Response:**
+1. Analyze: "I see a settings page with toggles, a form section, and action buttons"
+2. Map: "I'll use `Toggle` for the switches, `Field` + `TextInputControl` for inputs, and `CTAButton` for the save action"
+3. Implement: Build using Ariane components with appropriate spacing
+4. Note differences: "The Figma shows 20px spacing between sections - I'm using `LG` (24px) which is the closest Ariane token"
+
+---
+
+## Remember
+
+- **Design system first** - Ariane components ensure prototypes match production
+- **Extend, don't replace** - Use `className` for minor styling adjustments
+- **Communicate** - Let designers know when you're adapting the design to fit the system
+- **Check the showcase** - The Ariane Components prototype has examples of everything available

@@ -1,0 +1,57 @@
+# Shared vs Prototype-Specific Components
+
+When creating new components, follow this decision tree:
+
+## 1. First: Check Ariane Design System
+
+**Before creating ANY component**, check if it exists in Ariane (`src/components/ariane/`):
+
+```jsx
+import { CTAButton, TextInputControl, Avatar, Flex } from '@/components/ariane';
+```
+
+See `ariane-design-system.mdc` for the complete component catalog.
+
+## 2. If Not in Ariane: Decide Placement
+
+### Shared Components (`src/components/shared/`)
+
+Place components here **only** if they are:
+*   **Truly generic** - Not bound to change meaningfully across prototypes
+*   **Reusable across multiple prototypes** - Useful in 2+ prototypes without modification
+*   **Stable in design** - Unlikely to need prototype-specific variations
+*   **Not suitable for Ariane** - Too specific to this repo's needs
+
+Examples: Prototype-specific layout wrappers, specialized data visualizations
+
+Create the `src/components/shared/` folder if it doesn't exist.
+
+### Prototype-Specific Components (`src/prototypes/<name>/components/`)
+
+Keep components here if they are:
+*   **Specific to one prototype's needs**
+*   **Likely to evolve differently** per prototype
+*   **Tied to prototype-specific logic or design**
+
+Examples: Custom cards, prototype-specific modals, specialized input forms
+
+## Decision Flowchart
+
+```
+Need a UI component?
+    │
+    ├─→ Does Ariane have it? ──→ YES ──→ Use Ariane component
+    │                                     (extend with className if needed)
+    │
+    └─→ NO
+         │
+         ├─→ Reusable across prototypes? ──→ YES ──→ src/components/shared/
+         │
+         └─→ NO ──→ src/prototypes/<name>/components/
+```
+
+## Rule of Thumb
+
+1. **Ariane first** - Always check the design system
+2. **Tailwind extend** - Use className for minor adjustments
+3. **When in doubt, keep it at the prototype level** - Easier to promote later

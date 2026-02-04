@@ -1,0 +1,12 @@
+---
+description: State management patterns for prototypes
+globs: src/prototypes/**/*
+---
+
+# State Management
+
+Since these are prototypes for exploration:
+*   **Prefer local state** (`useState`, `useReducer`) over global state solutions
+*   **Use React Context** only when multiple components need shared state within a prototype
+*   **Mock data inline** or in a `data.js` file within the prototype directory
+*   **Avoid external API calls** unless testing a specific integration - use mock data instead

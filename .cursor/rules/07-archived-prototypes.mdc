@@ -1,0 +1,73 @@
+---
+description: How to archive prototypes (hide from main list)
+---
+
+# Archived Prototypes
+
+To archive a prototype (hide it from the main prototype list but keep it accessible):
+
+## How to Archive
+
+Add the `Archived` property to your prototype component:
+
+```jsx
+function MyPrototype() {
+  return <div>...</div>;
+}
+
+MyPrototype.Title = "Old Experiment";
+MyPrototype.Description = "A prototype I want to hide";
+MyPrototype.Archived = true;  // This moves it to the Archived section
+
+export default MyPrototype;
+```
+
+The prototype will move to a collapsible "Archived" section in the sidebar. It remains accessible via direct URL and can still be selected from the Archived section.
+
+## When to Archive
+
+- Work-in-progress prototypes not ready for review
+- Completed prototypes that are no longer actively needed
+- Experimental or internal-only prototypes
+- Old versions kept for reference
+
+## Archived Prototype Behavior
+
+- Archived prototypes appear in a collapsed "Archived" section at the bottom of the prototype list
+- They still support all features: Title, Description, annotations, full preview links
+- The section shows a count of archived prototypes
+- Click to expand/collapse the archived section
+
+## How to Unarchive
+
+To bring a prototype back to the main list, simply remove the `Archived` property or set it to `false`:
+
+```jsx
+// Remove this line to unarchive:
+// MyPrototype.Archived = true;
+
+// Or set it to false:
+MyPrototype.Archived = false;
+```
+
+## Example
+
+```jsx
+// src/prototypes/my-experiment/index.jsx
+
+function MyExperiment() {
+  return (
+    <div>
+      <h1>Experimental Feature</h1>
+      {/* ... */}
+    </div>
+  );
+}
+
+MyExperiment.Title = "Feature Experiment v1";
+MyExperiment.Description = "Early exploration - kept for reference";
+MyExperiment.Order = 50;
+MyExperiment.Archived = true;  // Hidden from main list
+
+export default MyExperiment;
+```

@@ -1,0 +1,44 @@
+---
+description: CRITICAL rules for prototype isolation - prevents accidental changes to wrong prototypes
+globs: src/prototypes/**/*
+alwaysApply: true
+---
+
+# Prototype Isolation Rules
+
+**CRITICAL: When working on a specific prototype, follow these rules strictly:**
+
+## Core Isolation Principles
+
+1. **Always confirm the active prototype**: Before making any changes, identify which prototype the user is working on. Prototypes are located in `src/prototypes/[prototype-name]/`.
+
+2. **Never modify other prototypes**: When working on a prototype (e.g., `ariane-review`), do NOT make changes to files in other prototype directories (e.g., `ariane-showcase`, `hello-designer`).
+
+3. **Ask for clarification if unclear**: If the user's request could apply to multiple prototypes, ask them to specify which prototype they want to modify.
+
+4. **Verify file paths before editing**: Before making any edit, verify that the file path belongs to the correct prototype directory. The pattern should be:
+   - `src/prototypes/{active-prototype-name}/**/*`
+
+5. **When creating new files for a prototype**: Always create them within that prototype's directory unless explicitly creating a shared component.
+
+## How to Identify the Active Prototype
+
+- Check which files the user has open in the editor
+- Look at the file paths mentioned in the conversation context
+- Ask the user directly: "Which prototype are you currently working on?"
+- If the user mentions a prototype by name, use that as the active context
+
+## Shared Components Exception
+
+The `src/_framework/components/ariane/` directory contains shared UI components that can be used by any prototype. Changes to these shared components should be made deliberately and with awareness that they affect all prototypes.
+
+## Example Prompt for Clarification
+
+If unsure, ask: "I see multiple prototypes in this project. Which prototype would you like me to modify? Current prototypes are: ariane-review, ariane-showcase, hello-designer"
+
+## Pre-Edit Checklist
+
+Before making any edit to prototype files:
+- [ ] Confirmed which prototype is active
+- [ ] Verified the file path matches `src/prototypes/{active-prototype}/`
+- [ ] Not touching files in other prototype directories

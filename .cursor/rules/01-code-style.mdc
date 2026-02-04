@@ -1,0 +1,17 @@
+---
+description: Code formatting and style conventions for prototypes
+globs: src/prototypes/**/*
+---
+
+# Code Style Guidelines
+
+*   **Framework:** Use React with functional components and hooks.
+*   **UI:** Use Ariane Design System components first, extend with Tailwind CSS classes when needed.
+*   **Naming:**
+    *   Components: `PascalCase` (e.g., `MyComponent`)
+    *   Hooks: `useCamelCase` (e.g., `useMyLogic`)
+    *   Variables/Functions: `camelCase` (e.g., `myVariable`)
+    *   Constants: `UPPER_SNAKE_CASE` (e.g., `DEFAULT_VALUE`)
+*   **Structure:** Co-locate components, hooks, and constants within their respective prototype's directory (`src/prototypes/<prototype-name>/`).
+*   **Comments:** Use JSDoc for components and hooks. Add inline comments for complex logic sections.
+*   **Exports:** Use default exports for the main prototype component.

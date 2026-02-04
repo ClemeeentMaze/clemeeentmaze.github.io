@@ -1,0 +1,32 @@
+---
+description: Package manager rules - ALWAYS use Yarn, never npm
+alwaysApply: true
+---
+
+# Package Management
+
+**Use Yarn as the package manager** for this project.
+
+## Commands
+
+| Action | Command |
+|--------|---------|
+| Install dependencies | `yarn install` or `yarn` |
+| Add a package | `yarn add <package-name>` |
+| Add a dev dependency | `yarn add -D <package-name>` |
+| Remove a package | `yarn remove <package-name>` |
+| Run dev server | `yarn dev` |
+| Build for production | `yarn build` |
+| Run linter | `yarn lint` |
+
+## Why Yarn over npm
+
+*   **Consistent lockfile:** `yarn.lock` ensures deterministic installs across environments
+*   **Faster installs:** Parallel downloads and efficient caching
+*   **Better workspace support:** Useful if project grows to monorepo structure
+
+## Important
+
+*   **Do NOT use `npm install`** — this creates `package-lock.json` which conflicts with `yarn.lock`
+*   If you see a `package-lock.json` file, delete it and use `yarn.lock` instead
+*   Always commit `yarn.lock` to version control

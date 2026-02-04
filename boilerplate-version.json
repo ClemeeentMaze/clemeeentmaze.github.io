@@ -1,0 +1,19 @@
+{
+  "version": "1.0.0",
+  "name": "ai-prototyping-boilerplate",
+  "updatedAt": "2026-01-07",
+  "repository": "https://github.com/guillermogineste/ai-prototyping-boilerplate",
+  "description": "A boilerplate for rapidly creating and testing multiple prototypes using React, Vite, and Tailwind CSS with Ariane design system components.",
+  "frameworkPaths": [
+    "src/_framework/",
+    "tailwind.config.js",
+    "vite.config.js",
+    "postcss.config.js",
+    "jsconfig.json",
+    ".cursor/rules/"
+  ],
+  "protectedPaths": [
+    "src/prototypes/"
+  ]
+}
+

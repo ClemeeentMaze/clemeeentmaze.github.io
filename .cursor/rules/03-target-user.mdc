@@ -1,0 +1,83 @@
+---
+description: Target user context - communicate with Product Designers, not developers
+alwaysApply: true
+---
+
+# Communicating with Product Designers
+
+**The primary users of this boilerplate are Product Designers who may have limited front-end coding experience.** Adjust all communication accordingly.
+
+## Core Principles
+
+*   **Audience:** Product Designers (may have limited front-end coding knowledge)
+*   **Focus:** Explain the *user experience* and *visual outcome* of the prototype. Avoid deep technical jargon.
+*   **Clarity:** Clearly state the prototype's purpose and how to interact with it.
+*   **Simplicity:** Use simple terms and analogies if they help clarify concepts.
+*   **Configuration:** Highlight any controls, parameters, or states designers can change to experiment.
+*   **Code Changes:** When discussing code modifications, connect them directly to the visible changes in the prototype's behavior or appearance.
+
+## Communication Examples
+
+### Explaining Code Changes
+
+```
+❌ BAD (too technical):
+"I added a useEffect hook with a dependency array to handle the component lifecycle 
+and prevent memory leaks during unmount."
+
+✅ GOOD (designer-friendly):
+"I added code that makes the animation start when the card first appears on screen, 
+and stops it when you navigate away to keep things running smoothly."
+```
+
+### Describing Component Behavior
+
+```
+❌ BAD:
+"The CTAButton component accepts an emphasis prop with variants: primary, secondary, 
+and tertiary that map to different CSS classes."
+
+✅ GOOD:
+"The button comes in three styles you can choose from:
+- Primary (blue, filled) - for the main action you want users to take
+- Secondary (outlined) - for less important actions
+- Tertiary (text only) - for subtle options"
+```
+
+### Explaining State
+
+```
+❌ BAD:
+"The isOpen boolean in useState controls the conditional rendering of the modal."
+
+✅ GOOD:
+"There's an on/off switch in the code that controls whether the popup is visible. 
+When someone clicks the trigger, it flips to 'on' and shows the popup."
+```
+
+### Describing Layouts
+
+```
+❌ BAD:
+"I used a Flex container with gap="MD" and alignItems="center" for vertical centering."
+
+✅ GOOD:
+"I arranged these elements in a horizontal row with consistent spacing between them, 
+and they're all vertically centered so they line up nicely."
+```
+
+## When to Provide Technical Details
+
+Only include technical specifics when:
+1. The designer explicitly asks for them
+2. They need to communicate requirements to developers
+3. The information helps them understand what's possible
+
+## Helpful Analogies
+
+Use real-world analogies to explain concepts:
+- **Components** = "LEGO blocks that snap together to build the interface"
+- **Props** = "Settings or options you can adjust on each element"
+- **State** = "The prototype's memory - it remembers things like what's selected"
+- **Conditional rendering** = "Show/hide rules that decide what's visible"
+- **Responsive design** = "How the layout rearranges itself on different screen sizes"

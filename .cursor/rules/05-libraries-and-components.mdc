@@ -1,0 +1,118 @@
+---
+description: Libraries and dependencies available - includes component decision rules
+globs: src/prototypes/**/*
+alwaysApply: true
+---
+
+# Available Libraries & Component Guidelines
+
+The following libraries are pre-installed and ready to use.
+
+## UI Components (Priority Order)
+
+### 1. Ariane Design System (PREFERRED)
+**Always use Ariane components first.** Import from `@framework/components/ariane`:
+
+```jsx
+import { Text, Heading, CTAButton, Flex, Box, Field, TextInputControl, ScrollContainer } from '@framework/components/ariane';
+```
+
+See `ariane-design-system.mdc` for the complete component list and usage guidelines.
+
+### 2. Tailwind CSS
+Use Tailwind classes for:
+- Extending Ariane components via `className` prop
+- Custom layouts not covered by Ariane
+- One-off styling needs
+
+### 3. Radix UI Primitives
+Used internally by Ariane. Available if building custom accessible components:
+- `@radix-ui/react-checkbox`
+- `@radix-ui/react-dropdown-menu`
+- `@radix-ui/react-radio-group`
+- `@radix-ui/react-select`
+- `@radix-ui/react-switch`
+- `@radix-ui/react-tooltip`
+
+## Other Libraries
+
+*   **Animation:** Framer Motion (`framer-motion`) - Use for transitions, gestures, and micro-interactions
+*   **Icons:** React Icons (`react-icons`) - Access to multiple icon sets (e.g., `import { FiUser } from "react-icons/fi"`)
+*   **Icons:** Lucide React (`lucide-react`) - Modern icon set with customizable stroke width
+*   **Routing:** React Router DOM (`react-router-dom`) - Already configured in the app shell
+*   **Utilities:** `clsx`, `class-variance-authority`, `tailwind-merge` - For class management
+
+---
+
+## Component Decision Rules
+
+### Priority Rule
+**DO NOT** create custom styled elements when Ariane components exist:
+
+```jsx
+// ❌ BAD
+<button className="bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
+
+// ✅ GOOD  
+<CTAButton emphasis="primary">Submit</CTAButton>
+```
+
+### Scrollable Content Rule
+**ALWAYS use `ScrollContainer` for scrollable content.** Never use `overflow-auto` or `overflow-scroll` directly:
+
+```jsx
+// ❌ BAD - Native scrollbars are inconsistent and visually intrusive
+<div className="overflow-auto h-[400px]">
+  {items.map(item => <Item key={item.id} />)}
+</div>
+
+// ✅ GOOD - Minimal scrollbars that appear only on hover
+<ScrollContainer className="h-[400px]">
+  {items.map(item => <Item key={item.id} />)}
+</ScrollContainer>
+```
+
+Use `ScrollContainer` whenever you have:
+- Lists that may overflow
+- Panels or sidebars with scrollable content
+- Modal/dialog bodies with variable content
+- Any container with `overflow-auto` or fixed/max height
+
+### Decision Flowchart
+
+When you need a UI component, follow this decision process:
+
+```
+Need a UI component?
+    │
+    ├─→ Does Ariane have it? ──→ YES ──→ Use Ariane component
+    │                                     (extend with className if needed)
+    │
+    └─→ NO
+         │
+         ├─→ Reusable across prototypes? ──→ YES ──→ src/components/shared/
+         │
+         └─→ NO ──→ src/prototypes/<name>/components/
+```
+
+### Where to Place New Components
+
+**Shared Components (`src/components/shared/`)**
+Place components here **only** if they are:
+*   **Truly generic** - Not bound to change meaningfully across prototypes
+*   **Reusable across multiple prototypes** - Useful in 2+ prototypes without modification
+*   **Stable in design** - Unlikely to need prototype-specific variations
+*   **Not suitable for Ariane** - Too specific to this repo's needs
+
+**Prototype-Specific Components (`src/prototypes/<name>/components/`)**
+Keep components here if they are:
+*   **Specific to one prototype's needs**
+*   **Likely to evolve differently** per prototype
+*   **Tied to prototype-specific logic or design**
+
+### Rule of Thumb
+
+1. **Ariane first** - Always check the design system at `@framework/components/ariane`
+2. **ScrollContainer for overflow** - Always wrap scrollable content with `ScrollContainer`
+3. **Tailwind extend** - Use className for minor adjustments
+4. **When in doubt, keep it at the prototype level** - Easier to promote later

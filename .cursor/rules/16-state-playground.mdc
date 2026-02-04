@@ -1,0 +1,293 @@
+---
+description: State Playground - opt-in visual state controls for prototypes
+globs: src/prototypes/**/*
+---
+
+# State Playground (Opt-in Feature)
+
+The State Playground panel provides visual controls for manipulating prototype state. It appears at the bottom of the right sidebar and allows designers to explore different states without code changes.
+
+**This is an ADVANCED feature — do NOT add it by default.**
+
+---
+
+## When to Add State Controls
+
+Add `StateControls` to a prototype ONLY when the designer explicitly:
+- Asks for visual state controls
+- Wants to explore loading/error/empty states interactively
+- Needs to reach UI states where annotations are attached
+- Wants to demo multiple scenarios without code changes
+
+---
+
+## When NOT to Add State Controls
+
+Do NOT add `StateControls`:
+- **By default** when creating new prototypes
+- For simple prototypes with one main state
+- Unless **explicitly requested** by the designer
+
+When in doubt, **don't add them**. The empty state in the panel guides users to ask for controls when needed.
+
+---
+
+## How to Add State Controls
+
+### Step 1: Import the hook
+
+```jsx
+import { useStatePlayground } from '@framework/hooks/useStatePlayground';
+```
+
+### Step 2: Define StateControls on the component
+
+Add a static `StateControls` property to your prototype component:
+
+```jsx
+function MyPrototype() {
+  // Component code...
+}
+
+MyPrototype.StateControls = {
+  viewState: {
+    label: "View State",
+    type: "select",
+    options: ["default", "loading", "empty", "error", "success"],
+    default: "default"
+  },
+  itemCount: {
+    label: "Items",
+    type: "range",
+    min: 0,
+    max: 20,
+    default: 5
+  },
+  showFeature: {
+    label: "Show Feature",
+    type: "toggle",
+    default: false
+  },
+  userName: {
+    label: "User Name",
+    type: "text",
+    placeholder: "Enter name...",
+    default: "John Doe"
+  }
+};
+
+MyPrototype.Title = "My Prototype";
+export default MyPrototype;
+```
+
+### Step 3: Use state values in the component
+
+```jsx
+function MyPrototype() {
+  const { state } = useStatePlayground();
+  const { viewState, itemCount, showFeature, userName } = state;
+  
+  // Handle different view states
+  if (viewState === 'loading') {
+    return <LoadingSpinner />;
+  }
+  
+  if (viewState === 'empty') {
+    return <EmptyState message="No items yet" />;
+  }
+  
+  if (viewState === 'error') {
+    return <ErrorState message="Something went wrong" />;
+  }
+  
+  // Default/success state
+  return (
+    <div>
+      <Heading>Welcome, {userName}</Heading>
+      <ItemList count={itemCount} />
+      {showFeature && <FeatureBanner />}
+    </div>
+  );
+}
+```
+
+---
+
+## Control Types
+
+| Type | Use For | Properties |
+|------|---------|------------|
+| `select` | Mutually exclusive states (loading, error, empty) | `options: string[]` |
+| `toggle` | Boolean flags (show/hide, enabled/disabled) | (none) |
+| `range` | Numeric values (counts, percentages) | `min`, `max`, `step?` |
+| `text` | String inputs (names, labels) | `placeholder?` |
+
+### Select Control
+
+For mutually exclusive options. Uses a segmented control for ≤4 options, dropdown for more:
+
+```jsx
+viewState: {
+  label: "View State",
+  type: "select",
+  options: ["default", "loading", "empty", "error"],
+  default: "default"
+}
+```
+
+### Toggle Control
+
+For boolean on/off values:
+
+```jsx
+showBanner: {
+  label: "Show Banner",
+  type: "toggle",
+  default: false
+}
+```
+
+### Range Control
+
+For numeric values with a slider:
+
+```jsx
+itemCount: {
+  label: "Number of Items",
+  type: "range",
+  min: 0,
+  max: 50,
+  step: 5,  // Optional, defaults to 1
+  default: 10
+}
+```
+
+### Text Control
+
+For string input values:
+
+```jsx
+searchQuery: {
+  label: "Search Query",
+  type: "text",
+  placeholder: "Type to search...",
+  default: ""
+}
+```
+
+---
+
+## Integration with Annotations
+
+State controls work especially well with annotations when:
+- An annotation refers to an element that only appears in certain states
+- Designer needs to demonstrate state-specific behaviors to developers
+- Handover notes describe different scenarios (loading, error, success)
+
+**Example:** Add a `viewState` control so developers can toggle to the loading state and see the annotation attached to the loading spinner.
+
+---
+
+## URL State Sharing
+
+State values are automatically synced to URL parameters, making states shareable:
+
+```
+/my-prototype?playgroundState=viewState:loading,itemCount:5
+```
+
+This means:
+- Designers can share specific state configurations with stakeholders
+- State persists when copying/pasting URLs
+- Works with the `?full-preview` mode for clean presentations
+
+---
+
+## Complete Example
+
+```jsx
+import { useStatePlayground } from '@framework/hooks/useStatePlayground';
+import { Text, Heading, Flex, Box, CTAButton } from '@framework/components/ariane';
+
+function CheckoutPrototype() {
+  const { state } = useStatePlayground();
+  const { viewState, cartItems, hasPromoCode } = state;
+  
+  // Loading state
+  if (viewState === 'loading') {
+    return (
+      <Flex alignItems="center" justifyContent="center" className="h-64">
+        <Text color="default.main.secondary">Loading cart...</Text>
+      </Flex>
+    );
+  }
+  
+  // Empty cart state
+  if (viewState === 'empty' || cartItems === 0) {
+    return (
+      <Box className="text-center py-xl">
+        <Heading level={2}>Your cart is empty</Heading>
+        <Text color="default.main.secondary" className="mt-sm">
+          Add some items to get started
+        </Text>
+      </Box>
+    );
+  }
+  
+  // Error state
+  if (viewState === 'error') {
+    return (
+      <Box className="bg-red-50 p-lg rounded">
+        <Heading level={3} color="default.extra.critical">
+          Unable to load cart
+        </Heading>
+        <CTAButton emphasis="tertiary" className="mt-md">
+          Try Again
+        </CTAButton>
+      </Box>
+    );
+  }
+  
+  // Default state
+  return (
+    <Box>
+      <Heading level={2}>Your Cart ({cartItems} items)</Heading>
+      {hasPromoCode && (
+        <Box className="bg-green-50 p-sm rounded mt-md">
+          <Text color="default.extra.success">Promo code applied!</Text>
+        </Box>
+      )}
+      <CTAButton emphasis="primary" className="mt-lg">
+        Proceed to Checkout
+      </CTAButton>
+    </Box>
+  );
+}
+
+CheckoutPrototype.Title = "Checkout Flow";
+CheckoutPrototype.Description = "Cart and checkout exploration";
+CheckoutPrototype.Order = 20;
+
+CheckoutPrototype.StateControls = {
+  viewState: {
+    label: "View State",
+    type: "select",
+    options: ["default", "loading", "empty", "error"],
+    default: "default"
+  },
+  cartItems: {
+    label: "Cart Items",
+    type: "range",
+    min: 0,
+    max: 10,
+    default: 3
+  },
+  hasPromoCode: {
+    label: "Promo Applied",
+    type: "toggle",
+    default: false
+  }
+};
+
+export default CheckoutPrototype;
+```

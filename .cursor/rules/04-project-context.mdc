@@ -1,0 +1,8 @@
+---
+description: Project background and purpose
+alwaysApply: true
+---
+
+# Project Context
+
+This project is a boilerplate for rapidly creating and testing multiple prototypes using React, Vite, the Ariane Design System, and Tailwind CSS. Each prototype is an exploration or iteration of an idea, focused on enabling designers to create functional UI prototypes with AI assistance.

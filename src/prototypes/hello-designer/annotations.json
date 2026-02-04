@@ -1,0 +1,42 @@
+{
+  "scopes": [
+    {
+      "id": "info",
+      "name": "Information"
+    },
+    {
+      "id": "interaction",
+      "name": "Interaction"
+    },
+    {
+      "id": "styling",
+      "name": "Styling"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "demo-input",
+      "targetId": "demoInput",
+      "scope": "info",
+      "type": "Info",
+      "title": "This is an Annotation",
+      "body": "Annotations like this one help communicate design decisions to developers. They can describe validation rules, placeholder text, or expected behavior."
+    },
+    {
+      "id": "demo-toggle",
+      "targetId": "demoToggle",
+      "scope": "interaction",
+      "type": "Interaction",
+      "title": "Interaction Notes",
+      "body": "Use interaction annotations to describe how a component should behave — like what happens on toggle, animations, or state changes."
+    },
+    {
+      "id": "demo-button",
+      "targetId": "demoButton",
+      "scope": "styling",
+      "type": "Styling",
+      "title": "Styling Guidelines",
+      "body": "Styling annotations can describe visual states (hover, active, disabled), spacing requirements, or when to use specific variants."
+    }
+  ]
+}

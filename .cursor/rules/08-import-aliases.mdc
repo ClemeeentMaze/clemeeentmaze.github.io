@@ -1,0 +1,55 @@
+---
+description: Import path aliases configuration (@framework/ and @/)
+globs: src/**/*
+---
+
+# Import Aliases
+
+This project uses two path aliases for cleaner imports:
+
+## `@framework/` - Framework & Infrastructure
+
+Use for all framework/infrastructure code (design system, contexts, hooks, utilities):
+
+```javascript
+// Design system components
+import { CTAButton, TextInputControl, Flex } from '@framework/components/ariane';
+
+// Context
+import { useAnnotations } from '@framework/context/AnnotationContext';
+
+// Hooks
+import { usePrototypes } from '@framework/hooks/usePrototypes';
+
+// Core utilities
+import { prototypeEntries } from '@framework/core/prototype-utils';
+```
+
+## `@/` - General Source
+
+Use for general src directory references (prototypes, local assets):
+
+```javascript
+// Prototype imports (less common - prototypes are auto-discovered)
+import MyComponent from '@/prototypes/my-prototype/components/MyComponent';
+```
+
+## Framework Directory Structure
+
+The `src/_framework/` directory contains all updatable infrastructure:
+
+```
+src/_framework/
+├── components/
+│   ├── ariane/          # Design system (UI components)
+│   ├── MainContent.jsx  # Prototype shell
+│   └── PrototypeSelector.jsx
+├── context/             # React contexts
+├── hooks/               # Custom hooks
+├── core/                # Core utilities
+└── styles/              # Shared styles
+```
+
+## Why This Structure?
+
+The `_framework` directory groups all infrastructure code that can be updated from the boilerplate without affecting your prototypes in `src/prototypes/`.

@@ -1,0 +1,12 @@
+---
+description: Preview mode functionality for sharing prototypes
+---
+
+# Full Preview Mode
+
+Append `?full-preview` to any prototype URL to hide the prototype selector UI. This is useful for:
+*   Sharing clean prototype links with stakeholders
+*   Recording demos or screenshots
+*   Testing the prototype in isolation
+
+Example: `http://localhost:5173/my-prototype?full-preview`

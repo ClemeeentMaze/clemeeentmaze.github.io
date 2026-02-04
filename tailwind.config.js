@@ -1,0 +1,268 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        // Raw color scales from Ariane tokens/colors.ts
+        amber: {
+          100: '#FFF9ED',
+          200: '#FFEED1',
+          300: '#FCD78D',
+          400: '#D29615',
+          500: '#AC7000',
+          600: '#8C5400',
+          700: '#6B3E00',
+          800: '#4B2800',
+        },
+        blue: {
+          100: '#F0FAFF',
+          200: '#CEEEFF',
+          300: '#9AD6FF',
+          400: '#3B9FEC',
+          500: '#0568FD',
+          600: '#034FD6',
+          700: '#0138A9',
+          800: '#012577',
+        },
+        cyan: {
+          100: '#DEFFFE',
+          200: '#BBF4F3',
+          300: '#81DDE7',
+          400: '#2BA7B8',
+          500: '#147E90',
+          600: '#016479',
+          700: '#024A5A',
+          800: '#02323D',
+        },
+        forest: {
+          100: '#EBFCF5',
+          200: '#BCFAE0',
+          300: '#87DEBA',
+          400: '#38A97A',
+          500: '#158053',
+          600: '#00673C',
+          700: '#024C2D',
+          800: '#01341F',
+        },
+        lavender: {
+          100: '#F9F7FF',
+          200: '#E7E7FF',
+          300: '#CCCAFF',
+          400: '#928BFF',
+          500: '#6B5BEE',
+          600: '#5247C8',
+          700: '#3A30A4',
+          800: '#1F1C7F',
+        },
+        lila: {
+          100: '#FCF7FF',
+          200: '#F3E3FF',
+          300: '#E5C2FE',
+          400: '#C576F9',
+          500: '#9C48E0',
+          600: '#7C2FC7',
+          700: '#6215A0',
+          800: '#450773',
+        },
+        neutral: {
+          '000': '#FFFFFF',
+          100: '#F8F8FB',
+          200: '#E8E8F1',
+          300: '#CDCEDD',
+          400: '#9597B0',
+          500: '#6C718C',
+          600: '#535A74',
+          700: '#3D425A',
+          800: '#282D40',
+          900: '#000000',
+        },
+        red: {
+          100: '#FFF6F8',
+          200: '#FEE3E5',
+          300: '#FCC0C3',
+          400: '#F86C74',
+          500: '#CC3F4D',
+          600: '#A4313C',
+          700: '#7D222B',
+          800: '#57151F',
+        },
+        rose: {
+          100: '#FFF6FE',
+          200: '#FFE0FC',
+          300: '#FCB9F7',
+          400: '#E46ADA',
+          500: '#BB3DB0',
+          600: '#982D8E',
+          700: '#7A1070',
+          800: '#56054F',
+        },
+        sand: {
+          100: '#f5f4f0',
+          200: '#eae6e1',
+          300: '#d2cec6',
+          400: '#9e9b94',
+          500: '#73726f',
+          600: '#595959',
+          700: '#383838',
+          800: '#1c1c1c',
+        },
+        lime: {
+          100: '#f9ffdb',
+          200: '#dffd86',
+          300: '#bbe510',
+          400: '#8aa80a',
+          500: '#607f10',
+          600: '#465f0c',
+          700: '#2b4909',
+          800: '#1e3206',
+        },
+        // Semantic colors
+        semantic: {
+          awake: '#0568FD',
+          dormant: '#6C718C',
+          critical: '#CC3F4D',
+          warning: '#AC5F00',
+          success: '#15807B',
+          featured: '#6B5BEE',
+          onExtra: '#FFFFFF',
+          upsell: '#2D3CA4',
+        },
+        // Surface colors
+        surface: {
+          awake: '#F0FAFF',
+          dormant: '#F8F8FB',
+          critical: '#FFF6F8',
+          warning: '#FFF7F1',
+          success: '#EBFCFA',
+          featured: '#F9F7FF',
+        },
+        // State colors
+        state: {
+          awakeHovered: '#034FD6',
+          awakePressed: '#0138A9',
+          criticalHovered: '#A4313C',
+          criticalPressed: '#7D222B',
+        },
+        // Surface state colors
+        surfaceState: {
+          awakeHovered: '#CEEEFF',
+          awakePressed: '#9AD6FF',
+          criticalHovered: '#FEE3E5',
+          criticalPressed: '#FCC0C3',
+        },
+        // Outline colors
+        outline: {
+          awake: 'rgba(5, 104, 253, 0.28)',
+          dormant: 'rgba(108, 113, 140, 0.28)',
+          critical: 'rgba(204, 63, 77, 0.28)',
+        },
+        // Shadow colors (for use in box-shadow)
+        shadowColor: {
+          awake: 'rgba(5, 104, 253, 0.08)',
+          dormant: 'rgba(108, 113, 140, 0.08)',
+          critical: 'rgba(204, 63, 77, 0.08)',
+        },
+        // Main colors
+        main: {
+          background: '#FFFFFF',
+          primary: '#000000',
+          secondary: '#535A74',
+        },
+        // Inverted colors
+        inverted: {
+          background: '#282D40',
+          primary: '#FFFFFF',
+          secondary: '#9597B0',
+        },
+      },
+      spacing: {
+        // Ariane space tokens
+        'xs': '4px',
+        'sm': '8px',
+        'sm-plus': '12px',
+        'md': '16px',
+        'lg': '24px',
+        'xl': '32px',
+        'xl-plus': '40px',
+        'xxl': '56px',
+      },
+      fontSize: {
+        // Ariane typography tokens
+        'caption': ['14px', { lineHeight: '20px', fontWeight: '400', letterSpacing: '-0.01em' }],
+        'default': ['16px', { lineHeight: '24px', fontWeight: '400', letterSpacing: '-0.01em' }],
+        'lead': ['18px', { lineHeight: '24px', fontWeight: '400', letterSpacing: '-0.01em' }],
+        'heading-5': ['14px', { lineHeight: '20px', fontWeight: '600', letterSpacing: '-0.01em' }],
+        'heading-4': ['16px', { lineHeight: '24px', fontWeight: '600', letterSpacing: '-0.01em' }],
+        'heading-3': ['18px', { lineHeight: '24px', fontWeight: '600', letterSpacing: '-0.01em' }],
+        'heading-2': ['20px', { lineHeight: '24px', fontWeight: '600', letterSpacing: '-0.01em' }],
+        'heading-1': ['23px', { lineHeight: '32px', fontWeight: '600', letterSpacing: '-0.01em' }],
+        'kicker': ['13px', { lineHeight: '16px', fontWeight: '700', letterSpacing: '0', textTransform: 'uppercase' }],
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      borderRadius: {
+        'ariane': '8px',
+        'ariane-lg': '10px',
+        'ariane-full': '9999px',
+      },
+      boxShadow: {
+        // Card shadows
+        'card-dormant': 'inset 0px 0px 0px 0.5px rgba(108, 113, 140, 0.28), 0px 1px 2px 0px rgba(108, 113, 140, 0.08), 0px 2px 8px 0px rgba(108, 113, 140, 0.08)',
+        'card-awake': 'inset 0px 0px 0px 0.5px rgba(5, 104, 253, 0.28), 0px 1px 2px 0px rgba(5, 104, 253, 0.08), 0px 2px 6px 0px rgba(5, 104, 253, 0.08)',
+        'card-awake-hovered': 'inset 0px 0px 0px 1px rgba(5, 104, 253, 0.28), 0px 1px 2px 0px rgba(5, 104, 253, 0.08), 0px 2px 6px 0px rgba(5, 104, 253, 0.08)',
+        'card-awake-focused': 'inset 0px 0px 0px 0.5px rgba(5, 104, 253, 0.28)',
+        'card-awake-pressed': 'inset 0px 0px 0px 1px rgba(5, 104, 253, 1)',
+        // Control shadows - MD
+        'control-md-awake': '0px 1px 2px rgba(5, 104, 253, 0.08), inset 0px 0px 0px 0.5px rgba(5, 104, 253, 0.28)',
+        'control-md-awake-focused': 'inset 0px 0px 0px 1px rgba(5, 104, 253, 0.28)',
+        'control-md-awake-hovered': '0px 1px 2px rgba(5, 104, 253, 0.08), inset 0px 0px 0px 1px rgba(5, 104, 253, 0.28)',
+        'control-md-awake-pressed': 'inset 0px 0px 0px 1px rgba(5, 104, 253, 1)',
+        'control-md-critical': '0px 1px 2px rgba(204, 63, 77, 0.08), inset 0px 0px 0px 0.5px rgba(204, 63, 77, 0.28)',
+        'control-md-critical-focused': 'inset 0px 0px 0px 1px rgba(204, 63, 77, 0.28)',
+        'control-md-critical-hovered': '0px 1px 2px rgba(204, 63, 77, 0.08), inset 0px 0px 0px 1px rgba(204, 63, 77, 0.28)',
+        'control-md-critical-pressed': 'inset 0px 0px 0px 1px #CC3F4D',
+        'control-md-dormant': '0px 1px 2px rgba(108, 113, 140, 0.08), inset 0px 0px 0px 0.5px rgba(108, 113, 140, 0.28)',
+        'control-md-dormant-pressed': 'inset 0px 0px 0px 1px rgba(108, 113, 140, 1)',
+        'control-md-dormant-focused': 'inset 0px 0px 0px 1px rgba(108, 113, 140, 0.28), 0px 0px 0px 2px rgba(3, 79, 214, 1), 0px 0px 0px 2px rgba(255, 255, 255, 1)',
+        // Control shadows - SM
+        'control-sm-awake': '0px 1px 2px rgba(5, 104, 253, 0.08), inset 0px 0px 0px 0.5px rgba(5, 104, 253, 0.8)',
+        'control-sm-awake-focused': 'inset 0px 0px 0px 1px rgba(5, 104, 253, 0.8)',
+        'control-sm-awake-hovered': '0px 1px 2px rgba(5, 104, 253, 0.08), inset 0px 0px 0px 1px rgba(5, 104, 253, 0.8)',
+        'control-sm-awake-pressed': 'inset 0px 0px 0px 1px rgba(5, 104, 253, 1)',
+        'control-sm-critical': '0px 1px 2px rgba(204, 63, 77, 0.08), inset 0px 0px 0px 0.5px rgba(204, 63, 77, 0.8)',
+        'control-sm-critical-focused': 'inset 0px 0px 0px 1px rgba(204, 63, 77, 0.8)',
+        'control-sm-critical-hovered': '0px 1px 2px rgba(204, 63, 77, 0.08), inset 0px 0px 0px 1px rgba(204, 63, 77, 0.8)',
+        'control-sm-critical-pressed': 'inset 0px 0px 0px 1px #CC3F4D',
+        'control-sm-dormant': '0px 1px 2px rgba(108, 113, 140, 0.08), inset 0px 0px 0px 0.5px rgba(108, 113, 140, 0.8)',
+        'control-sm-dormant-pressed': 'inset 0px 0px 0px 1px rgba(108, 113, 140, 1)',
+        'control-sm-dormant-focused': 'inset 0px 0px 0px 1px rgba(108, 113, 140, 0.8), 0px 0px 0px 2px rgba(3, 79, 214, 1), 0px 0px 0px 2px rgba(255, 255, 255, 1)',
+        // Divider shadows
+        'divider-all': 'inset 0px 0px 0px 0.5px rgba(108, 113, 140, 0.28)',
+        'divider-bottom': 'inset 0px -0.5px 0px rgba(108, 113, 140, 0.28)',
+        'divider-left': 'inset 0.5px 0px 0px rgba(108, 113, 140, 0.28)',
+        'divider-right': 'inset -0.5px 0px 0px rgba(108, 113, 140, 0.28)',
+        'divider-top': 'inset 0px 0.5px 0px rgba(108, 113, 140, 0.28)',
+        // Outline shadow
+        'outline-awake': '0px 0px 0px 2px #034FD6',
+        // Panel shadow
+        'panel-dormant': 'inset 0px 0px 0px 0.5px rgba(108, 113, 140, 0.28), 0px 1px 2px 0px rgba(108, 113, 140, 0.08), 0px 2px 8px 0px rgba(108, 113, 140, 0.08), 0px 4px 48px 0px rgba(108, 113, 140, 0.08)',
+      },
+      animation: {
+        'pulse-ariane': 'pulse-ariane 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
+      keyframes: {
+        'pulse-ariane': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '.7' },
+        },
+      },
+    },
+  },
+  plugins: [],
+}
+

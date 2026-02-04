@@ -1,0 +1,163 @@
+# AI Prototyping Boilerplate - Cursor Rules Index
+
+This project uses modular Cursor rules located in `.cursor/rules/`. Below is a summary of available rules.
+
+## Quick Decision Matrix
+
+| Task | Rule File |
+|------|-----------|
+| Brainstorming / ideating | `13-brainstorming.mdc` (explore multiple prototypes) |
+| Working on prototype code | `11-prototype-isolation.mdc` (CRITICAL) |
+| Creating a new prototype | `02-prototype-creation.mdc` (restart server after) |
+| Grouping related prototypes | `02-prototype-creation.mdc` (see Group property) |
+| Choosing UI components | `ariane-design-system.mdc` + `05-libraries-and-components.mdc` |
+| Implementing Figma designs | `17-figma-mcp.mdc` (use design system components) |
+| Adding packages | `10-package-management.mdc` (use Yarn) |
+| Explaining to user | `03-target-user.mdc` (designer-friendly) |
+| Adding annotations | `12-annotations.mdc` |
+| Adding state controls | `16-state-playground.mdc` (opt-in, experimental) |
+| Creating scrollable content | Use `ScrollContainer` from Ariane (never `overflow-auto`) |
+
+## Pre-Response Checklist
+
+Before making changes or responding, verify:
+- [ ] Confirmed which prototype is active (if working on prototype code)
+- [ ] Using Ariane components first (not custom HTML/CSS)
+- [ ] Using `ScrollContainer` for any scrollable/overflow content
+- [ ] Communicating in designer-friendly terms
+- [ ] Using yarn (not npm) for package operations
+- [ ] Consider suggesting prototype grouping if many related prototypes exist
+- [ ] Restart dev server after creating new prototypes (automatic via Shell tool)
+
+## Rules Overview
+
+| Rule File | Description |
+|-----------|-------------|
+| `01-code-style.mdc` | Code formatting and style conventions |
+| `02-prototype-creation.mdc` | How to create new prototypes (includes file structure, Group property) |
+| `03-target-user.mdc` | Target user context - communicate with designers |
+| `04-project-context.mdc` | Project background and purpose |
+| `05-libraries-and-components.mdc` | Libraries available + component decision rules |
+| `06-preview-mode.mdc` | Preview mode functionality |
+| `07-archived-prototypes.mdc` | Archiving prototypes (hide from main list) |
+| `08-import-aliases.mdc` | Import path aliases (@framework/, @/) |
+| `09-state-management.mdc` | State management patterns |
+| `10-package-management.mdc` | Package manager rules (Yarn) |
+| `11-prototype-isolation.mdc` | **CRITICAL** - Prototype isolation rules |
+| `12-annotations.mdc` | Developer handover annotation system |
+| `13-brainstorming.mdc` | AI-assisted brainstorming and ideation guidelines |
+| `16-state-playground.mdc` | State Playground - opt-in visual state controls |
+| `17-figma-mcp.mdc` | Working with Figma designs via MCP |
+| `ariane-design-system.mdc` | Ariane design system documentation |
+
+## Critical Rules Summary
+
+### New Prototype Creation (Rule 02)
+
+**When creating a new prototype, ALWAYS restart the dev server automatically:**
+
+1. **Why restart is needed:** Prototype discovery uses Vite's `import.meta.glob()`, which analyzes the filesystem at build time. New files aren't detected until the server restarts.
+
+2. **How to restart:**
+   - Find the terminal running `yarn dev` (check terminals folder)
+   - Use Shell tool with `Ctrl+C` to stop the process
+   - Start a new `yarn dev` process in the background on port 5153
+
+3. **User communication:**
+   - "I've created your new prototype at `src/prototypes/[name]/`. Restarting the dev server so it appears in the selector..."
+   - After restart: "All set! Your prototype is now visible in the selector. All future edits will hot-reload automatically without needing another restart."
+
+4. **Important:** Only editing existing prototypes hot-reloads instantly. Creating new prototype folders requires a server restart.
+
+### Prototype Isolation (Rule 11)
+
+**ALWAYS verify which prototype you're working on before making changes.**
+
+- Prototypes live in `src/prototypes/[prototype-name]/`
+- Never modify files in other prototype directories
+- Ask for clarification if the active prototype is unclear
+- Shared components in `src/_framework/components/ariane/` affect all prototypes
+
+### Designer Communication (Rule 03)
+
+Users are **Product Designers** with limited coding experience. Always:
+- Explain visual/UX outcomes, not technical implementation
+- Use simple terms and analogies
+- Connect code changes to visible behavior
+
+### Component Priority (Rule 05 + ariane-design-system)
+
+1. **Ariane first** - Always check `@framework/components/ariane`
+2. **ScrollContainer for overflow** - Always use `ScrollContainer` for scrollable content
+3. **Tailwind extend** - Use className for minor adjustments
+4. **Prototype-specific** - Create in `src/prototypes/<name>/components/` only when necessary
+
+### ScrollContainer Usage
+
+**Always use `ScrollContainer` for scrollable content.** It provides minimal, elegant scrollbars that appear only on hover.
+
+```jsx
+// ❌ BAD - Native scrollbars
+<div className="overflow-auto h-[400px]">...</div>
+
+// ✅ GOOD - Minimal scrollbars
+<ScrollContainer className="h-[400px]">...</ScrollContainer>
+```
+
+### Brainstorming Mode (Rule 13)
+
+When a designer wants to explore ideas:
+- **Think like an expert Product Designer** - Consider user goals, context, and edge cases
+- **Propose multiple directions** - Suggest 2-4 distinct approaches, not just one
+- **Create separate prototypes** - One prototype per concept for easy comparison
+- **Frame as hypotheses** - Present ideas as testable assumptions, not definitive solutions
+
+### Figma MCP Integration (Rule 17)
+
+When implementing designs from Figma via MCP:
+- **Always use Ariane components** - Map Figma elements to design system components
+- **Extend, don't replace** - Use `className` for minor styling adjustments
+- **Communicate tradeoffs** - Explain when designs need adaptation to fit the system
+
+## Prototype Organization
+
+### Grouping Prototypes
+
+Use the `Group` property to organize related prototypes:
+
+```jsx
+MyPrototype.Title = "Checkout - Wizard";
+MyPrototype.Group = "Checkout Exploration";
+MyPrototype.Order = 10;
+```
+
+**Proactively suggest grouping when:**
+- Creating variations of an existing concept
+- There are 5+ prototypes with some appearing related
+- User is brainstorming multiple approaches
+
+### State Playground (Experimental)
+
+State controls let designers switch between prototype states without code changes. **Only add when explicitly requested.**
+
+```jsx
+MyPrototype.StateControls = {
+  viewState: { type: 'select', options: ['default', 'loading', 'error'], default: 'default' },
+  itemCount: { type: 'range', min: 0, max: 20, default: 5 }
+};
+```
+
+See `16-state-playground.mdc` for full details.
+
+## Annotations System
+
+This project includes a developer handover annotation system. See `12-annotations.mdc` for full details.
+
+**Two ways to add annotations:**
+
+1. **From selected element**: User provides DOM path/element info → AI finds element, adds ref, creates annotation entry
+2. **Bulk by scope**: User asks for scope annotations (e.g., "add layout annotations") → AI analyzes prototype and adds multiple annotations
+
+**Key files per prototype:**
+- `annotations.json` - Stores scopes and annotation data
+- `index.jsx` - Contains refs and renders Annotation components

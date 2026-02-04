@@ -1,0 +1,134 @@
+---
+description: How to create new prototypes - includes file structure and conventions
+globs: src/prototypes/**/*
+---
+
+# Prototype Creation Guide
+
+**Important:** Prototypes are auto-discovered and appear in the dropdown selector automatically — but ONLY if you follow these exact conventions:
+
+## Required Steps (all are mandatory)
+
+1.  **Directory:** Create a folder under `src/prototypes/` using kebab-case (e.g., `src/prototypes/new-cool-feature/`)
+
+2.  **File name must be `index.jsx`:** The main component MUST be in a file named exactly `index.jsx` — not `Index.jsx`, not `main.jsx`, not anything else.
+
+3.  **Default export required:** The component MUST be exported as the default export.
+
+4.  **Title property required:** Add a static `Title` property to the component. This is what displays in the dropdown selector.
+
+5.  **Order property (recommended):** Add a static `Order` property to control the prototype's position in the list.
+
+```javascript
+function NewCoolFeature() {
+  // ... component logic ...
+}
+
+NewCoolFeature.Title = "New Cool Feature";
+NewCoolFeature.Description = "Optional description shown in the selector";
+NewCoolFeature.Order = 30; // Controls position in prototype list
+NewCoolFeature.Group = "Feature Exploration"; // Optional: groups related prototypes
+
+export default NewCoolFeature;
+```
+
+## Prototype Groups
+
+The `Group` property organizes related prototypes under collapsible sections in the sidebar. This is especially useful during brainstorming when exploring multiple variations of a concept.
+
+### When to Use Groups
+
+- **Brainstorming sessions:** Group variations like `checkout-wizard`, `checkout-single-page`, `checkout-express` under "Checkout Exploration"
+- **Feature iterations:** Keep v1, v2, v3 of a feature together
+- **A/B testing:** Group different approaches to compare
+
+### Group Naming Conventions
+
+- Use descriptive names: "Checkout Exploration", "Onboarding Options", "Dashboard Layouts"
+- Be consistent across related prototypes
+- Groups are sorted alphabetically in the sidebar
+
+### Example
+
+```javascript
+// Prototype 1
+CheckoutWizard.Title = "Checkout - Wizard";
+CheckoutWizard.Group = "Checkout Exploration";
+CheckoutWizard.Order = 10;
+
+// Prototype 2
+CheckoutSinglePage.Title = "Checkout - Single Page";
+CheckoutSinglePage.Group = "Checkout Exploration";
+CheckoutSinglePage.Order = 20;
+
+// Prototype 3 (ungrouped - appears at top)
+Dashboard.Title = "Dashboard";
+Dashboard.Order = 5;
+```
+
+**Result in sidebar:**
+```
+Dashboard                    ← Ungrouped (no header)
+▼ Checkout Exploration (2)   ← Collapsible group
+  Checkout - Wizard
+  Checkout - Single Page
+```
+
+## Prototype Order Guidelines
+
+The `Order` property determines where a prototype appears in the selector list:
+
+- **Use increments of 10** (10, 20, 30...) to allow easy insertion of new prototypes later
+- **Check existing prototypes first:** Before assigning an Order, look at the Order values in other prototypes under `src/prototypes/*/index.jsx`
+- **New prototypes:** Assign the next available Order value (e.g., if highest is 20, use 30)
+- **Insert between:** To add between existing prototypes, use a value in between (e.g., 15 between 10 and 20)
+- **Prototypes without Order:** Appear at the end of the list
+
+## Prototype File Structure
+
+For more complex prototypes, organize files within the prototype directory:
+
+```
+src/prototypes/my-feature/
+├── index.jsx          # Required: main component (default export)
+├── annotations.json   # Optional: developer handover annotations
+├── components/        # Optional: sub-components specific to this prototype
+├── hooks/             # Optional: custom hooks for this prototype
+├── data.js            # Optional: mock data and constants
+└── styles.css         # Optional: additional styles (prefer Tailwind classes)
+```
+
+## Verification Checklist
+
+Before considering a prototype complete, verify:
+- [ ] Folder is directly under `src/prototypes/` (not nested deeper)
+- [ ] Main file is named `index.jsx` (exact casing)
+- [ ] Component has `export default`
+- [ ] Component has a `.Title` property set
+- [ ] Component has an `.Order` property set (check existing prototypes for values)
+- [ ] Component has a `.Group` property if part of a brainstorming exploration
+- [ ] Prototype appears in the dropdown selector
+
+## When to Suggest Grouping
+
+Proactively suggest adding a `Group` property when:
+- Creating a new prototype that explores a variation of an existing concept
+- The prototype name suggests it's part of a series (e.g., "Checkout v2", "Dashboard - Dark")
+- There are 5+ prototypes in the sidebar and some appear related
+- The user is brainstorming multiple approaches to the same problem
+
+**Example suggestion:**
+> "I notice you have several checkout-related prototypes. Would you like me to group them under 'Checkout Exploration' so they're easier to find?"
+
+## Archiving Prototypes
+
+To archive a prototype, add the `Archived` property:
+
+```javascript
+MyPrototype.Title = "Old Feature";
+MyPrototype.Archived = true;  // Moves to collapsible "Archived" section
+```
+
+- The prototype moves to a collapsible "Archived" section in the sidebar
+- It remains accessible via direct URL and the Archived section
+- See `07-archived-prototypes.mdc` for more details

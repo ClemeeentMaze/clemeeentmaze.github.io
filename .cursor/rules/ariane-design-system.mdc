@@ -1,0 +1,351 @@
+---
+description: Ariane design system components and usage guidelines
+globs: src/prototypes/**/*
+---
+
+# Ariane Design System Usage Guidelines
+
+## Overview
+
+This project includes a Tailwind CSS port of the **Ariane Design System**. All UI components should prioritize using this system to ensure consistency and maintainability.
+
+---
+
+## IMPORTANT: Always Check Ariane First
+
+Before creating ANY custom UI element, ask yourself:
+1. Does an Ariane component exist for this? → **Use it**
+2. Can I achieve this with Ariane + `className`? → **Do that**
+3. Is this truly unique to this prototype? → **Only then create custom**
+
+**The "Ariane Components" prototype shows all available components with interactive examples.** Check it before building custom UI.
+
+---
+
+## Quick Component Lookup
+
+| Need | Use |
+|------|-----|
+| Button (main action) | `CTAButton emphasis="primary"` |
+| Button (secondary) | `ActionButton emphasis="secondary"` |
+| Button (destructive) | `CTAButton destructive` or `ActionButton destructive` |
+| Text input | `Field` + `TextInputControl` |
+| Textarea | `Field` + `TextAreaControl` |
+| Dropdown/Select | `SimpleSelect options={[...]}` |
+| On/off switch | `Toggle checked={val} onChange={...}` |
+| Checkbox with label | `CheckboxField valueLabel="..."` |
+| Radio buttons | `RadioGroup` + `RadioControl` |
+| User avatar (image) | `ImageFigure src="..." size="MD"` |
+| User avatar (initials) | `InitialsFigure initials="AB" color="awake"` |
+| Status badge | `TextBadge sentiment="success"` |
+| Horizontal layout | `Flex gap="MD" alignItems="center"` |
+| Vertical layout | `Flex flexDirection="column" gap="SM"` |
+| Card container | `Box` or `HoverCard` |
+| Scrollable content | `ScrollContainer` |
+| Page title | `Heading level={1}` |
+| Section title | `Heading level={2}` |
+| Body text | `Text` |
+| Secondary/muted text | `Text color="default.main.secondary"` |
+| Caption/small text | `Text type="caption"` |
+| Error message | `ErrorText` |
+| Info notice | `InfoBox title="..." body="..."` |
+| Progress indicator | `ProgressBar value={50} max={100}` |
+| Multi-step progress | `StepsProgressBar steps={5} activeStep={2}` |
+
+---
+
+## Common UI Patterns
+
+### Forms
+- **Simple form**: `Field` + `TextInputControl` + `CTAButton`
+- **Form with validation**: Add `ErrorText` below invalid fields
+- **Settings toggles**: `Flex` with `Text` + `Toggle` per row
+- **Multi-step wizard**: `StepsProgressBar` + form content
+
+### Lists & Data
+- **User list with avatars**: `Flex` + `ImageFigure` or `InitialsFigure`
+- **Status indicators**: `TextBadge` for text, `Dot` for simple dots
+- **Card grid**: `Flex` with `flexWrap="wrap"` + `HoverCard` items
+- **Scrollable lists**: `ScrollContainer` wrapping list content
+
+### Actions
+- **Primary page action**: `CTAButton emphasis="primary"`
+- **Secondary actions**: `ActionButton emphasis="secondary"`
+- **Dangerous actions**: `CTAButton destructive` or `ActionButton destructive`
+- **Icon-only buttons**: `ActionButton iconOnly icon={...}`
+- **Loading button**: `CTAButton waiting`
+
+### Feedback & States
+- **Loading states**: `CTAButton waiting` or custom spinner
+- **Empty states**: `Flex` centered with `IconFigure` + `Text`
+- **Field errors**: `ErrorText` below the field
+- **Page-level notices**: `InfoBox`
+
+---
+
+## Component Priority (MUST FOLLOW)
+
+When building UI, follow this priority order:
+
+### 1. Use Ariane Components First (Preferred)
+Always check if an Ariane component exists before creating custom elements.
+
+\`\`\`jsx
+// ✅ GOOD - Use Ariane components
+import { Text, Heading, CTAButton, Flex, Box } from '@framework/components/ariane';
+
+<Flex gap="MD" alignItems="center">
+  <Heading level={2}>Title</Heading>
+  <Text type="caption" color="default.main.secondary">Subtitle</Text>
+  <CTAButton emphasis="primary">Click me</CTAButton>
+</Flex>
+\`\`\`
+
+\`\`\`jsx
+// ❌ BAD - Creating custom elements when Ariane components exist
+<div className="flex gap-4 items-center">
+  <h2 className="text-xl font-semibold">Title</h2>
+  <p className="text-sm text-gray-500">Subtitle</p>
+  <button className="bg-blue-500 text-white px-4 py-2 rounded">Click me</button>
+</div>
+\`\`\`
+
+### 2. Extend with Tailwind Classes (When Needed)
+If Ariane components need minor adjustments, use the \`className\` prop with Tailwind:
+
+\`\`\`jsx
+// ✅ GOOD - Ariane component with Tailwind overrides
+<Box className="mt-8 border-t border-neutral-200">
+  <Text type="lead" className="italic">Custom styled text</Text>
+</Box>
+\`\`\`
+
+### 3. Create Custom Components (Last Resort)
+Only create new components when:
+- No suitable Ariane component exists
+- User explicitly requests a custom component
+- The UI pattern is unique to this prototype
+
+---
+
+## Available Ariane Components
+
+### Typography
+| Component | Use For | Example |
+|-----------|---------|---------|
+| \`Text\` | Body text, captions, labels | \`<Text type="caption">Label</Text>\` |
+| \`Heading\` | Page/section titles (h1-h5) | \`<Heading level={1}>Title</Heading>\` |
+| \`Link\` | Navigation links | \`<Link href="/page">Go</Link>\` |
+| \`ErrorText\` | Form validation errors | \`<ErrorText>Required field</ErrorText>\` |
+
+### Layout
+| Component | Use For | Example |
+|-----------|---------|---------|
+| \`Box\` | Container with spacing/colors | \`<Box padding="MD" bg="neutral100">...</Box>\` |
+| \`Flex\` | Flexbox layouts | \`<Flex gap="SM" alignItems="center">...</Flex>\` |
+| \`HoverCard\` | Clickable cards with hover effects | \`<HoverCard ctype="scaling">...</HoverCard>\` |
+| \`ScrollContainer\` | Scrollable areas with minimal scrollbars | \`<ScrollContainer className="h-[400px]">...</ScrollContainer>\` |
+| \`VisuallyHidden\` | Screen reader only content | \`<VisuallyHidden>Label</VisuallyHidden>\` |
+
+### Buttons
+| Component | Use For | Example |
+|-----------|---------|---------|
+| \`CTAButton\` | Primary actions | \`<CTAButton emphasis="primary">Submit</CTAButton>\` |
+| \`ActionButton\` | Secondary/icon buttons | \`<ActionButton icon={<Icon />}>Edit</ActionButton>\` |
+
+### Form Controls
+| Component | Use For | Example |
+|-----------|---------|---------|
+| \`Field\` | Form field wrapper with label | \`<Field label="Email">...</Field>\` |
+| \`TextInputControl\` | Text inputs | \`<TextInputControl placeholder="Enter..." />\` |
+| \`TextAreaControl\` | Multiline text | \`<TextAreaControl rows={4} />\` |
+| \`SearchControl\` | Search inputs | \`<SearchControl clearable />\` |
+| \`CheckboxControl\` | Checkboxes | \`<CheckboxControl checked={val} />\` |
+| \`CheckboxField\` | Checkbox with label | \`<CheckboxField valueLabel="Accept terms" />\` |
+| \`RadioControl\` | Radio buttons | \`<RadioControl value="opt1" />\` |
+| \`RadioGroup\` | Radio button group | \`<RadioGroup><RadioControl />...</RadioGroup>\` |
+| \`Toggle\` | On/off switches | \`<Toggle checked={val} />\` |
+| \`SegmentControl\` | Segmented buttons | \`<SegmentControl options={[...]} />\` |
+
+### Selection & Overlays
+| Component | Use For | Example |
+|-----------|---------|---------|
+| \`Select\` / \`SimpleSelect\` | Dropdowns | \`<SimpleSelect options={[...]} />\` |
+| \`DropdownMenu\` / \`SimpleDropdownMenu\` | Action menus | \`<SimpleDropdownMenu menuItems={[...]} />\` |
+| \`Tooltip\` | Hover tooltips | \`<Tooltip content="Help text">...</Tooltip>\` |
+| \`InfoTooltip\` | Info icon with tooltip | \`<InfoTooltip content="More info" />\` |
+
+### Indicators
+| Component | Use For | Example |
+|-----------|---------|---------|
+| \`Avatar\` | User avatars | \`<Avatar size="lg">JD</Avatar>\` |
+| \`InitialsFigure\` | Initials in shapes | \`<InitialsFigure initials="AB" color="awake" />\` |
+| \`ImageFigure\` | Image avatars | \`<ImageFigure src="..." alt="User" />\` |
+| \`IconFigure\` | Icon in shape | \`<IconFigure name="user" color="success" />\` |
+| \`FigureStack\` | Stacked avatars | \`<FigureStack size="MD">...</FigureStack>\` |
+| \`TextBadge\` | Status badges | \`<TextBadge sentiment="success">Active</TextBadge>\` |
+| \`ShapeBadge\` | Dot indicators | \`<ShapeBadge sentiment="awake">Online</ShapeBadge>\` |
+| \`Tag\` | Labels/tags | \`<Tag>Category</Tag>\` |
+| \`Dot\` | Simple dots | \`<Dot color="blue500" />\` |
+| \`Bar\` | Horizontal bars | \`<Bar percent={75} color="blue500" />\` |
+| \`ProgressBar\` | Progress indicators | \`<ProgressBar value={50} max={100} />\` |
+| \`StepsProgressBar\` | Multi-step progress | \`<StepsProgressBar steps={5} activeStep={2} />\` |
+
+### Feedback
+| Component | Use For | Example |
+|-----------|---------|---------|
+| \`InfoBox\` | Dismissible notices | \`<InfoBox title="Note" body="Info here" />\` |
+
+---
+
+## ScrollContainer Usage
+
+**Always use \`ScrollContainer\` when content needs to scroll.** It provides minimal, elegant scrollbars that appear only on hover.
+
+### Basic Usage
+
+\`\`\`jsx
+import { ScrollContainer } from '@framework/components/ariane';
+
+// Fixed height container
+<ScrollContainer className="h-[400px]">
+  <div>Long scrollable content...</div>
+</ScrollContainer>
+\`\`\`
+
+### In Flex Layouts
+
+\`\`\`jsx
+// ScrollContainer fills remaining space in a flex column
+<Flex flexDirection="column" className="h-full">
+  <Heading level={2}>Fixed Header</Heading>
+  <ScrollContainer className="flex-1">
+    <div>Scrollable content that fills remaining space</div>
+  </ScrollContainer>
+</Flex>
+\`\`\`
+
+### Horizontal Scrolling
+
+\`\`\`jsx
+<ScrollContainer horizontal className="max-w-full">
+  <Flex gap="MD" className="w-max">
+    {items.map(item => <Card key={item.id} />)}
+  </Flex>
+</ScrollContainer>
+\`\`\`
+
+### With Lists
+
+\`\`\`jsx
+<ScrollContainer className="h-[300px]">
+  <Flex flexDirection="column" gap="SM">
+    {users.map(user => (
+      <UserCard key={user.id} user={user} />
+    ))}
+  </Flex>
+</ScrollContainer>
+\`\`\`
+
+### Important Notes
+
+- **Always set a height** using \`className\` (e.g., \`h-[400px]\`, \`h-full\`, \`flex-1\`)
+- Use \`horizontal\` prop for horizontal scrolling
+- The \`ref\` prop provides access to the SimpleBar instance for programmatic scrolling
+
+---
+
+## Ariane Spacing Tokens
+
+Use these tokens with Box/Flex spacing props:
+
+| Token | Value |
+|-------|-------|
+| \`XS\` | 4px |
+| \`SM\` | 8px |
+| \`SMPlus\` | 12px |
+| \`MD\` | 16px |
+| \`LG\` | 24px |
+| \`XL\` | 32px |
+| \`XLPlus\` | 40px |
+| \`XXL\` | 56px |
+
+\`\`\`jsx
+<Flex gap="MD" padding="LG">  // gap: 16px, padding: 24px
+<Box mt="SM" mb="LG">         // margin-top: 8px, margin-bottom: 24px
+\`\`\`
+
+---
+
+## Ariane Color Tokens
+
+### Semantic Colors (for sentiments)
+- \`awake\` - Blue (#0568FD) - Active, primary states
+- \`dormant\` - Gray (#6C718C) - Inactive, secondary states
+- \`critical\` - Red (#CC3F4D) - Errors, destructive
+- \`warning\` - Amber (#AC5F00) - Warnings
+- \`success\` - Forest (#15807B) - Success states
+- \`featured\` - Lavender (#6B5BEE) - Featured, special
+
+### Text Colors
+\`\`\`jsx
+<Text color="default.main.primary">    // Black - primary text
+<Text color="default.main.secondary">  // Gray - secondary text
+<Text color="default.extra.awake">     // Blue - links, active
+<Text color="default.extra.critical">  // Red - errors
+\`\`\`
+
+---
+
+## Import Pattern
+
+Always import from the barrel export:
+
+\`\`\`jsx
+import {
+  // Layout
+  Box, Flex, HoverCard, ScrollContainer,
+  // Typography
+  Text, Heading, Link, ErrorText,
+  // Buttons
+  CTAButton, ActionButton,
+  // Forms
+  Field, TextInputControl, TextAreaControl, SearchControl,
+  CheckboxControl, CheckboxField, RadioControl, RadioGroup,
+  Toggle, SegmentControl,
+  // Selection
+  Select, SimpleSelect, SimpleDropdownMenu,
+  Tooltip, InfoTooltip,
+  // Indicators
+  Avatar, InitialsFigure, ImageFigure, IconFigure, FigureStack,
+  TextBadge, ShapeBadge, Tag, Dot, Bar, ProgressBar, StepsProgressBar,
+  // Feedback
+  InfoBox,
+  // Utilities
+  cn, VisuallyHidden,
+} from '@framework/components/ariane';
+\`\`\`
+
+---
+
+## When to Create Custom Components
+
+Create custom components ONLY when:
+1. ❌ No Ariane component serves the purpose
+2. ❌ Tailwind overrides cannot achieve the design
+3. ✅ User explicitly requests a custom implementation
+4. ✅ Building a prototype-specific unique pattern
+
+When creating custom components:
+- Use Tailwind CSS classes
+- Follow Ariane's color palette and spacing tokens
+- Consider if it should be added to Ariane
+
+---
+
+## Source Reference
+
+Each Ariane component file includes \`@source\` annotations pointing to the original implementation in:
+\`maze-monorepo/packages/ariane/src/components/\`
+
+Refer to these for prop interfaces and behavior details.

@@ -1,0 +1,160 @@
+---
+description: Developer handover annotation system
+globs: src/prototypes/**/annotations.json, src/prototypes/**/index.jsx
+---
+
+# Annotation System Rules
+
+This project includes an annotation system for developer handover notes. Annotations are visual markers that attach to prototype elements and display notes in a popup.
+
+## Annotation File Structure
+
+Each prototype can have an `annotations.json` file in its directory:
+
+```
+src/prototypes/[prototype-name]/
+├── index.jsx
+└── annotations.json
+```
+
+### annotations.json Schema
+
+```json
+{
+  "scopes": [
+    {
+      "id": "scope-id",
+      "name": "Scope Display Name"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "unique-annotation-id",
+      "targetId": "refName",
+      "scope": "scope-id",
+      "type": "Optional Type Tag",
+      "title": "Annotation Title",
+      "body": "Detailed description of the annotation."
+    }
+  ]
+}
+```
+
+## How to Add Annotations
+
+### Method 1: From a Selected Element
+
+When the user provides a DOM element selection (DOM path, position, React component, HTML element), follow these steps:
+
+1. **Identify the element** in the prototype's JSX code using the provided information (class names, component type, content)
+
+2. **Add a ref** to the element:
+   - Add a new ref to the `targetRefs` object in the prototype
+   - Apply the ref to the target element
+   - Use camelCase for ref names (e.g., `formCard`, `submitButton`, `nameInput`)
+
+3. **Add the annotation to annotations.json**:
+   - Create a unique `id` for the annotation
+   - Set `targetId` to match the ref name
+   - Assign an appropriate `scope` (create new scope if needed)
+   - Add descriptive `title` and `body`
+
+**Example workflow:**
+
+User provides:
+```
+DOM Path: div.bg-white.rounded-lg.p-lg
+React Component: Box
+```
+
+AI actions:
+1. Find the element in JSX
+2. Add ref: `targetRefs: { formCard: useRef(null), ... }`
+3. Apply ref: `<Box ref={targetRefs.formCard} className="bg-white rounded-lg p-lg">`
+4. Add to annotations.json:
+```json
+{
+  "id": "form-card",
+  "targetId": "formCard",
+  "scope": "layout",
+  "type": "Layout",
+  "title": "Form Card Container",
+  "body": "Description from user or inferred from context"
+}
+```
+
+### Method 2: Bulk Annotations for a Scope
+
+When asked to "add annotations for [scope]" (e.g., "add all layout annotations"):
+
+1. **Analyze the prototype** to identify relevant elements for that scope
+2. **Create a new scope** in annotations.json if it doesn't exist
+3. **Add refs** to all relevant elements
+4. **Create annotation entries** for each element with meaningful titles and descriptions
+5. **Ask the user** for specific notes if the context isn't clear
+
+**Common scope categories:**
+- `layout` - Spacing, positioning, responsive behavior
+- `validation` - Form validation rules
+- `backend` - API integration, data persistence
+- `interaction` - Animations, transitions, click handlers
+- `accessibility` - ARIA labels, keyboard navigation
+- `styling` - Visual design notes, brand compliance
+
+## Prototype Setup Requirements
+
+For annotations to work, the prototype must:
+
+1. **Import dependencies**:
+```jsx
+import { useRef, useEffect } from "react";
+import { Annotation } from "@framework/components/ariane";
+import { useAnnotations } from "@framework/context/AnnotationContext";
+import annotationsData from "./annotations.json";
+```
+
+2. **Set up the context**:
+```jsx
+const { setAnnotationData, annotations } = useAnnotations();
+
+useEffect(() => {
+  setAnnotationData(annotationsData);
+  return () => setAnnotationData(null);
+}, [setAnnotationData]);
+```
+
+3. **Define refs object**:
+```jsx
+const targetRefs = {
+  elementName: useRef(null),
+  // ... more refs
+};
+```
+
+4. **Render annotations**:
+```jsx
+{annotations.map((annotation) => {
+  const targetRef = targetRefs[annotation.targetId];
+  if (!targetRef) return null;
+  
+  return (
+    <Annotation 
+      key={annotation.id}
+      id={annotation.id}
+      targetRef={targetRef}
+      type={annotation.type}
+    >
+      <strong>{annotation.title}</strong>
+      <p>{annotation.body}</p>
+    </Annotation>
+  );
+})}
+```
+
+## Best Practices
+
+1. **Use descriptive IDs**: `submit-button-loading` not `ann-1`
+2. **Keep titles concise**: 3-5 words that identify the element
+3. **Write actionable bodies**: Explain what developers need to implement
+4. **Group related annotations**: Use scopes to organize notes logically
+5. **Match ref names to targetIds**: Keep them identical for clarity
