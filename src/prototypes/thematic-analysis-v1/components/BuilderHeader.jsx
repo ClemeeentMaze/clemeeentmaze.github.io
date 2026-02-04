@@ -136,7 +136,7 @@ function CenterNavigation({ currentStep = 'build' }) {
           <NavStep
             label={step.label}
             isActive={currentStep === step.id}
-            isDisabled={step.id !== 'build' && currentStep === 'build'}
+            isDisabled={false}
             hasPreview={step.hasPreview}
             onClick={() => console.log(`Navigate to ${step.id}`)}
           />
@@ -166,7 +166,7 @@ function CenterNavigation({ currentStep = 'build' }) {
  */
 export function BuilderHeader({ 
   studyMeta = { name: 'Identifying Confusion in Onboarding' },
-  currentStep = "build",
+  currentStep = "results",
   onBack = () => console.log('Back clicked'),
   onPreview = () => console.log('Preview clicked'),
   onStartTesting = () => console.log('Start testing clicked'),
