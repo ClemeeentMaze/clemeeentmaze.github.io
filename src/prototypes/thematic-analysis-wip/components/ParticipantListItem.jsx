@@ -22,7 +22,7 @@ export function ParticipantListItem({ participant, isSelected, onSelect }) {
         bg-white rounded-lg p-4 cursor-pointer
         transition-all duration-150
         ${isSelected 
-          ? 'shadow-[inset_0px_0px_0px_1px_#0568fd]' 
+          ? 'shadow-[inset_0px_0px_0px_1px_#0568fd] bg-[#F0FAFF]' 
           : 'shadow-[inset_0px_0px_0px_0.5px_rgba(108,113,140,0.28)]'
         }
         hover:shadow-[0px_2px_4px_rgba(108,113,140,0.12),inset_0px_0px_0px_0.5px_rgba(108,113,140,0.4)]
