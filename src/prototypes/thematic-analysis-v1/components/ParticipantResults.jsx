@@ -6,7 +6,7 @@
  */
 import { useState } from 'react';
 import { Flex, Box, Text, Heading, IconFigure, ScrollContainer, ActionButton, Icon } from '@framework/components/ariane';
-import { ChevronDown, ChevronLeft, ChevronRight, MoreHorizontal, Download, Play, Star, Table2, Sparkles } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, MoreHorizontal, Download, Play, Star, Table2, Sparkles, Filter } from 'lucide-react';
 import { BLOCK_TYPES } from '../data';
 
 /**
@@ -251,10 +251,9 @@ export function ParticipantResults({ blocks = [] }) {
       <Flex flexDirection="column" className="p-6">
         {/* Filter Bar */}
         <Flex className="mb-6">
-          <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-[#0568FD] border border-[rgba(108,113,140,0.28)] rounded-lg bg-white hover:bg-neutral-50 cursor-pointer">
-            <Icon name="filter" size={16} />
-            <span>Add filters</span>
-          </button>
+          <ActionButton emphasis="secondary" size="SM" icon={<Filter size={16} />}>
+            Add filters
+          </ActionButton>
         </Flex>
 
         {/* Participant Card */}

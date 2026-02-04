@@ -123,10 +123,9 @@ export function BlockResults({ block }) {
       <Flex flexDirection="column" className="p-6">
         {/* Filter Bar */}
         <Flex alignItems="center" className="mb-6">
-          <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-[#6C718C] bg-white border border-[rgba(108,113,140,0.28)] rounded-lg hover:bg-neutral-50 cursor-pointer">
-            <Filter size={16} />
-            <span>Filter</span>
-          </button>
+          <ActionButton emphasis="secondary" size="SM" icon={<Filter size={16} />}>
+            Add filters
+          </ActionButton>
         </Flex>
 
         {/* Block Header */}

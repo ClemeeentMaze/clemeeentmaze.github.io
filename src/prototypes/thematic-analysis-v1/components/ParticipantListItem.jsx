@@ -2,9 +2,9 @@
  * ParticipantListItem Component
  * 
  * Represents a single participant in the left panel list.
- * Displays participant avatar (circle) and ID only.
+ * Displays participant avatar (circle), ID and URL Link subtext.
  */
-import { Flex, Box, IconFigure } from '@framework/components/ariane';
+import { Flex, Box, Text, IconFigure } from '@framework/components/ariane';
 
 /**
  * ParticipantListItem displays a clickable participant card in the sidebar
@@ -38,11 +38,19 @@ export function ParticipantListItem({ participant, isSelected, onSelect }) {
           shape="circle"
         />
         
-        {/* Participant Content - ID only, no subtext */}
+        {/* Participant Content */}
         <Box className="flex-1 min-w-0 overflow-hidden">
           <p className="text-[16px] leading-6 truncate text-black m-0">
             Participant {participant.participantId}
           </p>
+          {/* Subtext - URL Link */}
+          <Text 
+            type="caption" 
+            color="default.main.secondary"
+            className="leading-5"
+          >
+            URL Link
+          </Text>
         </Box>
       </Flex>
     </Box>
