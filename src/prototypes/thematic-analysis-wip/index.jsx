@@ -57,10 +57,13 @@ function ThematicAnalysisV1() {
   // Track which blocks have been viewed (to hide "new highlights" after viewing)
   const [viewedBlocks, setViewedBlocks] = useState(new Set());
 
-  // Mark block as viewed when selected in Results tab
+  // Mark the PREVIOUS block as viewed when navigating to a new block
   const handleSelectBlock = (blockId) => {
+    // Mark the current block as viewed before switching
+    if (selectedBlockId && selectedBlockId !== blockId) {
+      setViewedBlocks(prev => new Set([...prev, selectedBlockId]));
+    }
     selectBlock(blockId);
-    setViewedBlocks(prev => new Set([...prev, blockId]));
   };
 
   // Mock theme data for ThemeResults
