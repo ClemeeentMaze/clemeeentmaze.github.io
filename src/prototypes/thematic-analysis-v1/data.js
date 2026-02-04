@@ -51,18 +51,6 @@ export const BLOCK_TYPES = {
     arianeColor: 'primary',
     description: 'Greet participants and set expectations',
   },
-  mission: {
-    name: 'Website Test',
-    iconName: 'website',
-    arianeColor: 'awake',
-    description: 'Test a website or prototype with specific tasks',
-  },
-  app_test: {
-    name: 'App Test',
-    iconName: 'mobile-test-block',
-    arianeColor: 'awake',
-    description: 'Test a mobile app with specific tasks',
-  },
   prototype_test: {
     name: 'Prototype Test',
     iconName: 'prototype',
@@ -99,35 +87,11 @@ export const BLOCK_TYPES = {
     arianeColor: 'lila',
     description: 'Simple binary question',
   },
-  legal: {
-    name: 'Legal Screen',
-    iconName: 'legal',
-    arianeColor: 'dormant',
-    description: 'Present legal documents like NDAs or privacy policies',
-  },
-  five_second_test: {
-    name: '5-Second Test',
-    iconName: 'timer',
-    arianeColor: 'forest',
-    description: 'Show an image briefly to capture first impressions',
-  },
   context: {
     name: 'Context Screen',
     iconName: 'context-question',
     arianeColor: 'critical',
     description: 'Provide context or instructions before tasks',
-  },
-  card_sort: {
-    name: 'Card Sort',
-    iconName: 'cards',
-    arianeColor: 'lila',
-    description: 'Have participants sort cards into categories',
-  },
-  tree_test: {
-    name: 'Tree Test',
-    iconName: 'tree-test-question',
-    arianeColor: 'lila',
-    description: 'Test information architecture with a tree structure',
   },
   thankyou: {
     name: 'Thank you',
@@ -149,26 +113,6 @@ export const BLOCK_DEFAULTS = {
     imageEnabled: false,
     imageUrl: null,
   },
-  legal: {
-    title: 'Consent to participate',
-    description:
-      'Before we begin, please confirm you are at least 18 years old and agree to participate in this research study.',
-    documentUrl: null,
-    conditionsEnabled: false,
-  },
-  mission: {
-    title: 'Find the checkout button',
-    description: 'Navigate to the product page and complete the purchase flow.',
-    prototypeUrl: null,
-    hasPrototype: false,
-    conditionsEnabled: false,
-  },
-  app_test: {
-    title: 'Try using the filter feature',
-    description: 'Open the filters and show only items under $25.',
-    taskLinkEnabled: false,
-    taskLinkUrl: '',
-  },
   prototype_test: {
     title: 'Try using the filter feature',
     description: 'Open the filters and show only items under $25.',
@@ -189,52 +133,12 @@ export const BLOCK_DEFAULTS = {
     otherOptionEnabled: false,
     conditionsEnabled: false,
   },
-  five_second_test: {
-    title: 'First impressions',
-    description: 'What do you remember from the image you just saw?',
-    customizeInstructions: false,
-    imageUrl: null,
-    seconds: 5,
-    conditionsEnabled: false,
-  },
   context: {
     title: 'Before you begin',
     description:
       "Here's a quick overview to help you understand what you'll be looking at.",
     imageEnabled: false,
     imageUrl: null,
-    conditionsEnabled: false,
-  },
-  card_sort: {
-    title: 'Organize our features',
-    description: 'Sort these feature cards into categories that make sense to you.',
-    customizeInstructions: false,
-    cards: [
-      { id: 'card-1', label: 'Analytics' },
-      { id: 'card-2', label: 'Team management' },
-      { id: 'card-3', label: 'Billing' },
-    ],
-    shuffleCards: false,
-    allowContinue: false,
-    requireRanking: false,
-    sortingType: 'closed',
-    categories: [
-      { id: 'cat-1', label: 'Account' },
-      { id: 'cat-2', label: 'Reports' },
-    ],
-    shuffleCategories: false,
-    conditionsEnabled: false,
-  },
-  tree_test: {
-    title: 'Find payment settings',
-    description: 'Where would you go to update your saved payment method?',
-    treeNodes: [
-      {
-        id: 'node-1',
-        label: 'Settings',
-        children: [{ id: 'node-2', label: 'Billing', children: [] }],
-      },
-    ],
     conditionsEnabled: false,
   },
   scale: {
@@ -316,15 +220,9 @@ export const USE_CASES = {
     },
     blocks: [
       { ...createBlock('welcome'), isFixed: true },
-      { ...createBlock('legal') },
-      { ...createBlock('mission'), hasPrototype: true, prototypeUrl: 'prototype-link' },
-      { ...createBlock('app_test') },
       { ...createBlock('prototype_test') },
       { ...createBlock('multiple_choice') },
-      { ...createBlock('five_second_test') },
       { ...createBlock('context') },
-      { ...createBlock('card_sort') },
-      { ...createBlock('tree_test') },
       { ...createBlock('scale') },
       { ...createBlock('yesno') },
       { ...createBlock('input') },
@@ -363,7 +261,7 @@ export const USE_CASES = {
       // TASK 1: FIND A PRODUCT
       // =====================
       {
-        ...createBlock('mission'),
+        ...createBlock('prototype_test'),
         title: 'Find a waterproof hiking jacket',
         description:
           "Browse the SummitGear website and find a waterproof jacket that would be suitable for mountain hiking. When you've found one you like, click on it to view the product details page.",
@@ -420,7 +318,7 @@ export const USE_CASES = {
           "Great job finding a jacket! Now let's see how easy it is to add it to your shopping basket.",
       },
       {
-        ...createBlock('mission'),
+        ...createBlock('prototype_test'),
         title: 'Add the jacket to your basket',
         description:
           'Select size Medium and your preferred color, then add the jacket to your basket. Confirm you can see the item in your basket before continuing.',
@@ -472,7 +370,7 @@ export const USE_CASES = {
           "You're almost done! For this last task, we'd like you to go through the checkout process. You can use fake details — this is just a test, no real purchase will be made.",
       },
       {
-        ...createBlock('mission'),
+        ...createBlock('prototype_test'),
         title: 'Complete the checkout process',
         description:
           "Proceed to checkout and complete all the steps as if you were making a real purchase. Use any fake details you like (e.g., test@example.com, fake address). Stop when you reach the final confirmation page.",
