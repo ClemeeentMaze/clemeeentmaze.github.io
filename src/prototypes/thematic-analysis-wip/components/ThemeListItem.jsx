@@ -17,6 +17,14 @@ import { Tag } from 'lucide-react';
  */
 export function ThemeListItem({ theme, isSelected, onSelect }) {
   const isUncategorized = theme.id === 'uncategorized';
+  const isGeneratedTheme = theme.color !== undefined;
+  
+  // Get background color for icon - use theme color for generated themes
+  const getIconBgColor = () => {
+    if (isSelected) return 'bg-[#6C718C]';
+    if (isGeneratedTheme) return `${theme.color}15`; // Light version of theme color
+    return 'bg-neutral-100';
+  };
   
   return (
     <Box
@@ -32,13 +40,16 @@ export function ThemeListItem({ theme, isSelected, onSelect }) {
       `}
     >
       <Flex gap="SM" alignItems="center">
-        {/* Theme Icon */}
-        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-          isSelected ? 'bg-[#6C718C]' : 'bg-neutral-100'
-        }`}>
+        {/* Theme Icon - colored for generated themes */}
+        <div 
+          className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+          style={{ 
+            backgroundColor: isSelected ? '#6C718C' : (isGeneratedTheme ? `${theme.color}15` : '#F5F5F5')
+          }}
+        >
           <Tag 
             size={20} 
-            className={isSelected ? 'text-white' : 'text-[#6C718C]'} 
+            style={{ color: isSelected ? 'white' : (isGeneratedTheme ? theme.color : '#6C718C') }}
           />
         </div>
         
@@ -49,7 +60,7 @@ export function ThemeListItem({ theme, isSelected, onSelect }) {
             {theme.name}
           </p>
           
-          {/* Status / Count - purple when new highlights */}
+          {/* Status / Count */}
           <Flex alignItems="center" gap="XS" className="leading-5">
             {isUncategorized ? (
               <span className={`
@@ -58,6 +69,10 @@ export function ThemeListItem({ theme, isSelected, onSelect }) {
               `}>
                 {theme.highlightCount} highlights
               </span>
+            ) : isGeneratedTheme ? (
+              <Text type="caption" color="default.main.secondary">
+                {theme.highlightCount} highlights
+              </Text>
             ) : (
               <Text type="caption" color="default.main.secondary">
                 {theme.status}

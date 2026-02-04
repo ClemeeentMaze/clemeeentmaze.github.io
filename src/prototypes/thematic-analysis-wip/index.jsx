@@ -59,6 +59,14 @@ function ThematicAnalysisV1() {
   
   // Track if uncategorized theme has been viewed
   const [uncategorizedViewed, setUncategorizedViewed] = useState(false);
+  
+  // Track AI-generated themes (populated after analysis is complete)
+  const [generatedThemes, setGeneratedThemes] = useState([]);
+
+  // Handle analysis completion - add generated themes to the list
+  const handleAnalysisComplete = (themes) => {
+    setGeneratedThemes(themes);
+  };
 
   // Mark the PREVIOUS block as viewed when navigating to a new block
   const handleSelectBlock = (blockId) => {
@@ -178,6 +186,7 @@ function ThematicAnalysisV1() {
             onSelectTheme={handleSelectTheme}
             viewedBlocks={viewedBlocks}
             uncategorizedViewed={uncategorizedViewed}
+            generatedThemes={generatedThemes}
           />
         </Box>
         
@@ -188,7 +197,7 @@ function ThematicAnalysisV1() {
         <Box className="flex-1 h-full bg-white">
           {activeTab === 'results' && <BlockResults block={selectedBlock} isViewed={viewedBlocks.has(selectedBlock?.id)} />}
           {activeTab === 'participants' && <ParticipantResults blocks={visibleBlocks} selectedParticipantId={selectedParticipantId} />}
-          {activeTab === 'themes' && <ThemeResults theme={selectedTheme} isViewed={selectedThemeId === 'uncategorized' ? uncategorizedViewed : false} />}
+          {activeTab === 'themes' && <ThemeResults theme={selectedTheme} isViewed={selectedThemeId === 'uncategorized' ? uncategorizedViewed : false} onAnalysisComplete={handleAnalysisComplete} />}
         </Box>
       </Flex>
     </Flex>

@@ -47,6 +47,7 @@ const MOCK_THEME_LIST = [
  * @param {Function} props.onSelectTheme - Theme selection callback
  * @param {Set} props.viewedBlocks - Set of block IDs that have been viewed
  * @param {boolean} props.uncategorizedViewed - Whether uncategorized theme has been viewed
+ * @param {Array} props.generatedThemes - AI-generated themes after analysis
  */
 export function BlockList({ 
   blocks, 
@@ -60,7 +61,18 @@ export function BlockList({
   onSelectTheme,
   viewedBlocks = new Set(),
   uncategorizedViewed = false,
+  generatedThemes = [],
 }) {
+  // Combine base themes with generated themes
+  const allThemes = [
+    ...MOCK_THEME_LIST,
+    ...generatedThemes.map(theme => ({
+      id: theme.id,
+      name: theme.name,
+      color: theme.color,
+      highlightCount: Math.floor(Math.random() * 10) + 5, // Mock random highlight count
+    })),
+  ];
   return (
     <Flex flexDirection="column" className="h-full bg-white shadow-[inset_-0.5px_0_0_0_rgba(108,113,140,0.28)]">
       {/* Tabs Header */}
@@ -107,7 +119,7 @@ export function BlockList({
           ))}
           {activeTab === 'themes' && (
             <>
-              {MOCK_THEME_LIST.map((theme) => {
+              {allThemes.map((theme) => {
                 // Hide new count for uncategorized if it's been viewed
                 const themeWithViewedState = theme.id === 'uncategorized' && uncategorizedViewed
                   ? { ...theme, newCount: 0 }
