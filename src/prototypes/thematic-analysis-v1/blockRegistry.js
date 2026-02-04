@@ -2,7 +2,6 @@
  * Block registry that maps block types to their Settings and Preview components.
  * This keeps block type wiring in one place for easier extension.
  */
-import { WelcomeSettings } from './components/settings/WelcomeSettings';
 import { MultipleChoiceSettings } from './components/settings/MultipleChoiceSettings';
 import { YesNoSettings } from './components/settings/YesNoSettings';
 import { ContextSettings } from './components/settings/ContextSettings';
@@ -18,11 +17,8 @@ import { OpinionScalePreview } from './components/previews/OpinionScalePreview';
 import { MultipleChoicePreview } from './components/previews/MultipleChoicePreview';
 import { ContextPreview } from './components/previews/ContextPreview';
 import { YesNoPreview } from './components/previews/YesNoPreview';
-import { WelcomePreview } from './components/previews/WelcomePreview';
-import { ThankYouPreview } from './components/previews/ThankYouPreview';
 
 export const BLOCK_REGISTRY = {
-  welcome: { Settings: WelcomeSettings, Preview: WelcomePreview },
   prototype_test: { Settings: PrototypeTestSettings, Preview: WebsiteTestPreview },
   multiple_choice: { Settings: MultipleChoiceSettings, Preview: MultipleChoicePreview },
   context: { Settings: ContextSettings, Preview: ContextPreview },
@@ -30,5 +26,4 @@ export const BLOCK_REGISTRY = {
   yesno: { Settings: YesNoSettings, Preview: YesNoPreview },
   input: { Settings: OpenQuestionSettings, Preview: OpenQuestionPreview },
   simple_input: { Settings: SimpleInputSettings, Preview: SimpleInputPreview },
-  thankyou: { Settings: null, Preview: ThankYouPreview },
 };

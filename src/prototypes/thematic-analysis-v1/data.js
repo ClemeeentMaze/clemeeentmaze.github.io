@@ -45,12 +45,6 @@ export const FIELD_OPTIONS = {
  * arianeColor: color token for IconFigure component (used with mode="dark")
  */
 export const BLOCK_TYPES = {
-  welcome: {
-    name: 'Welcome',
-    iconName: 'log-in-hand',
-    arianeColor: 'primary',
-    description: 'Greet participants and set expectations',
-  },
   prototype_test: {
     name: 'Prototype Test',
     iconName: 'prototype',
@@ -93,12 +87,6 @@ export const BLOCK_TYPES = {
     arianeColor: 'critical',
     description: 'Provide context or instructions before tasks',
   },
-  thankyou: {
-    name: 'Thank you',
-    iconName: 'success',
-    arianeColor: 'primary',
-    description: 'Thank participants and provide next steps',
-  },
 };
 
 /**
@@ -106,13 +94,6 @@ export const BLOCK_TYPES = {
  * These ensure every input has a backing data field.
  */
 export const BLOCK_DEFAULTS = {
-  welcome: {
-    title: 'Welcome to our study',
-    description: 'Thank you for participating! This study will take about 5 minutes.',
-    customMessageEnabled: true,
-    imageEnabled: false,
-    imageUrl: null,
-  },
   prototype_test: {
     title: 'Try using the filter feature',
     description: 'Open the filters and show only items under $25.',
@@ -178,10 +159,6 @@ export const BLOCK_DEFAULTS = {
     inputType: 'email',
     conditionsEnabled: false,
   },
-  thankyou: {
-    title: 'Thank you!',
-    description: 'Your feedback helps us build better products.',
-  },
 };
 
 let blockIdCounter = 1000;
@@ -219,7 +196,6 @@ export const USE_CASES = {
       recordAudio: false,
     },
     blocks: [
-      { ...createBlock('welcome'), isFixed: true },
       { ...createBlock('prototype_test') },
       { ...createBlock('multiple_choice') },
       { ...createBlock('context') },
@@ -227,7 +203,6 @@ export const USE_CASES = {
       { ...createBlock('yesno') },
       { ...createBlock('input') },
       { ...createBlock('simple_input') },
-      { ...createBlock('thankyou'), isFixed: true },
     ],
   },
   summit_gear_purchase: {
