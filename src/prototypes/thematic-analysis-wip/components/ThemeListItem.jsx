@@ -59,7 +59,7 @@ export function ThemeListItem({ theme, isSelected, onSelect }) {
             {isUncategorized ? (
               <span className={`
                 px-1.5 py-0.5 rounded text-xs font-medium
-                ${theme.newCount > 0 ? 'bg-[#7C3AED] text-white' : 'bg-neutral-100 text-[#6C718C]'}
+                ${theme.newCount > 0 ? 'bg-[#F9F7FF] text-[#6B5BEE]' : 'bg-neutral-100 text-[#6C718C]'}
               `}>
                 {theme.highlightCount} highlights
               </span>

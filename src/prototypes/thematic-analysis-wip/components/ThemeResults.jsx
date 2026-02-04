@@ -533,7 +533,7 @@ export function ThemeResults({ theme, isViewed = false, onAnalysisComplete }) {
               <span className={`
                 px-2 py-1 rounded text-sm font-medium
                 ${!isViewed && MOCK_UNCATEGORIZED_HIGHLIGHTS.filter(h => h.isNew).length > 0 
-                  ? 'bg-[#7C3AED] text-white' 
+                  ? 'bg-[#F9F7FF] text-[#6B5BEE]' 
                   : 'bg-neutral-100 text-[#6C718C]'
                 }
               `}>

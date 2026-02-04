@@ -87,12 +87,12 @@ export function HighlightCard({
   return (
     <div className={`
       relative bg-white rounded-xl p-5
-      border ${isNew ? 'border-[#7C3AED] shadow-[0_0_0_2px_rgba(124,58,237,0.1)]' : 'border-[rgba(108,113,140,0.16)]'}
+      border ${isNew ? 'border-[#6B5BEE] shadow-[0_0_0_2px_rgba(107,91,238,0.1)]' : 'border-[rgba(108,113,140,0.16)]'}
       transition-all duration-200
     `}>
-      {/* New badge - purple color */}
+      {/* New badge - lighter purple color */}
       {isNew && (
-        <div className="absolute -top-2 -right-2 px-2 py-0.5 bg-[#7C3AED] text-white text-xs font-semibold rounded-full">
+        <div className="absolute -top-2 -right-2 px-2 py-0.5 bg-[#F9F7FF] text-[#6B5BEE] text-xs font-semibold rounded-full">
           New
         </div>
       )}

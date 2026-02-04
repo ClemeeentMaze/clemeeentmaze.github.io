@@ -88,7 +88,7 @@ const MOCK_HIGHLIGHTS_BY_BLOCK_TYPE = {
       id: 'h1',
       insight: "Monica is excited about the feature that automatically creates a session and captures information, making it easier to upload and analyze audio or video.",
       transcript: "Because that would make, that would be fantastic because that's one of the things w...",
-      themes: ['End-to-end'],
+      themes: [],
       isNew: true,
       participantId: '483697735',
     },
@@ -104,7 +104,7 @@ const MOCK_HIGHLIGHTS_BY_BLOCK_TYPE = {
       id: 'h6',
       insight: "The navigation flow was described as intuitive and easy to follow, with clear visual hierarchy.",
       transcript: "I really liked how the navigation was laid out. Everything felt like it was where I expected it to be...",
-      themes: ['Navigation'],
+      themes: [],
       isNew: false,
       participantId: '483697738',
     },
@@ -112,7 +112,7 @@ const MOCK_HIGHLIGHTS_BY_BLOCK_TYPE = {
       id: 'h7',
       insight: "Mobile responsiveness was praised, with the layout adapting well to smaller screens.",
       transcript: "Even on my phone, the experience was smooth. The buttons were easy to tap and nothing felt cramped...",
-      themes: ['Mobile UX'],
+      themes: [],
       isNew: false,
       participantId: '483697739',
     },
@@ -130,7 +130,7 @@ const MOCK_HIGHLIGHTS_BY_BLOCK_TYPE = {
       id: 'h8',
       insight: "High satisfaction scores were correlated with users who had prior experience with similar tools.",
       transcript: "Since I've used similar products before, this felt very familiar. I'd rate it quite highly...",
-      themes: ['User Experience'],
+      themes: [],
       isNew: false,
       participantId: '483697735',
     },
@@ -189,7 +189,7 @@ function ResponseTab({ icon: IconComponent, label, count, newCount, isActive, on
         <span className={`
           ml-1 px-1.5 py-0.5 rounded text-sm font-medium flex items-center gap-1
           ${hasNewHighlights 
-            ? 'bg-[#7C3AED] text-white' 
+            ? 'bg-[#F9F7FF] text-[#6B5BEE]' 
             : isActive 
               ? 'bg-[#E8F4FF] text-[#0568FD]' 
               : 'bg-neutral-100 text-[#6C718C]'

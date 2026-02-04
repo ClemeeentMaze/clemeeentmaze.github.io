@@ -19,7 +19,7 @@ const MOCK_PARTICIPANT_HIGHLIGHTS = {
       id: 'ph1',
       insight: "Monica is excited about the feature that automatically creates a session and captures information, making it easier to upload and analyze audio or video.",
       transcript: "Because that would make, that would be fantastic because that's one of the things w...",
-      themes: ['End-to-end'],
+      themes: [],
       isNew: true,
       blockType: 'prototype_test',
     },
@@ -97,7 +97,7 @@ function ResponseTab({ icon: IconComponent, label, count, newCount, isActive, on
         <span className={`
           ml-1 px-1.5 py-0.5 rounded text-sm font-medium flex items-center gap-1
           ${hasNewHighlights 
-            ? 'bg-[#7C3AED] text-white' 
+            ? 'bg-[#F9F7FF] text-[#6B5BEE]' 
             : isActive 
               ? 'bg-[#E8F4FF] text-[#0568FD]' 
               : 'bg-neutral-100 text-[#6C718C]'

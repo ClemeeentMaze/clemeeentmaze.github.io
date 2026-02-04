@@ -72,7 +72,7 @@ function Avatar({ seed = 0 }) {
  */
 function NewHighlightsBadge({ count }) {
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-[#7C3AED]/10 text-[#7C3AED]">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-[#F9F7FF] text-[#6B5BEE]">
       <Sparkles size={12} />
       {count} new highlights
     </span>
@@ -82,10 +82,10 @@ function NewHighlightsBadge({ count }) {
 /**
  * Study row component
  */
-function StudyRow({ study, onSelect, isFirst }) {
+function StudyRow({ study, onSelect }) {
   return (
     <div 
-      className={`flex items-center py-4 border-b border-[rgba(108,113,140,0.12)] hover:bg-neutral-50 cursor-pointer ${isFirst ? 'bg-[#F0FAFF]' : ''}`}
+      className="flex items-center py-4 border-b border-[rgba(108,113,140,0.12)] hover:bg-neutral-50 cursor-pointer"
       onClick={() => onSelect(study.id)}
     >
       <div className="flex-1 px-4 min-w-0">
@@ -231,7 +231,6 @@ export function ProjectStudiesScreen({ onSelectStudy }) {
                   key={study.id} 
                   study={study} 
                   onSelect={onSelectStudy}
-                  isFirst={index === 0}
                 />
               ))}
             </div>
