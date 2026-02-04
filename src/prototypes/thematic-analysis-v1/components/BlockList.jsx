@@ -6,6 +6,8 @@
 import { Flex, ScrollContainer, SegmentControl } from '@framework/components/ariane';
 import { BlockListItem } from './BlockListItem';
 import { ParticipantListItem } from './ParticipantListItem';
+import { ThemeListItem } from './ThemeListItem';
+import { Plus } from 'lucide-react';
 
 const TAB_OPTIONS = [
   { id: 'results', label: 'Results' },
@@ -25,6 +27,14 @@ const MOCK_PARTICIPANT_LIST = [
 ];
 
 /**
+ * Mock themes for the list
+ */
+const MOCK_THEME_LIST = [
+  { id: 'thematic-analysis', name: 'Thematic analysis', status: 'Not enough sessions' },
+  { id: 'uncategorized', name: 'Uncategorized', highlightCount: 18, sessionCount: '1/1' },
+];
+
+/**
  * @param {Array} props.blocks - Array of block objects
  * @param {string} props.selectedBlockId - Currently selected block ID
  * @param {Function} props.onSelectBlock - Block selection callback
@@ -32,6 +42,8 @@ const MOCK_PARTICIPANT_LIST = [
  * @param {Function} props.onTabChange - Tab change callback
  * @param {string} props.selectedParticipantId - Currently selected participant ID
  * @param {Function} props.onSelectParticipant - Participant selection callback
+ * @param {string} props.selectedThemeId - Currently selected theme ID
+ * @param {Function} props.onSelectTheme - Theme selection callback
  */
 export function BlockList({ 
   blocks, 
@@ -41,6 +53,8 @@ export function BlockList({
   onTabChange,
   selectedParticipantId,
   onSelectParticipant,
+  selectedThemeId,
+  onSelectTheme,
 }) {
   return (
     <Flex flexDirection="column" className="h-full bg-white shadow-[inset_-0.5px_0_0_0_rgba(108,113,140,0.28)]">
@@ -75,9 +89,30 @@ export function BlockList({
             />
           ))}
           {activeTab === 'themes' && (
-            <div className="text-center py-8 text-[#6C718C]">
-              Themes content coming soon
-            </div>
+            <>
+              {MOCK_THEME_LIST.map((theme) => (
+                <ThemeListItem
+                  key={theme.id}
+                  theme={theme}
+                  isSelected={selectedThemeId === theme.id}
+                  onSelect={onSelectTheme}
+                />
+              ))}
+              {/* Add theme button */}
+              <button
+                onClick={() => console.log('Add theme clicked')}
+                className="
+                  flex items-center justify-center gap-2 w-full p-3
+                  text-sm font-medium text-[#6C718C]
+                  border border-dashed border-[rgba(108,113,140,0.4)] rounded-lg
+                  bg-white hover:bg-neutral-50 hover:border-[#6C718C]
+                  transition-all duration-150 cursor-pointer
+                "
+              >
+                <Plus size={16} />
+                <span>Add theme</span>
+              </button>
+            </>
           )}
         </Flex>
       </ScrollContainer>

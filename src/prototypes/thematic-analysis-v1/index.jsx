@@ -23,6 +23,7 @@ import { BuilderHeader } from './components/BuilderHeader';
 import { BlockList } from './components/BlockList';
 import { BlockResults } from './components/BlockResults';
 import { ParticipantResults } from './components/ParticipantResults';
+import { ThemeResults } from './components/ThemeResults';
 
 // Mock data
 import { BLOCK_TYPES, DEFAULT_USE_CASE, USE_CASES } from './data';
@@ -51,6 +52,14 @@ function ThematicAnalysisV1() {
   // Tab state for Results/Participants/Themes
   const [activeTab, setActiveTab] = useState('results');
   const [selectedParticipantId, setSelectedParticipantId] = useState('p1');
+  const [selectedThemeId, setSelectedThemeId] = useState('thematic-analysis');
+
+  // Mock theme data for ThemeResults
+  const MOCK_THEMES = {
+    'thematic-analysis': { id: 'thematic-analysis', name: 'Thematic analysis', status: 'Not enough sessions' },
+    'uncategorized': { id: 'uncategorized', name: 'Uncategorized', highlightCount: 18, sessionCount: '1/1' },
+  };
+  const selectedTheme = MOCK_THEMES[selectedThemeId];
 
   const { useCase, selectedBlockType, blockCount } = state || {};
 
@@ -140,6 +149,8 @@ function ThematicAnalysisV1() {
             onTabChange={setActiveTab}
             selectedParticipantId={selectedParticipantId}
             onSelectParticipant={setSelectedParticipantId}
+            selectedThemeId={selectedThemeId}
+            onSelectTheme={setSelectedThemeId}
           />
         </Box>
         
@@ -150,11 +161,7 @@ function ThematicAnalysisV1() {
         <Box className="flex-1 h-full bg-white">
           {activeTab === 'results' && <BlockResults block={selectedBlock} />}
           {activeTab === 'participants' && <ParticipantResults blocks={visibleBlocks} />}
-          {activeTab === 'themes' && (
-            <Flex alignItems="center" justifyContent="center" className="h-full text-[#6C718C]">
-              Themes content coming soon
-            </Flex>
-          )}
+          {activeTab === 'themes' && <ThemeResults theme={selectedTheme} />}
         </Box>
       </Flex>
     </Flex>
