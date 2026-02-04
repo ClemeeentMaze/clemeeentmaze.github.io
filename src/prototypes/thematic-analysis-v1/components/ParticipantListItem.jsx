@@ -2,9 +2,9 @@
  * ParticipantListItem Component
  * 
  * Represents a single participant in the left panel list.
- * Displays participant avatar, ID, and status.
+ * Displays participant avatar (circle) and ID only.
  */
-import { Flex, Box, Text, IconFigure } from '@framework/components/ariane';
+import { Flex, Box, IconFigure } from '@framework/components/ariane';
 
 /**
  * ParticipantListItem displays a clickable participant card in the sidebar
@@ -15,12 +15,6 @@ import { Flex, Box, Text, IconFigure } from '@framework/components/ariane';
  * @param {Function} props.onSelect - Callback when participant is clicked
  */
 export function ParticipantListItem({ participant, isSelected, onSelect }) {
-  const statusLabels = {
-    completed: 'Completed',
-    in_progress: 'In progress',
-    not_started: 'Not started',
-  };
-
   return (
     <Box
       onClick={() => onSelect(participant.id)}
@@ -35,7 +29,7 @@ export function ParticipantListItem({ participant, isSelected, onSelect }) {
       `}
     >
       <Flex gap="SM" alignItems="center">
-        {/* Participant Avatar */}
+        {/* Participant Avatar - Circle shape */}
         <IconFigure 
           name="user"
           color="secondary"
@@ -44,21 +38,11 @@ export function ParticipantListItem({ participant, isSelected, onSelect }) {
           shape="circle"
         />
         
-        {/* Participant Content */}
+        {/* Participant Content - ID only, no subtext */}
         <Box className="flex-1 min-w-0 overflow-hidden">
-          {/* Participant ID */}
           <p className="text-[16px] leading-6 truncate text-black m-0">
             Participant {participant.participantId}
           </p>
-          
-          {/* Status Label */}
-          <Text 
-            type="caption" 
-            color="default.main.secondary"
-            className="leading-5"
-          >
-            {statusLabels[participant.status] || 'Unknown'}
-          </Text>
         </Box>
       </Flex>
     </Box>

@@ -3,11 +3,10 @@
  * 
  * Tabs + Scrollable block list.
  */
-import { Flex, ScrollContainer, SegmentControl } from '@framework/components/ariane';
+import { Flex, ScrollContainer, SegmentControl, ActionButton, Icon } from '@framework/components/ariane';
 import { BlockListItem } from './BlockListItem';
 import { ParticipantListItem } from './ParticipantListItem';
 import { ThemeListItem } from './ThemeListItem';
-import { Plus } from 'lucide-react';
 
 const TAB_OPTIONS = [
   { id: 'results', label: 'Results' },
@@ -99,19 +98,15 @@ export function BlockList({
                 />
               ))}
               {/* Add theme button */}
-              <button
+              <ActionButton 
+                emphasis="tertiary" 
+                size="SM" 
+                icon={<Icon name="plus" />}
                 onClick={() => console.log('Add theme clicked')}
-                className="
-                  flex items-center justify-center gap-2 w-full p-3
-                  text-sm font-medium text-[#6C718C]
-                  border border-dashed border-[rgba(108,113,140,0.4)] rounded-lg
-                  bg-white hover:bg-neutral-50 hover:border-[#6C718C]
-                  transition-all duration-150 cursor-pointer
-                "
+                className="w-full justify-center"
               >
-                <Plus size={16} />
-                <span>Add theme</span>
-              </button>
+                Add theme
+              </ActionButton>
             </>
           )}
         </Flex>

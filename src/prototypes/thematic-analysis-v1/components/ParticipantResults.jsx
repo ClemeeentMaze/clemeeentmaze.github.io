@@ -204,12 +204,27 @@ function NavButton({ direction, onClick }) {
 }
 
 /**
- * Mock transcript data for the participant
+ * Mock transcript snippets to show between blocks
  */
-const MOCK_TRANSCRIPTS = [
-  { timestamp: '0:00', text: "Okay, let's see... looking for Four Seasons in London. Hmm, I'll type it in the search bar... yeah, there it is." },
-  { timestamp: '0:30', text: "Just checking the dates... alright, selecting next weekend.", highlight: 'dates' },
-  { timestamp: '1:28', text: "I'll confirm the booking anyway—it looks like all the details are correct. Done. That was pretty straightforward overall." },
+const MOCK_TRANSCRIPTS_PER_BLOCK = [
+  [
+    { timestamp: '0:00', text: "Okay, let's see... looking for Four Seasons in London. Hmm, I'll type it in the search bar... yeah, there it is." },
+    { timestamp: '0:30', text: "Just checking the dates... alright, selecting next weekend.", highlight: 'dates' },
+    { timestamp: '1:28', text: "I'll confirm the booking anyway—it looks like all the details are correct. Done. That was pretty straightforward overall." },
+  ],
+  [
+    { timestamp: '1:45', text: "Now it's asking me about filters... let me try using that feature to narrow down the options." },
+    { timestamp: '2:02', text: "Oh interesting, I can filter by price range and amenities. That's helpful.", highlight: 'filter' },
+  ],
+  [
+    { timestamp: '2:30', text: "Rating this experience... I'd say it was pretty easy overall, maybe a 4 out of 5." },
+  ],
+  [
+    { timestamp: '2:45', text: "For the open question... I think the main thing that could be improved is the loading time on the search results." },
+  ],
+  [
+    { timestamp: '3:10', text: "Yes, I would definitely recommend this to a friend. The interface is clean and intuitive." },
+  ],
 ];
 
 /**
@@ -304,30 +319,29 @@ export function ParticipantResults({ blocks = [] }) {
                 />
               </Flex>
 
-              {/* Responses List - shows blocks from the block list */}
+              {/* Responses List - shows blocks with transcripts in between */}
               <Flex flexDirection="column" gap="MD">
                 {blocks.length > 0 ? (
-                  <>
-                    {/* First block highlighted */}
-                    {blocks[0] && (
-                      <BlockResponseCard block={blocks[0]} isHighlighted />
-                    )}
-                    
-                    {/* Transcript entries */}
-                    {MOCK_TRANSCRIPTS.map((transcript, idx) => (
-                      <TranscriptEntry
-                        key={`transcript-${idx}`}
-                        timestamp={transcript.timestamp}
-                        text={transcript.text}
-                        highlight={transcript.highlight}
-                      />
-                    ))}
-                    
-                    {/* Remaining blocks */}
-                    {blocks.slice(1).map((block) => (
-                      <BlockResponseCard key={block.id} block={block} />
-                    ))}
-                  </>
+                  blocks.map((block, blockIndex) => (
+                    <div key={block.id}>
+                      {/* Block card - first one is highlighted */}
+                      <BlockResponseCard block={block} isHighlighted={blockIndex === 0} />
+                      
+                      {/* Transcript entries after this block */}
+                      {MOCK_TRANSCRIPTS_PER_BLOCK[blockIndex] && (
+                        <div className="mt-3 mb-2">
+                          {MOCK_TRANSCRIPTS_PER_BLOCK[blockIndex].map((transcript, idx) => (
+                            <TranscriptEntry
+                              key={`transcript-${blockIndex}-${idx}`}
+                              timestamp={transcript.timestamp}
+                              text={transcript.text}
+                              highlight={transcript.highlight}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))
                 ) : (
                   <Text color="default.main.secondary">No blocks to display</Text>
                 )}
