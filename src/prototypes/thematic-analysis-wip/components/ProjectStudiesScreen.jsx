@@ -5,7 +5,7 @@
  * opens its results view.
  */
 import { Flex, Box, Text, Heading, ActionButton, ScrollContainer, IconFigure } from '@framework/components/ariane';
-import { ArrowLeft, MoreHorizontal, Settings, Users } from 'lucide-react';
+import { ArrowLeft, MoreHorizontal, Settings, Users, Sparkles } from 'lucide-react';
 
 /**
  * Study type card for "Create new study" section
@@ -68,6 +68,18 @@ function Avatar({ seed = 0 }) {
 }
 
 /**
+ * New highlights badge
+ */
+function NewHighlightsBadge({ count }) {
+  return (
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-[#7C3AED]/10 text-[#7C3AED]">
+      <Sparkles size={12} />
+      {count} new highlights
+    </span>
+  );
+}
+
+/**
  * Study row component
  */
 function StudyRow({ study, onSelect, isFirst }) {
@@ -86,7 +98,10 @@ function StudyRow({ study, onSelect, isFirst }) {
             shape="squared"
           />
           <div className="min-w-0">
-            <Text className="font-medium text-neutral-900 truncate">{study.name}</Text>
+            <Flex alignItems="center" gap="SM">
+              <Text className="font-medium text-neutral-900 truncate">{study.name}</Text>
+              {study.newHighlights && <NewHighlightsBadge count={study.newHighlights} />}
+            </Flex>
             <Flex alignItems="center" gap="XS">
               <Text color="default.main.secondary" className="text-sm">{study.type}</Text>
               {study.hasPanel && (
@@ -126,15 +141,9 @@ function StudyRow({ study, onSelect, isFirst }) {
  * Mock studies data
  */
 const MOCK_STUDIES = [
-  { id: 1, name: '[Beta] Participant Experience', type: 'Unmoderated maze', status: 'LIVE', participants: 212, createdOn: '16 Apr 2025', updatedOn: '4 Feb 2026' },
-  { id: 2, name: '[Reload] Kill Other Apps', type: 'Unmoderated maze', status: 'LIVE', participants: 73, hasPanel: true, createdOn: '28 Nov 2025', updatedOn: '3 Feb 2026' },
-  { id: 3, name: 'Test Figma Crash', type: 'Unmoderated maze', status: 'LIVE', participants: 69, createdOn: '8 Jul 2025', updatedOn: '26 Jan 2026' },
-  { id: 4, name: 'Maze Unmoderated Study...', type: 'Unmoderated maze', status: 'LIVE', participants: null, hasPanel: true, createdOn: '10 Dec 2025', updatedOn: '10 Dec 2025' },
-  { id: 5, name: '[Internal] Original', type: 'Unmoderated maze', status: 'LIVE', participants: 8, hasPanel: true, createdOn: '4 Dec 2025', updatedOn: '9 Dec 2025' },
-  { id: 6, name: '[Reload] Website Test', type: 'Unmoderated maze', status: 'LIVE', participants: 56, hasPanel: true, createdOn: '5 Dec 2025', updatedOn: '5 Dec 2025' },
-  { id: 7, name: '[Prolific] Website Test', type: 'Unmoderated maze', status: 'LIVE', participants: 64, hasPanel: true, createdOn: '6 Nov 2025', updatedOn: '4 Dec 2025' },
-  { id: 8, name: '[Prolific] Original', type: 'Unmoderated maze', status: 'LIVE', participants: 59, hasPanel: true, createdOn: '7 Nov 2025', updatedOn: '4 Dec 2025' },
-  { id: 9, name: 'Prototype Test - Mobile', type: 'Unmoderated maze', status: 'DRAFT', participants: null, createdOn: '4 Nov 2025', updatedOn: '25 Nov 2025' },
+  { id: 1, name: 'User research study', type: 'Unmoderated maze', status: 'LIVE', participants: 8, newHighlights: 5, createdOn: '16 Jan 2026', updatedOn: '4 Feb 2026' },
+  { id: 2, name: 'Onboarding flow test', type: 'Unmoderated maze', status: 'LIVE', participants: 73, createdOn: '28 Nov 2025', updatedOn: '3 Feb 2026' },
+  { id: 3, name: 'Mobile app prototype', type: 'Unmoderated maze', status: 'DRAFT', participants: null, createdOn: '4 Nov 2025', updatedOn: '25 Nov 2025' },
 ];
 
 /**
