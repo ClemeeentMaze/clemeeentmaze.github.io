@@ -11,13 +11,10 @@
  */
 import { 
   Flex, 
-  Box, 
-  Text, 
   Heading, 
-  CTAButton, 
   Tooltip,
 } from '@framework/components/ariane';
-import { ArrowLeft, Eye, Settings, ChevronRight, UserPlus } from 'lucide-react';
+import { ArrowLeft, Settings, ChevronRight } from 'lucide-react';
 
 /**
  * IconButton - Matches Figma Action Button style with shadow and border
@@ -46,31 +43,6 @@ function IconButton({ children, onClick, label, hasBackground = false }) {
         {children}
       </button>
     </Tooltip>
-  );
-}
-
-/**
- * TextButton - Tertiary button with icon and text (Preview button style)
- */
-function TextButton({ icon: IconComponent, children, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      className="
-        flex items-center gap-1
-        px-2 py-1.5 rounded-lg
-        text-sm font-bold
-        bg-white hover:bg-neutral-50
-        shadow-[0px_1px_2px_0px_rgba(108,113,140,0.08)]
-        border-[0.5px] border-[rgba(108,113,140,0.28)]
-        transition-all duration-150
-        cursor-pointer
-      "
-      style={{ color: '#535a74' }}
-    >
-      <IconComponent size={16} />
-      <span>{children}</span>
-    </button>
   );
 }
 
@@ -168,9 +140,6 @@ export function BuilderHeader({
   studyMeta = { name: 'Identifying Confusion in Onboarding' },
   currentStep = "results",
   onBack = () => console.log('Back clicked'),
-  onPreview = () => console.log('Preview clicked'),
-  onStartTesting = () => console.log('Start testing clicked'),
-  onInvite = () => console.log('Invite clicked'),
   onSettings = () => console.log('Settings clicked'),
 }) {
   return (
@@ -193,26 +162,6 @@ export function BuilderHeader({
       
       {/* Right Section: Actions */}
       <Flex alignItems="center" gap="MD" justifyContent="flex-end" className="flex-1">
-        {/* Preview Button */}
-        <TextButton icon={Eye} onClick={onPreview}>
-          Preview
-        </TextButton>
-        
-        {/* Start Testing Button - Dormant state matching Figma */}
-        <CTAButton 
-          emphasis="primary" 
-          size="SM"
-          onClick={onStartTesting}
-          className="!bg-[#6c718c] hover:!bg-[#535a74]"
-        >
-          Start testing
-        </CTAButton>
-        
-        {/* Invite Button */}
-        <IconButton onClick={onInvite} label="Invite collaborators" hasBackground>
-          <UserPlus size={16} />
-        </IconButton>
-        
         {/* Settings Button */}
         <IconButton onClick={onSettings} label="Study settings" hasBackground>
           <Settings size={16} />

@@ -4,31 +4,14 @@
  * Tabs + Scrollable block list.
  */
 import { useState } from 'react';
-import { Flex, ScrollContainer, Icon } from '@framework/components/ariane';
+import { Flex, ScrollContainer, SegmentControl } from '@framework/components/ariane';
 import { BlockListItem } from './BlockListItem';
-import { LayoutGrid, Users, Film } from 'lucide-react';
 
-/**
- * Tab button component
- */
-function TabButton({ icon: IconComponent, label, isActive, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`
-        flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg
-        transition-all duration-150 cursor-pointer
-        ${isActive 
-          ? 'bg-[#0568FD] text-white' 
-          : 'bg-white text-[#6C718C] hover:bg-neutral-100 border border-[rgba(108,113,140,0.28)]'
-        }
-      `}
-    >
-      <IconComponent size={16} />
-      <span>{label}</span>
-    </button>
-  );
-}
+const TAB_OPTIONS = [
+  { id: 'results', label: 'Results' },
+  { id: 'participants', label: 'Participants' },
+  { id: 'themes', label: 'Themes' },
+];
 
 /**
  * @param {Array} props.blocks - Array of block objects
@@ -41,26 +24,15 @@ export function BlockList({ blocks, selectedBlockId, onSelectBlock }) {
   return (
     <Flex flexDirection="column" className="h-full bg-white shadow-[inset_-0.5px_0_0_0_rgba(108,113,140,0.28)]">
       {/* Tabs Header */}
-      <Flex gap="XS" className="flex-shrink-0 p-3 border-b border-[rgba(108,113,140,0.16)]">
-        <TabButton 
-          icon={LayoutGrid} 
-          label="Results" 
-          isActive={activeTab === 'results'} 
-          onClick={() => setActiveTab('results')} 
+      <div className="flex-shrink-0 p-3 border-b border-[rgba(108,113,140,0.16)]">
+        <SegmentControl
+          options={TAB_OPTIONS}
+          selected={activeTab}
+          onChange={(id) => setActiveTab(id)}
+          size="SM"
+          fullWidth
         />
-        <TabButton 
-          icon={Users} 
-          label="Participants" 
-          isActive={activeTab === 'participants'} 
-          onClick={() => setActiveTab('participants')} 
-        />
-        <TabButton 
-          icon={Film} 
-          label="Themes" 
-          isActive={activeTab === 'themes'} 
-          onClick={() => setActiveTab('themes')} 
-        />
-      </Flex>
+      </div>
 
       {/* Scrollable Block List */}
       <ScrollContainer className="flex-1 min-h-0">

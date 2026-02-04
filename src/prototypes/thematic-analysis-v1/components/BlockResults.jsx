@@ -7,8 +7,8 @@
  * - Responses table with tabs (All responses / Highlights)
  */
 import { useState } from 'react';
-import { Flex, Box, Text, Heading, IconFigure, ScrollContainer } from '@framework/components/ariane';
-import { MoreHorizontal, Filter, Play, Share2, ChevronLeft, ChevronRight, Table2, Sparkles } from 'lucide-react';
+import { Flex, Box, Text, Heading, IconFigure, ScrollContainer, ActionButton, Icon } from '@framework/components/ariane';
+import { MoreHorizontal, Filter, Play, ChevronLeft, ChevronRight, Table2, Sparkles } from 'lucide-react';
 import { BLOCK_TYPES } from '../data';
 
 /**
@@ -66,8 +66,8 @@ function ClipBadge({ duration }) {
  */
 function ResponseRow({ clipDuration, participantId, response }) {
   return (
-    <div className="flex items-center py-3 border-b border-[rgba(108,113,140,0.12)] hover:bg-neutral-50">
-      <div className="w-[100px] px-4">
+    <div className="flex items-center py-4 border-b border-[rgba(108,113,140,0.12)] hover:bg-neutral-50">
+      <div className="w-[120px] px-4">
         <ClipBadge duration={clipDuration} />
       </div>
       <div className="w-[120px] px-4">
@@ -77,9 +77,7 @@ function ResponseRow({ clipDuration, participantId, response }) {
         <Text color="default.main.secondary">{response}</Text>
       </div>
       <div className="w-[80px] px-4 flex justify-center">
-        <button className="p-2 hover:bg-neutral-100 rounded cursor-pointer">
-          <Share2 size={16} className="text-[#6C718C]" />
-        </button>
+        <ActionButton emphasis="tertiary" size="SM" icon={<Icon name="share" />} />
       </div>
     </div>
   );
@@ -120,7 +118,8 @@ export function BlockResults({ block }) {
               name={blockType.iconName || 'question'} 
               color={blockType.arianeColor || 'neutral'} 
               size="LG" 
-              mode="dark" 
+              mode="dark"
+              shape="squared"
             />
             <div>
               <Heading level={2} className="mb-1">
@@ -167,10 +166,9 @@ export function BlockResults({ block }) {
                 onClick={() => setActiveTab('highlights')} 
               />
             </Flex>
-            <button className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#6C718C] hover:text-[#535a74] cursor-pointer">
-              <Share2 size={16} />
-              <span>Share</span>
-            </button>
+            <ActionButton emphasis="tertiary" size="SM" icon={<Icon name="share" />}>
+              Share
+            </ActionButton>
           </Flex>
 
           {/* Table Header */}
