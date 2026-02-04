@@ -261,8 +261,10 @@ function ResponseRow({ clipDuration, participantId, responseValue, respondedAt, 
 
 /**
  * BlockResults - Main results display component
+ * @param {Object} props.block - The block to display
+ * @param {boolean} props.isViewed - Whether the block has been viewed (hides new highlights indicators)
  */
-export function BlockResults({ block }) {
+export function BlockResults({ block, isViewed = false }) {
   const [activeTab, setActiveTab] = useState('all');
   
   if (!block) {
@@ -282,7 +284,8 @@ export function BlockResults({ block }) {
   // Get highlights for this specific block type
   const blockHighlights = MOCK_HIGHLIGHTS_BY_BLOCK_TYPE[block.type] || [];
   const highlightCount = blockHighlights.length;
-  const newHighlightCount = blockHighlights.filter(h => h.isNew).length;
+  // Hide "new" indicators if the block has been viewed
+  const newHighlightCount = isViewed ? 0 : blockHighlights.filter(h => h.isNew).length;
 
   return (
     <ScrollContainer className="h-full">
@@ -404,7 +407,7 @@ export function BlockResults({ block }) {
                     insight={highlight.insight}
                     transcript={highlight.transcript}
                     themes={highlight.themes}
-                    isNew={highlight.isNew}
+                    isNew={isViewed ? false : highlight.isNew}
                     participantId={highlight.participantId}
                   />
                 ))

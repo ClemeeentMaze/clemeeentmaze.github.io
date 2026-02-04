@@ -27,10 +27,12 @@ const MOCK_PARTICIPANT_LIST = [
 
 /**
  * Mock themes for the list
+ * Highlight count matches total across blocks: prototype_test(4) + scale(2) + input(2) = 8
+ * New count: prototype_test(2) + scale(1) + input(2) = 5
  */
 const MOCK_THEME_LIST = [
-  { id: 'thematic-analysis', name: 'Thematic analysis', status: 'Not enough sessions' },
-  { id: 'uncategorized', name: 'Uncategorized', highlightCount: 6, newCount: 3 },
+  { id: 'thematic-analysis', name: 'Thematic analysis', status: '8 sessions' },
+  { id: 'uncategorized', name: 'Uncategorized', highlightCount: 8, newCount: 5 },
 ];
 
 /**
@@ -43,6 +45,7 @@ const MOCK_THEME_LIST = [
  * @param {Function} props.onSelectParticipant - Participant selection callback
  * @param {string} props.selectedThemeId - Currently selected theme ID
  * @param {Function} props.onSelectTheme - Theme selection callback
+ * @param {Set} props.viewedBlocks - Set of block IDs that have been viewed
  */
 export function BlockList({ 
   blocks, 
@@ -54,6 +57,7 @@ export function BlockList({
   onSelectParticipant,
   selectedThemeId,
   onSelectTheme,
+  viewedBlocks = new Set(),
 }) {
   return (
     <Flex flexDirection="column" className="h-full bg-white shadow-[inset_-0.5px_0_0_0_rgba(108,113,140,0.28)]">
@@ -78,7 +82,9 @@ export function BlockList({
               scale: 1,
               input: 2,
             };
-            const highlightCount = highlightCounts[block.type] || 0;
+            // Hide "new highlights" badge if block has been viewed
+            const hasBeenViewed = viewedBlocks.has(block.id);
+            const highlightCount = hasBeenViewed ? 0 : (highlightCounts[block.type] || 0);
             return (
               <BlockListItem
                 key={block.id}

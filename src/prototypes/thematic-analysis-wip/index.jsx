@@ -53,11 +53,21 @@ function ThematicAnalysisV1() {
   const [activeTab, setActiveTab] = useState('results');
   const [selectedParticipantId, setSelectedParticipantId] = useState('p1');
   const [selectedThemeId, setSelectedThemeId] = useState('thematic-analysis');
+  
+  // Track which blocks have been viewed (to hide "new highlights" after viewing)
+  const [viewedBlocks, setViewedBlocks] = useState(new Set());
+
+  // Mark block as viewed when selected in Results tab
+  const handleSelectBlock = (blockId) => {
+    selectBlock(blockId);
+    setViewedBlocks(prev => new Set([...prev, blockId]));
+  };
 
   // Mock theme data for ThemeResults
+  // Total highlights: prototype_test(4) + scale(2) + input(2) = 8
   const MOCK_THEMES = {
     'thematic-analysis': { id: 'thematic-analysis', name: 'Thematic analysis', status: 'Not enough sessions' },
-    'uncategorized': { id: 'uncategorized', name: 'Uncategorized', highlightCount: 18, sessionCount: '1/1' },
+    'uncategorized': { id: 'uncategorized', name: 'Uncategorized', highlightCount: 8, newCount: 5 },
   };
   const selectedTheme = MOCK_THEMES[selectedThemeId];
 
@@ -144,13 +154,14 @@ function ThematicAnalysisV1() {
           <BlockList
             blocks={visibleBlocks}
             selectedBlockId={selectedBlockId}
-            onSelectBlock={selectBlock}
+            onSelectBlock={handleSelectBlock}
             activeTab={activeTab}
             onTabChange={setActiveTab}
             selectedParticipantId={selectedParticipantId}
             onSelectParticipant={setSelectedParticipantId}
             selectedThemeId={selectedThemeId}
             onSelectTheme={setSelectedThemeId}
+            viewedBlocks={viewedBlocks}
           />
         </Box>
         
@@ -159,7 +170,7 @@ function ThematicAnalysisV1() {
           Flex: 1 (grows to fill remaining space)
         */}
         <Box className="flex-1 h-full bg-white">
-          {activeTab === 'results' && <BlockResults block={selectedBlock} />}
+          {activeTab === 'results' && <BlockResults block={selectedBlock} isViewed={viewedBlocks.has(selectedBlock?.id)} />}
           {activeTab === 'participants' && <ParticipantResults blocks={visibleBlocks} selectedParticipantId={selectedParticipantId} />}
           {activeTab === 'themes' && <ThemeResults theme={selectedTheme} />}
         </Box>

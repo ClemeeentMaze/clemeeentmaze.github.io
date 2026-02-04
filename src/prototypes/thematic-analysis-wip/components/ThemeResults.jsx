@@ -5,14 +5,16 @@
  * Based on Figma: Themes tab layout
  */
 import { Flex, Box, Text, Heading, ScrollContainer, CTAButton } from '@framework/components/ariane';
-import { Play, Check, Star } from 'lucide-react';
+import { Play, Check, Star, Highlighter, LayoutGrid, FileText } from 'lucide-react';
 import { HighlightCard } from './HighlightCard';
 
 /**
  * Mock uncategorized highlights - these need to be assigned themes
- * Mix of new and old highlights
+ * Must match total highlights across blocks: prototype_test(4) + scale(2) + input(2) = 8
+ * New highlights: prototype_test(2) + scale(1) + input(2) = 5
  */
 const MOCK_UNCATEGORIZED_HIGHLIGHTS = [
+  // From prototype_test (2 new, 2 old)
   {
     id: 'uh1',
     insight: "Monica is excited about the feature that automatically creates a session and captures information, making it easier to upload and analyze audio or video.",
@@ -20,6 +22,7 @@ const MOCK_UNCATEGORIZED_HIGHLIGHTS = [
     themes: [],
     isNew: true,
     participantId: '483697735',
+    blockType: 'prototype_test',
   },
   {
     id: 'uh2',
@@ -28,30 +31,35 @@ const MOCK_UNCATEGORIZED_HIGHLIGHTS = [
     themes: [],
     isNew: true,
     participantId: '483697736',
+    blockType: 'prototype_test',
   },
   {
     id: 'uh3',
-    insight: "Participant expressed confusion about where to find the export functionality.",
-    transcript: "So I'm trying to export this report, but I can't seem to find where that option is. I've clicked around a few places...",
-    themes: [],
-    isNew: true,
-    participantId: '483697737',
-  },
-  {
-    id: 'uh4',
     insight: "The navigation flow was described as intuitive and easy to follow, with clear visual hierarchy.",
     transcript: "I really liked how the navigation was laid out. Everything felt like it was where I expected it to be...",
     themes: [],
     isNew: false,
     participantId: '483697738',
+    blockType: 'prototype_test',
   },
   {
-    id: 'uh5',
+    id: 'uh4',
     insight: "Mobile responsiveness was praised, with the layout adapting well to smaller screens.",
     transcript: "Even on my phone, the experience was smooth. The buttons were easy to tap and nothing felt cramped...",
     themes: [],
     isNew: false,
     participantId: '483697739',
+    blockType: 'prototype_test',
+  },
+  // From scale (1 new, 1 old)
+  {
+    id: 'uh5',
+    insight: "Participant gave a high rating but mentioned the learning curve was steeper than expected initially.",
+    transcript: "I'd give it an 8 out of 10. It's really powerful once you get the hang of it, but it took me a bit to understand all the features...",
+    themes: [],
+    isNew: true,
+    participantId: '483697737',
+    blockType: 'scale',
   },
   {
     id: 'uh6',
@@ -60,22 +68,39 @@ const MOCK_UNCATEGORIZED_HIGHLIGHTS = [
     themes: [],
     isNew: false,
     participantId: '483697735',
+    blockType: 'scale',
+  },
+  // From input (2 new)
+  {
+    id: 'uh7',
+    insight: "Users consistently mention wanting better onboarding documentation and tooltips for complex features.",
+    transcript: "I think the main improvement would be having more tooltips or a guided tour when you first start. Some features are hidden and not obvious...",
+    themes: [],
+    isNew: true,
+    participantId: '483697738',
+    blockType: 'input',
+  },
+  {
+    id: 'uh8',
+    insight: "Multiple participants expressed desire for keyboard shortcuts to speed up their workflow.",
+    transcript: "If there were keyboard shortcuts for the common actions, that would save me a lot of time. Right now I have to click through menus...",
+    themes: [],
+    isNew: true,
+    participantId: '483697739',
+    blockType: 'input',
   },
 ];
 
 /**
- * Progress step indicator
+ * Feature list item with icon
  */
-function ProgressStep({ icon: IconComponent, value, isActive, isPast }) {
+function FeatureItem({ icon: IconComponent, children }) {
   return (
-    <Flex flexDirection="column" alignItems="center" gap="XS">
-      <div className={`
-        w-8 h-8 rounded-full flex items-center justify-center
-        ${isPast ? 'bg-[#0568FD] text-white' : isActive ? 'bg-[#0568FD] text-white' : 'bg-neutral-100 text-[#6C718C]'}
-      `}>
-        {IconComponent ? <IconComponent size={16} /> : null}
+    <Flex alignItems="center" gap="SM" className="py-2">
+      <div className="w-8 h-8 rounded-lg bg-[#E6F7F0] flex items-center justify-center flex-shrink-0">
+        <IconComponent size={16} className="text-[#10B981]" />
       </div>
-      <Text type="caption" color="default.main.secondary">{value}</Text>
+      <Text color="default.main.primary">{children}</Text>
     </Flex>
   );
 }
@@ -83,20 +108,27 @@ function ProgressStep({ icon: IconComponent, value, isActive, isPast }) {
 /**
  * Confidence progress bar
  */
-function ConfidenceProgress({ currentSessions = 1 }) {
+function ConfidenceProgress({ currentSessions = 5 }) {
   // Calculate progress percentage (1 to 10+)
   const progress = Math.min((currentSessions / 10) * 100, 100);
   const isPast5 = currentSessions >= 5;
   const isPast10 = currentSessions >= 10;
+  
+  // Determine confidence level text
+  const getConfidenceLevel = () => {
+    if (currentSessions >= 10) return 'HIGH ANALYSIS CONFIDENCE';
+    if (currentSessions >= 5) return 'MEDIUM ANALYSIS CONFIDENCE';
+    return 'LOW ANALYSIS CONFIDENCE';
+  };
 
   return (
     <div className="p-6 border border-[rgba(108,113,140,0.16)] rounded-xl">
       {/* Header */}
       <Flex justifyContent="space-between" alignItems="center" className="mb-6">
         <Text className="text-xs font-semibold text-[#6C718C] uppercase tracking-wide">
-          LOW ANALYSIS CONFIDENCE
+          {getConfidenceLevel()}
         </Text>
-        <span className="px-2 py-1 bg-neutral-100 rounded text-xs font-medium text-[#6C718C]">
+        <span className="px-2 py-1 border border-[#10B981] text-[#10B981] rounded text-xs font-medium">
           {currentSessions} SESSION{currentSessions !== 1 ? 'S' : ''}
         </span>
       </Flex>
@@ -104,14 +136,17 @@ function ConfidenceProgress({ currentSessions = 1 }) {
       {/* Progress Track */}
       <Flex alignItems="center" gap="SM">
         {/* Start indicator */}
-        <div className="w-8 h-8 rounded-full bg-[#0568FD] flex items-center justify-center">
-          <Play size={14} className="text-white ml-0.5" fill="white" />
-        </div>
+        <Flex flexDirection="column" alignItems="center" className="flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-[#E5E7EB] flex items-center justify-center">
+            <Play size={14} className="text-[#6C718C] ml-0.5" fill="currentColor" />
+          </div>
+          <Text type="caption" color="default.main.secondary" className="mt-1">1</Text>
+        </Flex>
 
-        {/* Progress bar to 5 */}
+        {/* Progress bar to 5 - green when past */}
         <div className="flex-1 h-1 bg-neutral-200 rounded-full relative">
           <div 
-            className="absolute left-0 top-0 h-full bg-[#0568FD] rounded-full transition-all duration-300"
+            className={`absolute left-0 top-0 h-full rounded-full transition-all duration-300 ${isPast5 ? 'bg-[#10B981]' : 'bg-[#10B981]'}`}
             style={{ width: `${Math.min(progress * 2, 100)}%` }}
           />
         </div>
@@ -119,18 +154,18 @@ function ConfidenceProgress({ currentSessions = 1 }) {
         {/* Checkpoint at 5 */}
         <Flex flexDirection="column" alignItems="center" className="flex-shrink-0">
           <div className={`
-            w-8 h-8 rounded-full flex items-center justify-center border-2
-            ${isPast5 ? 'bg-[#0568FD] border-[#0568FD] text-white' : 'bg-white border-neutral-300 text-[#6C718C]'}
+            w-8 h-8 rounded-full flex items-center justify-center
+            ${isPast5 ? 'bg-[#10B981] text-white' : 'bg-white border-2 border-neutral-300 text-[#6C718C]'}
           `}>
             <Check size={16} />
           </div>
           <Text type="caption" color="default.main.secondary" className="mt-1">5</Text>
         </Flex>
 
-        {/* Progress bar to 10+ */}
+        {/* Progress bar to 10+ - green when past 5 */}
         <div className="flex-1 h-1 bg-neutral-200 rounded-full relative">
           <div 
-            className="absolute left-0 top-0 h-full bg-[#0568FD] rounded-full transition-all duration-300"
+            className="absolute left-0 top-0 h-full bg-[#10B981] rounded-full transition-all duration-300"
             style={{ width: isPast5 ? `${Math.min((progress - 50) * 2, 100)}%` : '0%' }}
           />
         </div>
@@ -143,12 +178,9 @@ function ConfidenceProgress({ currentSessions = 1 }) {
           `}>
             <Star size={16} />
           </div>
-          <Text type="caption" color="default.main.secondary" className="mt-1">10+</Text>
+          <Text type="caption" color="default.main.secondary" className="mt-1">+10</Text>
         </Flex>
       </Flex>
-
-      {/* Start label */}
-      <Text type="caption" color="default.main.secondary" className="mt-1 ml-2">1</Text>
     </div>
   );
 }
@@ -178,28 +210,41 @@ export function ThemeResults({ theme }) {
         {isThematicAnalysis ? (
           <>
             {/* Confidence Progress */}
-            <ConfidenceProgress currentSessions={1} />
+            <ConfidenceProgress currentSessions={8} />
 
             {/* Message */}
             <Box className="mt-8">
               <Text className="font-semibold text-neutral-900 mb-2">
-                Not quite there yet
+                Panel order completed
               </Text>
-              <Text color="default.main.secondary">
-                Run <span className="font-semibold text-neutral-900">at least 5 sessions</span> to start identifying meaningful patterns.
+              <Text color="default.main.secondary" className="mb-1">
+                Your order of 8 participants is complete. Results may still shift as more data comes in. For more reliable insights, <span className="font-semibold text-neutral-900">aim for 10 sessions or more</span>.{' '}
+                <a 
+                  href="#" 
+                  className="text-[#0568FD] font-medium hover:underline"
+                >
+                  Learn more about thematic analysis
+                </a>
               </Text>
-              <a 
-                href="#" 
-                className="text-[#0568FD] font-medium hover:underline mt-1 inline-block"
-              >
-                Learn more about thematic analysis
-              </a>
+            </Box>
+
+            {/* Feature list */}
+            <Box className="mt-6">
+              <FeatureItem icon={Highlighter}>
+                Generate and assign themes to highlights
+              </FeatureItem>
+              <FeatureItem icon={LayoutGrid}>
+                Get a summary and key takeaways for each theme
+              </FeatureItem>
+              <FeatureItem icon={FileText}>
+                Generate a report ready to share and present
+              </FeatureItem>
             </Box>
 
             {/* Start Analysis Button - positioned at bottom right */}
             <Flex justifyContent="flex-end" className="mt-auto pt-8">
-              <CTAButton emphasis="tertiary" size="MD">
-                Start Analysis
+              <CTAButton emphasis="primary" size="MD">
+                Start analysis
               </CTAButton>
             </Flex>
           </>
