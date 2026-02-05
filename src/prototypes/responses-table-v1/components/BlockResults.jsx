@@ -8,7 +8,7 @@
  * - AI-generated highlights with new indicators
  */
 import { useState, useRef, useEffect } from 'react';
-import { Flex, Box, Text, Heading, IconFigure, ScrollContainer, ActionButton, CTAButton, Icon } from '@framework/components/ariane';
+import { Flex, Box, Text, Heading, IconFigure, ScrollContainer, ActionButton, CTAButton, Icon, Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@framework/components/ariane';
 import { MoreHorizontal, Filter, Play, ChevronLeft, ChevronRight, Table2, Highlighter, Tag, Info, Plus, Sparkles, Pencil } from 'lucide-react';
 import { BLOCK_TYPES } from '../data';
 import { HighlightCard } from './HighlightCard';
@@ -1320,30 +1320,62 @@ export function BlockResults({ block, isViewed = false, generatedThemes = [], on
           {/* Highlights Tab Content */}
           {activeTab === 'highlights' && (
             <Flex flexDirection="column" gap="MD">
-              {/* Theme Filter - only show for Open Question/AI Conversation when themes exist */}
-              {(block.type === 'input' || block.type === 'ai_conversation') && generatedThemes.length > 0 && blockHighlights.length > 0 && (
-                <Flex alignItems="center" gap="SM" className="mb-2">
-                  <Text color="default.main.secondary" className="text-sm">Filter by theme:</Text>
-                  <select
-                    value={selectedThemeFilter}
-                    onChange={(e) => setSelectedThemeFilter(e.target.value)}
-                    className="px-3 py-1.5 text-sm border border-[rgba(108,113,140,0.28)] rounded-lg bg-white text-neutral-900 cursor-pointer hover:border-[#0568FD] focus:outline-none focus:border-[#0568FD] focus:ring-1 focus:ring-[#0568FD]"
-                  >
-                    <option value="all">All themes</option>
-                    {(() => {
-                      // Get unique themes applied to this block's highlights
-                      const blockHighlightIds = blockHighlights.map(h => h.id);
-                      const blockThemeNames = new Set();
-                      blockHighlightIds.forEach(hId => {
-                        const themes = HIGHLIGHT_THEME_MAPPING[hId] || [];
-                        themes.forEach(t => blockThemeNames.add(t));
-                      });
-                      return Array.from(blockThemeNames).map(themeName => (
-                        <option key={themeName} value={themeName}>{themeName}</option>
-                      ));
-                    })()}
-                  </select>
-                </Flex>
+              {/* Theme Filter Section - for Open Question/AI Conversation */}
+              {(block.type === 'input' || block.type === 'ai_conversation') && blockHighlights.length > 0 && (
+                <>
+                  {generatedThemes.length > 0 ? (
+                    // Theme filter dropdown when themes exist
+                    <Flex alignItems="center" gap="SM" className="mb-4">
+                      <Text color="default.main.secondary" className="text-sm">Filter by theme:</Text>
+                      <div className="w-[280px]">
+                        <Select value={selectedThemeFilter} onValueChange={setSelectedThemeFilter}>
+                          <SelectTrigger size="SM">
+                            <SelectValue placeholder="All themes" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">
+                              <Flex alignItems="center" justifyContent="space-between" className="w-full">
+                                <span>All themes</span>
+                                <span className="ml-2 px-1.5 py-0.5 text-xs font-medium bg-neutral-100 text-neutral-600 rounded">
+                                  {blockHighlights.length}
+                                </span>
+                              </Flex>
+                            </SelectItem>
+                            {(() => {
+                              // Get unique themes with highlight counts
+                              const blockHighlightIds = blockHighlights.map(h => h.id);
+                              const themeHighlightCounts = {};
+                              blockHighlightIds.forEach(hId => {
+                                const themes = HIGHLIGHT_THEME_MAPPING[hId] || [];
+                                themes.forEach(t => {
+                                  themeHighlightCounts[t] = (themeHighlightCounts[t] || 0) + 1;
+                                });
+                              });
+                              return Object.entries(themeHighlightCounts).map(([themeName, count]) => (
+                                <SelectItem key={themeName} value={themeName}>
+                                  <Flex alignItems="center" justifyContent="space-between" className="w-full">
+                                    <span className="truncate max-w-[180px]">{themeName}</span>
+                                    <span className="ml-2 px-1.5 py-0.5 text-xs font-medium bg-neutral-100 text-neutral-600 rounded flex-shrink-0">
+                                      {count}
+                                    </span>
+                                  </Flex>
+                                </SelectItem>
+                              ));
+                            })()}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </Flex>
+                  ) : (
+                    // Suggestion text when no themes exist
+                    <Flex alignItems="center" gap="SM" className="mb-4 py-2 px-3 bg-[#F8F8FB] rounded-lg">
+                      <Tag size={16} className="text-[#6C718C]" />
+                      <Text color="default.main.secondary" className="text-sm">
+                        Run thematic analysis to filter highlights by theme
+                      </Text>
+                    </Flex>
+                  )}
+                </>
               )}
 
               {blockHighlights.length > 0 ? (
