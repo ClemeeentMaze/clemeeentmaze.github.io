@@ -395,10 +395,10 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
           </Text>
           
           {/* Metadata: Participant link + timestamp + highlight icon + actions */}
-          <Flex alignItems="center" justifyContent="space-between" className="mt-3">
+          <Flex alignItems="center" justifyContent="space-between">
             <Flex alignItems="center" gap="SM">
               <button 
-                className="text-[#6C718C] font-medium underline hover:text-[#535a74] cursor-pointer"
+                className="text-[#6C718C] underline hover:text-[#535a74] cursor-pointer"
                 onClick={onNavigateToParticipant}
               >
                 Participant {response.participantId}
