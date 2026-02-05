@@ -41,11 +41,11 @@ const MOCK_RESPONSES_BY_TYPE = {
   ],
   // Open Question with follow-up (for "What features were you looking for?")
   input_with_followup: [
-    { id: 1, clipDuration: '1:52', participantId: '483697735', responseValue: 'I was mainly looking for collaboration features. I work with a team and we need to share projects easily.\n\n**Follow-up:** What kind of collaboration features would be most useful for your team?\n\nReal-time editing would be huge. Right now we have to take turns and it slows everything down. Also, being able to leave comments directly on specific elements would help a lot.\n\n**Follow-up:** How do you currently handle feedback on projects?\n\nWe use a mix of Slack messages and Google Docs. It\'s messy because feedback gets scattered everywhere.', respondedAt: '17 Dec 2025, 06:22 pm', isNew: true, highlightedText: 'Real-time editing would be huge' },
-    { id: 2, clipDuration: '2:08', participantId: '483697736', responseValue: 'I wanted to find a way to export my work in different formats. PDF, PNG, that kind of thing.\n\n**Follow-up:** Which format is most important for your workflow?\n\nPDF mostly, because I need to share with clients who don\'t have access to the platform. But sometimes I need high-resolution images for presentations.\n\n**Follow-up:** Do you currently face any issues with the export options available?\n\nThe quality isn\'t always consistent. Sometimes the fonts look different in the export than on screen.', respondedAt: '17 Dec 2025, 05:18 pm', isNew: true },
-    { id: 3, clipDuration: '1:35', participantId: '483697737', responseValue: 'Templates were my main priority. I don\'t want to start from scratch every time.\n\n**Follow-up:** What types of templates would be most valuable to you?\n\nMostly presentation templates and report layouts. Something professional-looking that I can customize quickly.\n\n**Follow-up:** How much customization do you typically need?\n\nJust colors and fonts usually. I want the structure to be done for me but match our brand.', respondedAt: '17 Dec 2025, 04:54 pm', isNew: true, highlightedText: 'I want the structure to be done for me but match our brand' },
-    { id: 4, clipDuration: '1:45', participantId: '483697738', responseValue: 'Integration with other tools was key for me. I use a lot of different apps.\n\n**Follow-up:** Which integrations would be most helpful?\n\nSlack for notifications, Google Drive for storage, and maybe Figma for design handoff. Those are my main tools.\n\n**Follow-up:** How would these integrations improve your workflow?\n\nLess context switching. Right now I\'m constantly copying things between apps and it breaks my focus.', respondedAt: '17 Dec 2025, 03:47 pm' },
-    { id: 5, clipDuration: '2:18', participantId: '483697739', responseValue: 'I was hoping to find analytics or insights about my projects. Like how people interact with them.\n\n**Follow-up:** What kind of insights would be most actionable for you?\n\nViewing time mostly. I want to know which sections people spend time on and which they skip.\n\n**Follow-up:** How would you use this information?\n\nTo improve my content. If everyone skips section 3, maybe I need to rethink how it\'s presented or if it\'s even necessary.', respondedAt: '17 Dec 2025, 02:44 pm' },
+    { id: 1, clipDuration: '1:52', participantId: '483697735', responseValue: '**Participant:** I was mainly looking for collaboration features. I work with a team and we need to share projects easily.\n\n**Follow-up:** What kind of collaboration features would be most useful for your team?\n\n**Participant:** Real-time editing would be huge. Right now we have to take turns and it slows everything down. Also, being able to leave comments directly on specific elements would help a lot.\n\n**Follow-up:** How do you currently handle feedback on projects?\n\n**Participant:** We use a mix of Slack messages and Google Docs. It\'s messy because feedback gets scattered everywhere.', respondedAt: '17 Dec 2025, 06:22 pm', isNew: true, highlightedText: 'Real-time editing would be huge' },
+    { id: 2, clipDuration: '2:08', participantId: '483697736', responseValue: '**Participant:** I wanted to find a way to export my work in different formats. PDF, PNG, that kind of thing.\n\n**Follow-up:** Which format is most important for your workflow?\n\n**Participant:** PDF mostly, because I need to share with clients who don\'t have access to the platform. But sometimes I need high-resolution images for presentations.\n\n**Follow-up:** Do you currently face any issues with the export options available?\n\n**Participant:** The quality isn\'t always consistent. Sometimes the fonts look different in the export than on screen.', respondedAt: '17 Dec 2025, 05:18 pm', isNew: true },
+    { id: 3, clipDuration: '1:35', participantId: '483697737', responseValue: '**Participant:** Templates were my main priority. I don\'t want to start from scratch every time.\n\n**Follow-up:** What types of templates would be most valuable to you?\n\n**Participant:** Mostly presentation templates and report layouts. Something professional-looking that I can customize quickly.\n\n**Follow-up:** How much customization do you typically need?\n\n**Participant:** Just colors and fonts usually. I want the structure to be done for me but match our brand.', respondedAt: '17 Dec 2025, 04:54 pm', isNew: true, highlightedText: 'I want the structure to be done for me but match our brand' },
+    { id: 4, clipDuration: '1:45', participantId: '483697738', responseValue: '**Participant:** Integration with other tools was key for me. I use a lot of different apps.\n\n**Follow-up:** Which integrations would be most helpful?\n\n**Participant:** Slack for notifications, Google Drive for storage, and maybe Figma for design handoff. Those are my main tools.\n\n**Follow-up:** How would these integrations improve your workflow?\n\n**Participant:** Less context switching. Right now I\'m constantly copying things between apps and it breaks my focus.', respondedAt: '17 Dec 2025, 03:47 pm' },
+    { id: 5, clipDuration: '2:18', participantId: '483697739', responseValue: '**Participant:** I was hoping to find analytics or insights about my projects. Like how people interact with them.\n\n**Follow-up:** What kind of insights would be most actionable for you?\n\n**Participant:** Viewing time mostly. I want to know which sections people spend time on and which they skip.\n\n**Follow-up:** How would you use this information?\n\n**Participant:** To improve my content. If everyone skips section 3, maybe I need to rethink how it\'s presented or if it\'s even necessary.', respondedAt: '17 Dec 2025, 02:44 pm' },
   ],
   simple_input: [
     { id: 1, clipDuration: '0:12', participantId: '483697735', responseValue: 'sarah.johnson@gmail.com', respondedAt: '17 Dec 2025, 06:22 pm', isNew: true },
@@ -640,31 +640,51 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
         );
       }
       
+      // Check if this paragraph starts with **Follow-up:**
+      const followUpMatch = paragraph.match(/^\*\*Follow-up:\*\*\s*(.*)/);
+      
+      if (followUpMatch) {
+        return (
+          <p key={pIndex} className="mt-3 mb-1">
+            <span className="font-bold text-neutral-600">Follow-up:</span>{' '}
+            <span className="text-neutral-600 italic">{followUpMatch[1]}</span>
+          </p>
+        );
+      }
+      
+      // Check if this paragraph starts with **Participant:**
+      const participantMatch = paragraph.match(/^\*\*Participant:\*\*\s*(.*)/);
+      const participantText = participantMatch ? participantMatch[1] : paragraph;
+      const hasParticipantPrefix = participantMatch !== null;
+      
       // Regular participant text - apply highlighting
       let content;
       
       // First, check for active selection (user is creating a new highlight)
-      if (activeSelection && paragraph.includes(activeSelection)) {
-        const parts = paragraph.split(new RegExp(`(${activeSelection.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'g'));
+      if (activeSelection && participantText.includes(activeSelection)) {
+        const parts = participantText.split(new RegExp(`(${activeSelection.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'g'));
         content = parts.map((part, i) => 
           part === activeSelection 
             ? <span key={`sel-${i}`}>{renderActiveSelection(part)}</span>
             : renderWordsWithHover(part)
         );
-      } else if (highlightText) {
+      } else if (highlightText && participantText.includes(highlightText)) {
         // Existing highlight from saved data - use theme color or gray
-        const parts = paragraph.split(new RegExp(`(${highlightText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'));
+        const parts = participantText.split(new RegExp(`(${highlightText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'));
         content = parts.map((part, i) => 
           part.toLowerCase() === highlightText.toLowerCase() 
             ? <span key={i}>{renderExistingHighlight(part, highlightColors)}</span>
             : renderWordsWithHover(part)
         );
       } else {
-        content = renderWordsWithHover(paragraph);
+        content = renderWordsWithHover(participantText);
       }
       
       return (
         <p key={pIndex} className={pIndex > 0 ? 'mt-2' : ''}>
+          {hasParticipantPrefix && (
+            <><span className="font-bold text-neutral-600">Participant:</span>{' '}</>
+          )}
           {content}
         </p>
       );
@@ -955,12 +975,29 @@ function TranscriptResponseRow({ response, blockType = 'input', hasHighlight = f
         );
       }
       
+      // Check if this paragraph starts with **Follow-up:**
+      const followUpMatch = paragraph.match(/^\*\*Follow-up:\*\*\s*(.*)/);
+      
+      if (followUpMatch) {
+        return (
+          <p key={pIndex} className="mt-2 first:mt-0">
+            <span className="font-semibold text-neutral-600">Follow-up:</span>{' '}
+            <span className="text-neutral-600 italic">{followUpMatch[1]}</span>
+          </p>
+        );
+      }
+      
+      // Check if this paragraph starts with **Participant:**
+      const participantMatch = paragraph.match(/^\*\*Participant:\*\*\s*(.*)/);
+      const participantText = participantMatch ? participantMatch[1] : paragraph;
+      const hasParticipantPrefix = participantMatch !== null;
+      
       // Regular participant text - apply highlighting
       let content;
       
       // Handle active selection
-      if (activeSelection && paragraph.includes(activeSelection)) {
-        const parts = paragraph.split(activeSelection);
+      if (activeSelection && participantText.includes(activeSelection)) {
+        const parts = participantText.split(activeSelection);
         content = (
           <>
             {parts[0].split(/(\s+)/).map((part, i) => part.match(/^\s+$/) ? part : renderSelectableWord(part, `pre-${pIndex}-${i}`))}
@@ -968,9 +1005,9 @@ function TranscriptResponseRow({ response, blockType = 'input', hasHighlight = f
             {parts.slice(1).join(activeSelection).split(/(\s+)/).map((part, i) => part.match(/^\s+$/) ? part : renderSelectableWord(part, `post-${pIndex}-${i}`))}
           </>
         );
-      } else if (highlightText && paragraph.includes(highlightText)) {
+      } else if (highlightText && participantText.includes(highlightText)) {
         // Handle existing highlight
-        const parts = paragraph.split(highlightText);
+        const parts = participantText.split(highlightText);
         content = (
           <>
             {parts[0].split(/(\s+)/).map((part, i) => part.match(/^\s+$/) ? part : renderSelectableWord(part, `pre-${pIndex}-${i}`))}
@@ -980,12 +1017,12 @@ function TranscriptResponseRow({ response, blockType = 'input', hasHighlight = f
         );
       } else {
         // Default: render with hover effect
-        content = paragraph.split(/(\s+)/).map((part, i) => part.match(/^\s+$/) ? part : renderSelectableWord(part, `${pIndex}-${i}`));
+        content = participantText.split(/(\s+)/).map((part, i) => part.match(/^\s+$/) ? part : renderSelectableWord(part, `${pIndex}-${i}`));
       }
       
       return (
         <p key={pIndex} className="mt-2 first:mt-0">
-          {isAIConversation && (
+          {(isAIConversation || hasParticipantPrefix) && (
             <><span className="font-semibold text-neutral-600">Participant:</span>{' '}</>
           )}
           {content}
