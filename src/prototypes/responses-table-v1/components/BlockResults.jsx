@@ -1148,10 +1148,8 @@ export function BlockResults({ block, isViewed = false, generatedThemes = [], on
   // Hide "new" indicators if the block has been viewed
   const newHighlightCount = isViewed ? 0 : blockHighlights.filter(h => h.isNew).length;
   
-  // Check if this block type has highlights (and thus should show themes)
+  // Check if this block type has highlights
   const hasHighlights = highlightCount > 0;
-  // Only show themes section in Open Question (input) block
-  const showThemesSection = block.type === 'input' && generatedThemes.length > 0;
 
   return (
     <ScrollContainer className="h-full">
@@ -1235,61 +1233,6 @@ export function BlockResults({ block, isViewed = false, generatedThemes = [], on
                 <Text color="default.main.secondary" className="text-xs">75%</Text>
                 <Text color="default.main.secondary" className="text-xs">100%</Text>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* Themes Section - only shown when analysis is complete and block has highlights */}
-        {showThemesSection && (
-          <div className="mb-8">
-            <Flex alignItems="center" justifyContent="space-between" className="mb-4">
-              <Flex alignItems="center" gap="SM">
-                <Heading level={3}>Themes</Heading>
-                <button className="text-[#6C718C] hover:text-[#535a74]">
-                  <Info size={16} />
-                </button>
-              </Flex>
-              <Flex alignItems="center" gap="SM">
-                <ActionButton emphasis="secondary" size="SM" icon={<Plus size={16} />}>
-                  Create theme
-                </ActionButton>
-                <ActionButton emphasis="primary" size="SM" icon={<Tag size={16} />}>
-                  Find themes with AI
-                </ActionButton>
-              </Flex>
-            </Flex>
-
-            {/* Themes Table */}
-            <div className="border border-[rgba(108,113,140,0.16)] rounded-lg overflow-hidden">
-              {/* Table Header */}
-              <div className="flex items-center py-3 bg-[#F8F8FB] text-xs font-semibold text-[#6C718C] uppercase tracking-wide">
-                <div className="flex-1 px-4">NAME</div>
-                <div className="w-[200px] px-4">FREQUENCY</div>
-                <div className="w-[80px] px-4 text-right">ACTIONS</div>
-              </div>
-
-              {/* Theme Rows - only show themes applied to highlights in this block */}
-              {(() => {
-                // Get highlight IDs for this block
-                const blockHighlightIds = blockHighlights.map(h => h.id);
-                // Get unique theme names applied to this block's highlights
-                const blockThemeNames = new Set();
-                blockHighlightIds.forEach(hId => {
-                  const themes = HIGHLIGHT_THEME_MAPPING[hId] || [];
-                  themes.forEach(t => blockThemeNames.add(t));
-                });
-                // Filter generatedThemes to only those applied to this block
-                const relevantThemes = generatedThemes.filter(t => blockThemeNames.has(t.name));
-                
-                return relevantThemes.map((theme) => (
-                  <ThemeRow 
-                    key={theme.id}
-                    theme={theme}
-                    frequency={theme.highlightCount}
-                    percentage={Math.round((theme.highlightCount / 8) * 100)}
-                  />
-                ));
-              })()}
             </div>
           </div>
         )}
