@@ -60,6 +60,13 @@ const MOCK_RESPONSES_BY_TYPE = {
     { id: 4, clipDuration: '0:03', participantId: '483697738', responseValue: 'Yes', respondedAt: '17 Dec 2025, 03:47 pm' },
     { id: 5, clipDuration: '0:04', participantId: '483697739', responseValue: 'No', respondedAt: '17 Dec 2025, 02:44 pm' },
   ],
+  ai_conversation: [
+    { id: 1, clipDuration: '2:15', participantId: '483697735', responseValue: 'The interface was intuitive but I struggled with the navigation menu. The AI helped me articulate exactly what was confusing.', respondedAt: '17 Dec 2025, 06:22 pm', isNew: true },
+    { id: 2, clipDuration: '1:48', participantId: '483697736', responseValue: 'I gave a 4 because the core features work well, but loading times frustrated me during the conversation.', respondedAt: '17 Dec 2025, 05:18 pm', isNew: true },
+    { id: 3, clipDuration: '3:02', participantId: '483697737', responseValue: 'The conversation helped me realize my main concern was about data security, not usability.', respondedAt: '17 Dec 2025, 04:54 pm', isNew: true },
+    { id: 4, clipDuration: '1:35', participantId: '483697738', responseValue: 'Great experience overall. The AI asked follow-up questions that made me think deeper about my rating.', respondedAt: '17 Dec 2025, 03:47 pm' },
+    { id: 5, clipDuration: '2:22', participantId: '483697739', responseValue: 'I appreciated being able to explain my reasoning in a conversational way rather than just selecting options.', respondedAt: '17 Dec 2025, 02:44 pm' },
+  ],
   context: [
     { id: 1, clipDuration: '0:18', participantId: '483697735', responseValue: 'Read context', respondedAt: '17 Dec 2025, 06:22 pm', isNew: true },
     { id: 2, clipDuration: '0:22', participantId: '483697736', responseValue: 'Read context', respondedAt: '17 Dec 2025, 05:18 pm', isNew: true },

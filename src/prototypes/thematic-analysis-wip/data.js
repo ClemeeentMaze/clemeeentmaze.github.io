@@ -75,6 +75,12 @@ export const BLOCK_TYPES = {
     arianeColor: 'forest',
     description: 'Measure sentiment on a scale',
   },
+  ai_conversation: {
+    name: 'AI Conversation',
+    iconName: 'comment-sparkle',
+    arianeColor: 'purple',
+    description: 'AI-led follow-up conversation',
+  },
   yesno: {
     name: 'Yes/No',
     iconName: 'checkmark-cross-square',
@@ -151,6 +157,14 @@ export const BLOCK_DEFAULTS = {
     followUpEnabled: false,
     conditionsEnabled: false,
   },
+  ai_conversation: {
+    title: 'Why did you give that rating?',
+    description: 'Have an AI-led conversation to explore your reasoning.',
+    imageEnabled: false,
+    imageUrl: null,
+    followUpEnabled: true,
+    conditionsEnabled: false,
+  },
   simple_input: {
     title: "What's your email?",
     description: "We'd like to be able to reach out for follow-ups.",
@@ -200,6 +214,7 @@ export const USE_CASES = {
       { ...createBlock('multiple_choice') },
       { ...createBlock('context') },
       { ...createBlock('scale') },
+      { ...createBlock('ai_conversation') },
       { ...createBlock('yesno') },
       { ...createBlock('input') },
       { ...createBlock('simple_input') },
