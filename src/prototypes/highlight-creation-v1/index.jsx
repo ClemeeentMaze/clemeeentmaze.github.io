@@ -36,30 +36,34 @@ import { useBlocks } from './hooks/useBlocks';
  */
 function NewHighlightsToast({ onNavigateToThemes, onDismiss }) {
   return (
-    <div className="fixed top-4 right-4 z-[9999] animate-slide-down">
-      <div className="flex items-center gap-3 bg-white rounded-xl shadow-lg border border-[rgba(108,113,140,0.16)] px-4 py-3">
+    <div className="absolute top-4 right-6 z-[9999] animate-slide-down">
+      <div className="flex gap-3 bg-white rounded-xl shadow-lg border border-[rgba(108,113,140,0.16)] px-4 py-3">
         <div className="w-10 h-10 rounded-lg bg-[#F0FAFF] flex items-center justify-center flex-shrink-0">
           <Tag size={20} className="text-[#0568FD]" />
         </div>
-        <div className="flex-1">
-          <Text className="font-medium text-neutral-900">New highlights generated</Text>
-          <Text color="default.main.secondary" className="text-sm">
-            Run a thematic analysis to find themes.
-          </Text>
+        <div className="flex-1 flex flex-col gap-2">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <Text className="font-medium text-neutral-900">New highlights generated</Text>
+              <Text color="default.main.secondary" className="text-sm">
+                Run a thematic analysis to find themes.
+              </Text>
+            </div>
+            <button 
+              onClick={onDismiss}
+              className="text-[#6C718C] hover:text-neutral-900 p-1 cursor-pointer flex-shrink-0"
+            >
+              <X size={20} />
+            </button>
+          </div>
+          <CTAButton 
+            emphasis="tertiary" 
+            size="SM"
+            onClick={onNavigateToThemes}
+          >
+            Start analysis
+          </CTAButton>
         </div>
-        <CTAButton 
-          emphasis="tertiary" 
-          size="SM"
-          onClick={onNavigateToThemes}
-        >
-          Start analysis
-        </CTAButton>
-        <button 
-          onClick={onDismiss}
-          className="text-[#6C718C] hover:text-neutral-900 p-1 cursor-pointer"
-        >
-          <X size={20} />
-        </button>
       </div>
     </div>
   );
@@ -234,14 +238,6 @@ function ThematicAnalysisV1() {
       flexDirection="column" 
       className="h-screen w-full overflow-hidden bg-neutral-50"
     >
-      {/* Toast notification for new highlights */}
-      {showNewHighlightsToast && (
-        <NewHighlightsToast 
-          onNavigateToThemes={handleToastNavigateToThemes}
-          onDismiss={() => setShowNewHighlightsToast(false)}
-        />
-      )}
-      
       {/* 
         HEADER - Fixed 64px height
         Contains: Back button, study name, save state, actions
@@ -278,7 +274,15 @@ function ThematicAnalysisV1() {
           Main Content Area - Changes based on active tab
           Flex: 1 (grows to fill remaining space)
         */}
-        <Box className="flex-1 h-full bg-white">
+        <Box className="flex-1 h-full bg-white relative">
+          {/* Toast notification for new highlights */}
+          {showNewHighlightsToast && (
+            <NewHighlightsToast 
+              onNavigateToThemes={handleToastNavigateToThemes}
+              onDismiss={() => setShowNewHighlightsToast(false)}
+            />
+          )}
+          
           {activeTab === 'results' && (
             <BlockResults 
               block={selectedBlock} 
