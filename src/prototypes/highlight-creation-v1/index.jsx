@@ -229,6 +229,14 @@ function ThematicAnalysisV1() {
                 setActiveTab('themes');
                 setSelectedThemeId('thematic-analysis');
               }}
+              onNavigateToParticipant={(participantId) => {
+                setActiveTab('participants');
+                // Map response participant ID to participant list ID (p1, p2, etc.)
+                const participantIndex = ['483697735', '483697736', '483697737', '483697738', '483697739'].indexOf(participantId);
+                if (participantIndex >= 0) {
+                  setSelectedParticipantId(`p${participantIndex + 1}`);
+                }
+              }}
             />
           )}
           {activeTab === 'participants' && <ParticipantResults blocks={visibleBlocks} selectedParticipantId={selectedParticipantId} />}
@@ -240,10 +248,10 @@ function ThematicAnalysisV1() {
 }
 
 // Prototype metadata for the selector
-ThematicAnalysisV1.Title = "Highlight Creation V1 - Inline Selection";
+ThematicAnalysisV1.Title = "Highlight Creation";
 ThematicAnalysisV1.Description = "Create highlights by selecting text directly in response rows with a popover";
-ThematicAnalysisV1.Order = 10;
-ThematicAnalysisV1.Group = "Highlight Creation";
+ThematicAnalysisV1.Order = 3;
+ThematicAnalysisV1.Group = "AI Thematic Analysis";
 ThematicAnalysisV1.StateControls = {
   useCase: {
     label: 'Use Case',

@@ -295,7 +295,7 @@ function HighlightPopover({ selectedText, clipDuration, onCreateHighlight, onClo
  * Stacked transcript-style card for displaying responses (replaces table rows)
  * Consistent with participant view transcript entries
  */
-function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestion = false }) {
+function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestion = false, onNavigateToParticipant }) {
   const [selectedText, setSelectedText] = useState('');
   const [showPopover, setShowPopover] = useState(false);
   const [popoverPosition, setPopoverPosition] = useState(null);
@@ -376,18 +376,6 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
       ref={cardRef}
       className={`relative p-4 rounded-lg border ${hasHighlight ? 'border-[#7C3AED]/30 bg-[#FDFBFF]' : 'border-[rgba(108,113,140,0.28)] bg-white'}`}
     >
-      {/* Header: Participant ID + timestamp + actions */}
-      <Flex alignItems="center" justifyContent="space-between" className="mb-3">
-        <Flex alignItems="center" gap="SM">
-          <Text className="text-[#0568FD] font-medium">{response.participantId}</Text>
-          {hasHighlight && (
-            <Highlighter size={14} className="text-[#7C3AED]" />
-          )}
-          <Text color="default.main.secondary" className="text-sm">{response.respondedAt}</Text>
-        </Flex>
-        <ActionButton emphasis="tertiary" size="SM" icon={<Icon name="share" />} iconOnly />
-      </Flex>
-      
       {/* Content: Video thumbnail (if available) + transcript text */}
       <Flex gap="MD" alignItems="flex-start">
         {/* Video thumbnail - only show if response has video */}
@@ -406,6 +394,23 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
             {renderResponseText()}
           </Text>
         </div>
+      </Flex>
+      
+      {/* Footer: Participant link + timestamp + highlight icon + actions */}
+      <Flex alignItems="center" justifyContent="space-between" className="mt-3">
+        <Flex alignItems="center" gap="SM">
+          <button 
+            className="text-[#0568FD] font-medium underline hover:text-[#0450c9] cursor-pointer"
+            onClick={onNavigateToParticipant}
+          >
+            Participant {response.participantId}
+          </button>
+          {hasHighlight && (
+            <Highlighter size={14} className="text-[#7C3AED]" />
+          )}
+          <Text color="default.main.secondary" className="text-sm">{response.respondedAt}</Text>
+        </Flex>
+        <ActionButton emphasis="tertiary" size="SM" icon={<Icon name="share" />} iconOnly />
       </Flex>
 
       {/* Highlight creation popover */}
@@ -495,7 +500,7 @@ function ThemeRow({ theme, frequency, percentage }) {
  * @param {Array} props.generatedThemes - AI-generated themes after analysis
  * @param {Function} props.onNavigateToThemes - Callback to navigate to thematic analysis
  */
-export function BlockResults({ block, isViewed = false, generatedThemes = [], onNavigateToThemes }) {
+export function BlockResults({ block, isViewed = false, generatedThemes = [], onNavigateToThemes, onNavigateToParticipant }) {
   const [activeTab, setActiveTab] = useState('all');
   
   if (!block) {
@@ -684,6 +689,7 @@ export function BlockResults({ block, isViewed = false, generatedThemes = [], on
                         blockType={block.type}
                         hasHighlight={participantsWithHighlights.has(response.participantId)}
                         isOpenQuestion={true}
+                        onNavigateToParticipant={() => onNavigateToParticipant?.(response.participantId)}
                       />
                     );
                   })}
