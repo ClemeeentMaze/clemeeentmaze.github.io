@@ -9,7 +9,7 @@
  */
 import { useState, useRef, useEffect } from 'react';
 import { Flex, Box, Text, Heading, IconFigure, ScrollContainer, ActionButton, CTAButton, Icon } from '@framework/components/ariane';
-import { MoreHorizontal, Filter, Play, ChevronLeft, ChevronRight, Table2, Highlighter, Tag, Info, Plus, Sparkles } from 'lucide-react';
+import { MoreHorizontal, Filter, Play, ChevronLeft, ChevronRight, Table2, Highlighter, Tag, Info, Plus, Sparkles, Pencil } from 'lucide-react';
 import { BLOCK_TYPES } from '../data';
 import { HighlightCard } from './HighlightCard';
 
@@ -294,6 +294,76 @@ function VideoThumbnail({ duration }) {
 }
 
 /**
+ * Highlight View Popover
+ * Shows existing highlight details: insight, transcript, themes
+ */
+function HighlightViewPopover({ highlight, clipDuration, themes, position, onClose }) {
+  return (
+    <div 
+      className="absolute z-50 bg-white rounded-xl shadow-lg border border-[rgba(108,113,140,0.16)] p-4 w-[420px]"
+      style={{ top: position?.top ? `${position.top}px` : 0, left: position?.left ? `${position.left}px` : 0 }}
+    >
+      {/* Insight/Note at top */}
+      <div className="mb-4">
+        <Text className="text-sm font-medium text-neutral-500 mb-1">AI Insight</Text>
+        <Text className="text-neutral-900">{highlight?.insight || 'No insight available'}</Text>
+      </div>
+      
+      {/* Transcript quote with video thumbnail (if available) */}
+      <div className="bg-neutral-50 rounded-lg p-4 mb-4">
+        <Flex gap="MD" alignItems="flex-start">
+          <Text className="flex-1 text-neutral-700 text-sm">{highlight?.transcript || ''}</Text>
+          {clipDuration && (
+            <div className="flex-shrink-0 relative w-[100px] h-[60px] rounded-lg overflow-hidden bg-neutral-200">
+              <div className="absolute inset-0 bg-gradient-to-br from-neutral-300 to-neutral-400" />
+              <div className="absolute bottom-1 right-1 bg-black/70 text-white text-xs px-1.5 py-0.5 rounded">
+                {clipDuration}
+              </div>
+            </div>
+          )}
+        </Flex>
+      </div>
+      
+      {/* Themes tags */}
+      {themes && themes.length > 0 && (
+        <div className="mb-4">
+          <Text className="text-sm font-medium text-neutral-500 mb-2">Themes</Text>
+          <Flex gap="XS" className="flex-wrap">
+            {themes.map((theme, i) => (
+              <span 
+                key={i}
+                className="px-2 py-1 text-xs rounded-full"
+                style={{ backgroundColor: THEME_COLORS[theme]?.bg || '#F3F4F6' }}
+              >
+                {theme}
+              </span>
+            ))}
+          </Flex>
+        </div>
+      )}
+      
+      {/* Action buttons */}
+      <Flex alignItems="center" justifyContent="flex-end" gap="SM">
+        <ActionButton 
+          emphasis="tertiary" 
+          size="SM"
+          onClick={onClose}
+        >
+          Close
+        </ActionButton>
+        <ActionButton 
+          emphasis="secondary" 
+          size="SM" 
+          icon={<Pencil size={14} />}
+        >
+          Edit
+        </ActionButton>
+      </Flex>
+    </div>
+  );
+}
+
+/**
  * Highlight Creation Popover
  * Matches the design from the screenshot: note input on top, transcript quote with video below
  */
@@ -360,8 +430,10 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
   const [selectedText, setSelectedText] = useState('');
   const [showPopover, setShowPopover] = useState(false);
   const [popoverPosition, setPopoverPosition] = useState(null);
+  const [isViewingExistingHighlight, setIsViewingExistingHighlight] = useState(false);
   const cardRef = useRef(null);
   const popoverRef = useRef(null);
+  const highlightRef = useRef(null);
 
   // Click outside and ESC key to close popover
   useEffect(() => {
@@ -432,6 +504,7 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
   const closePopover = () => {
     setShowPopover(false);
     setSelectedText('');
+    setIsViewingExistingHighlight(false);
     window.getSelection()?.removeAllRanges();
   };
 
@@ -499,14 +572,43 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
     return DEFAULT_HIGHLIGHT_COLORS;
   };
 
+  // Find the highlight data for this response
+  const getHighlightData = () => {
+    const highlightText = response.highlightedText;
+    if (!highlightText) return null;
+    
+    const allHighlights = Object.values(MOCK_HIGHLIGHTS_BY_BLOCK_TYPE).flat();
+    return allHighlights.find(h => h.participantId === response.participantId);
+  };
+
+  // Handle click on existing highlight
+  const handleHighlightClick = (e, text) => {
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const cardRect = cardRef.current?.getBoundingClientRect();
+    
+    setSelectedText(text);
+    setIsViewingExistingHighlight(true);
+    
+    if (cardRect) {
+      setPopoverPosition({
+        top: rect.bottom - cardRect.top + 8,
+        left: rect.left - cardRect.left,
+      });
+    }
+    setShowPopover(true);
+  };
+
   // Render existing highlight with appropriate color
   const renderExistingHighlight = (text, colors) => {
     return (
       <span 
+        ref={highlightRef}
         className="px-1 rounded cursor-pointer transition-colors duration-100"
         style={{ backgroundColor: colors.bg }}
         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.hoverBg}
         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors.bg}
+        onClick={(e) => handleHighlightClick(e, text)}
       >
         {text}
       </span>
@@ -612,16 +714,26 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
         )}
       </Flex>
 
-      {/* Highlight creation popover */}
+      {/* Highlight popover - view existing or create new */}
       {showPopover && (
         <div ref={popoverRef}>
-          <HighlightPopover
-            selectedText={selectedText}
-            clipDuration={response.clipDuration}
-            onCreateHighlight={handleCreateHighlight}
-            onClose={closePopover}
-            position={popoverPosition}
-          />
+          {isViewingExistingHighlight ? (
+            <HighlightViewPopover
+              highlight={getHighlightData()}
+              clipDuration={response.clipDuration}
+              themes={generatedThemes.length > 0 ? HIGHLIGHT_THEME_MAPPING[getHighlightData()?.id] : []}
+              position={popoverPosition}
+              onClose={closePopover}
+            />
+          ) : (
+            <HighlightPopover
+              selectedText={selectedText}
+              clipDuration={response.clipDuration}
+              onCreateHighlight={handleCreateHighlight}
+              onClose={closePopover}
+              position={popoverPosition}
+            />
+          )}
         </div>
       )}
     </div>
