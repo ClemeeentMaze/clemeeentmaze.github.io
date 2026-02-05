@@ -977,6 +977,7 @@ function TranscriptResponseRow({ response, hasHighlight = false, onNavigateToPar
       
       return (
         <p key={pIndex} className="mt-2 first:mt-0">
+          <span className="font-semibold text-neutral-600">Participant:</span>{' '}
           {content}
         </p>
       );
@@ -1008,16 +1009,17 @@ function TranscriptResponseRow({ response, hasHighlight = false, onNavigateToPar
         className="flex-1 px-4 cursor-text"
         onMouseUp={handleMouseUp}
       >
-        {/* Transcript text with expand/collapse */}
+        {/* Transcript text with animated expand/collapse */}
         <div 
           ref={textRef}
-          className={`text-neutral-900 leading-relaxed overflow-hidden transition-all duration-200 ${
-            !isExpanded && needsExpand ? 'max-h-[144px]' : ''
-          }`}
-          style={!isExpanded && needsExpand ? { 
-            maskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)'
-          } : {}}
+          className="text-neutral-900 leading-relaxed overflow-hidden transition-[max-height] duration-300 ease-in-out"
+          style={{ 
+            maxHeight: !isExpanded && needsExpand ? '144px' : '2000px',
+            ...((!isExpanded && needsExpand) ? {
+              maskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)'
+            } : {})
+          }}
         >
           {renderTranscriptText()}
         </div>
@@ -1031,10 +1033,6 @@ function TranscriptResponseRow({ response, hasHighlight = false, onNavigateToPar
             {isExpanded ? 'Less' : 'More...'}
           </button>
         )}
-        
-        <Text color="default.main.secondary" className="text-xs mt-2 italic">
-          Select text to create a highlight
-        </Text>
       </div>
       <div className="w-[180px] px-4 pt-1">
         <Text color="default.main.secondary">{response.respondedAt}</Text>
