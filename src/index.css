@@ -36,3 +36,14 @@ body {
 .animate-slide-down {
   animation: slide-down 0.3s ease-out;
 }
+
+/* Custom text selection style for highlight creation */
+.selectable-text::selection {
+  background-color: #0568FD;
+  color: white;
+}
+
+.selectable-text::-moz-selection {
+  background-color: #0568FD;
+  color: white;
+}

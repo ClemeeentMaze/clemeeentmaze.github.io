@@ -410,6 +410,30 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
 
   const hasVideo = response.clipDuration !== null;
 
+  // Render a word with hover effect for selectable text
+  const renderSelectableWord = (word, key) => {
+    if (!isOpenQuestion) return word;
+    return (
+      <span 
+        key={key} 
+        className="hover:bg-[#E8F4FF] rounded transition-colors duration-100"
+      >
+        {word}
+      </span>
+    );
+  };
+
+  // Split text into words while preserving spaces for hover effect
+  const renderWordsWithHover = (text) => {
+    if (!isOpenQuestion) return text;
+    // Split by word boundaries but keep spaces
+    const parts = text.split(/(\s+)/);
+    return parts.map((part, i) => {
+      if (part.match(/^\s+$/)) return part; // Keep spaces as-is
+      return renderSelectableWord(part, i);
+    });
+  };
+
   // Render text with highlighted portion and conversation formatting
   const renderResponseText = () => {
     const text = response.responseValue;
@@ -433,14 +457,16 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
       }
       
       // Regular participant text - apply highlighting if needed
-      let content = paragraph;
+      let content;
       if (highlightText) {
         const parts = paragraph.split(new RegExp(`(${highlightText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'));
         content = parts.map((part, i) => 
           part.toLowerCase() === highlightText.toLowerCase() 
             ? <span key={i} className="bg-[#0568FD] text-white px-1 rounded">{part}</span>
-            : part
+            : renderWordsWithHover(part)
         );
+      } else {
+        content = renderWordsWithHover(paragraph);
       }
       
       return (
@@ -461,11 +487,26 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
         {/* Transcript/Response text + metadata - always left-aligned */}
         <div className="flex-1">
           <div 
-            className={`text-neutral-700 leading-relaxed ${isOpenQuestion ? 'cursor-text select-text' : ''}`}
+            className={`text-neutral-700 leading-relaxed ${isOpenQuestion ? 'cursor-text select-text selectable-text' : ''}`}
             onMouseUp={handleMouseUp}
           >
             {renderResponseText()}
           </div>
+          
+          {/* Selection handles indicator */}
+          {selectedText && showPopover && (
+            <div className="flex items-center gap-1 mt-2">
+              <svg width="8" height="12" viewBox="0 0 8 12" className="text-[#0568FD]">
+                <path d="M4 0L8 6L4 12L0 6L4 0Z" fill="currentColor"/>
+              </svg>
+              <span className="bg-[#0568FD] text-white px-2 py-0.5 rounded text-sm">
+                {selectedText.length > 50 ? selectedText.substring(0, 50) + '...' : selectedText}
+              </span>
+              <svg width="8" height="12" viewBox="0 0 8 12" className="text-[#0568FD]">
+                <path d="M4 0L8 6L4 12L0 6L4 0Z" fill="currentColor"/>
+              </svg>
+            </div>
+          )}
           
           {/* Metadata: Participant link + timestamp + highlight icon + actions */}
           <Flex alignItems="center" justifyContent="space-between">
