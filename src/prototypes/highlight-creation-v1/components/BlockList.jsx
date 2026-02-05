@@ -16,13 +16,14 @@ const TAB_OPTIONS = [
 
 /**
  * Mock participants for the list
+ * IDs match the participantId values in BlockResults responses
  */
 const MOCK_PARTICIPANT_LIST = [
-  { id: 'p1', participantId: '23338', status: 'completed' },
-  { id: 'p2', participantId: '23339', status: 'completed' },
-  { id: 'p3', participantId: '23340', status: 'completed' },
-  { id: 'p4', participantId: '23341', status: 'in_progress' },
-  { id: 'p5', participantId: '23342', status: 'completed' },
+  { id: 'p1', participantId: '483697735', status: 'completed' },
+  { id: 'p2', participantId: '483697736', status: 'completed' },
+  { id: 'p3', participantId: '483697737', status: 'completed' },
+  { id: 'p4', participantId: '483697738', status: 'completed' },
+  { id: 'p5', participantId: '483697739', status: 'completed' },
 ];
 
 /**
