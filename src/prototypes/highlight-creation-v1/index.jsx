@@ -15,7 +15,7 @@
  * └─────────────┴────────────────────────────────────────────────────────┘
  */
 import { useEffect, useMemo, useState } from 'react';
-import { Flex, Box, Text, ActionButton } from '@framework/components/ariane';
+import { Flex, Box, Text, ActionButton, CTAButton } from '@framework/components/ariane';
 import { useStatePlayground } from '@framework/hooks/useStatePlayground';
 import { Tag, X } from 'lucide-react';
 
@@ -36,7 +36,7 @@ import { useBlocks } from './hooks/useBlocks';
  */
 function NewHighlightsToast({ onNavigateToThemes, onDismiss }) {
   return (
-    <div className="fixed top-20 right-6 z-[9999] animate-slide-down">
+    <div className="fixed top-4 right-4 z-[9999] animate-slide-down">
       <div className="flex items-center gap-3 bg-white rounded-xl shadow-lg border border-[rgba(108,113,140,0.16)] px-4 py-3">
         <div className="w-10 h-10 rounded-lg bg-[#F0FAFF] flex items-center justify-center flex-shrink-0">
           <Tag size={20} className="text-[#0568FD]" />
@@ -44,16 +44,16 @@ function NewHighlightsToast({ onNavigateToThemes, onDismiss }) {
         <div className="flex-1">
           <Text className="font-medium text-neutral-900">New highlights generated</Text>
           <Text color="default.main.secondary" className="text-sm">
-            Run a{' '}
-            <button 
-              className="text-[#0568FD] underline hover:text-[#0450c9] cursor-pointer"
-              onClick={onNavigateToThemes}
-            >
-              thematic analysis
-            </button>
-            {' '}to find themes.
+            Run a thematic analysis to find themes.
           </Text>
         </div>
+        <CTAButton 
+          emphasis="tertiary" 
+          size="SM"
+          onClick={onNavigateToThemes}
+        >
+          Start analysis
+        </CTAButton>
         <button 
           onClick={onDismiss}
           className="text-[#6C718C] hover:text-neutral-900 p-1 cursor-pointer"
