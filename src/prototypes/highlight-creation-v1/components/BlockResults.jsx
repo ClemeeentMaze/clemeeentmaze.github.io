@@ -8,7 +8,7 @@
  * - AI-generated highlights with new indicators
  */
 import { useState, useRef, useEffect } from 'react';
-import { Flex, Box, Text, Heading, IconFigure, ScrollContainer, ActionButton, Icon } from '@framework/components/ariane';
+import { Flex, Box, Text, Heading, IconFigure, ScrollContainer, ActionButton, CTAButton, Icon } from '@framework/components/ariane';
 import { MoreHorizontal, Filter, Play, ChevronLeft, ChevronRight, Table2, Highlighter, Tag, Info, Plus, Sparkles } from 'lucide-react';
 import { BLOCK_TYPES } from '../data';
 import { HighlightCard } from './HighlightCard';
@@ -322,13 +322,13 @@ function HighlightPopover({ selectedText, clipDuration, onCreateHighlight, onClo
         >
           Add themes
         </ActionButton>
-        <ActionButton 
+        <CTAButton 
           emphasis="primary" 
           size="SM"
           onClick={() => onCreateHighlight(selectedText, note)}
         >
           Add highlight
-        </ActionButton>
+        </CTAButton>
       </Flex>
     </div>
   );
