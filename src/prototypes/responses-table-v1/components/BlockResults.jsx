@@ -1126,6 +1126,7 @@ function ThemeRow({ theme, frequency, percentage }) {
  */
 export function BlockResults({ block, isViewed = false, generatedThemes = [], onNavigateToThemes, onNavigateToParticipant }) {
   const [activeTab, setActiveTab] = useState('all');
+  const [selectedThemeFilter, setSelectedThemeFilter] = useState('all'); // 'all' or theme name
   
   if (!block) {
     return (
@@ -1376,24 +1377,57 @@ export function BlockResults({ block, isViewed = false, generatedThemes = [], on
           {/* Highlights Tab Content */}
           {activeTab === 'highlights' && (
             <Flex flexDirection="column" gap="MD">
+              {/* Theme Filter - only show for Open Question/AI Conversation when themes exist */}
+              {(block.type === 'input' || block.type === 'ai_conversation') && generatedThemes.length > 0 && blockHighlights.length > 0 && (
+                <Flex alignItems="center" gap="SM" className="mb-2">
+                  <Text color="default.main.secondary" className="text-sm">Filter by theme:</Text>
+                  <select
+                    value={selectedThemeFilter}
+                    onChange={(e) => setSelectedThemeFilter(e.target.value)}
+                    className="px-3 py-1.5 text-sm border border-[rgba(108,113,140,0.28)] rounded-lg bg-white text-neutral-900 cursor-pointer hover:border-[#0568FD] focus:outline-none focus:border-[#0568FD] focus:ring-1 focus:ring-[#0568FD]"
+                  >
+                    <option value="all">All themes</option>
+                    {(() => {
+                      // Get unique themes applied to this block's highlights
+                      const blockHighlightIds = blockHighlights.map(h => h.id);
+                      const blockThemeNames = new Set();
+                      blockHighlightIds.forEach(hId => {
+                        const themes = HIGHLIGHT_THEME_MAPPING[hId] || [];
+                        themes.forEach(t => blockThemeNames.add(t));
+                      });
+                      return Array.from(blockThemeNames).map(themeName => (
+                        <option key={themeName} value={themeName}>{themeName}</option>
+                      ));
+                    })()}
+                  </select>
+                </Flex>
+              )}
+
               {blockHighlights.length > 0 ? (
-                blockHighlights.map((highlight) => {
-                  // Apply themes from mapping if thematic analysis has been done
-                  const appliedThemes = generatedThemes.length > 0 
-                    ? (HIGHLIGHT_THEME_MAPPING[highlight.id] || [])
-                    : highlight.themes;
-                  
-                  return (
-                    <HighlightCard
-                      key={highlight.id}
-                      insight={highlight.insight}
-                      transcript={highlight.transcript}
-                      themes={appliedThemes}
-                      isNew={isViewed ? false : highlight.isNew}
-                      participantId={highlight.participantId}
-                    />
-                  );
-                })
+                blockHighlights
+                  .filter((highlight) => {
+                    // Apply theme filter
+                    if (selectedThemeFilter === 'all') return true;
+                    const highlightThemes = HIGHLIGHT_THEME_MAPPING[highlight.id] || [];
+                    return highlightThemes.includes(selectedThemeFilter);
+                  })
+                  .map((highlight) => {
+                    // Apply themes from mapping if thematic analysis has been done
+                    const appliedThemes = generatedThemes.length > 0 
+                      ? (HIGHLIGHT_THEME_MAPPING[highlight.id] || [])
+                      : highlight.themes;
+                    
+                    return (
+                      <HighlightCard
+                        key={highlight.id}
+                        insight={highlight.insight}
+                        transcript={highlight.transcript}
+                        themes={appliedThemes}
+                        isNew={isViewed ? false : highlight.isNew}
+                        participantId={highlight.participantId}
+                      />
+                    );
+                  })
               ) : (
                 <Flex 
                   alignItems="center" 
