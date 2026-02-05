@@ -1196,35 +1196,44 @@ export function BlockResults({ block, isViewed = false, generatedThemes = [], on
         {/* Chart Placeholder */}
         <Box className="bg-[#f8f8fb] rounded-lg h-[200px] mb-8" />
 
-        {/* Themes Empty State - shown only for Open Question (input) block before analysis */}
-        {block.type === 'input' && !showThemesSection && (
+        {/* Sentiment Analysis Section - shown for Open Question (input) block */}
+        {block.type === 'input' && (
           <div className="mb-8">
-            <Flex alignItems="center" gap="SM" className="mb-4">
-              <Heading level={3}>Themes</Heading>
-              <button className="text-[#6C718C] hover:text-[#535a74]">
-                <Info size={16} />
-              </button>
-            </Flex>
-            <div className="rounded-lg p-8 bg-white shadow-[inset_0px_0px_0px_0.5px_rgba(108,113,140,0.28)]">
-              <Flex flexDirection="column" alignItems="center" justifyContent="center" gap="MD" className="text-center">
-                <div className="w-12 h-12 rounded-full bg-[#7C3AED]/10 flex items-center justify-center">
-                  <Sparkles size={24} className="text-[#7C3AED]" />
-                </div>
-                <div className="flex flex-col items-center">
-                  <Text className="font-medium text-neutral-900 mb-1 block">Discover recurring themes</Text>
-                  <Text color="default.main.secondary" className="text-sm block max-w-[320px]">
-                    Run thematic analysis to automatically identify patterns and recurring themes across your responses.
-                  </Text>
-                </div>
-                <ActionButton 
-                  emphasis="secondary" 
-                  size="SM" 
-                  icon={<Sparkles size={16} />}
-                  onClick={onNavigateToThemes}
-                >
-                  Start thematic analysis
-                </ActionButton>
+            <Flex alignItems="center" justifyContent="space-between" className="mb-4">
+              <Heading level={3}>Sentiment</Heading>
+              <Flex alignItems="center" gap="LG">
+                <Flex alignItems="center" gap="XS">
+                  <span className="text-base">😊</span>
+                  <Text color="default.main.secondary" className="text-sm">Positive</Text>
+                </Flex>
+                <Flex alignItems="center" gap="XS">
+                  <span className="text-base">😐</span>
+                  <Text color="default.main.secondary" className="text-sm">Neutral</Text>
+                </Flex>
+                <Flex alignItems="center" gap="XS">
+                  <span className="text-base">😞</span>
+                  <Text color="default.main.secondary" className="text-sm">Negative</Text>
+                </Flex>
               </Flex>
+            </Flex>
+            
+            {/* Sentiment Bar Chart */}
+            <div className="relative">
+              {/* Bar */}
+              <div className="flex h-3 rounded-full overflow-hidden">
+                <div className="bg-[#0D9488]" style={{ width: '68%' }} />
+                <div className="bg-[#B45309]" style={{ width: '20%' }} />
+                <div className="bg-[#BE4B65]" style={{ width: '12%' }} />
+              </div>
+              
+              {/* Scale markers */}
+              <div className="flex justify-between mt-2">
+                <Text color="default.main.secondary" className="text-xs">0%</Text>
+                <Text color="default.main.secondary" className="text-xs">25%</Text>
+                <Text color="default.main.secondary" className="text-xs">50%</Text>
+                <Text color="default.main.secondary" className="text-xs">75%</Text>
+                <Text color="default.main.secondary" className="text-xs">100%</Text>
+              </div>
             </div>
           </div>
         )}
