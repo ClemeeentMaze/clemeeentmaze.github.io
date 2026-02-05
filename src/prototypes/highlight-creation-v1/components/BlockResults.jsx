@@ -346,7 +346,7 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
   const cardRef = useRef(null);
   const popoverRef = useRef(null);
 
-  // Click outside to close popover
+  // Click outside and ESC key to close popover
   useEffect(() => {
     if (!showPopover) return;
     
@@ -356,14 +356,24 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
       }
     };
     
-    // Delay adding listener to avoid immediate close from the selection click
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        closePopover();
+      }
+    };
+    
+    // Delay adding click listener to avoid immediate close from the selection click
     const timeoutId = setTimeout(() => {
       document.addEventListener('mousedown', handleClickOutside);
     }, 100);
     
+    // Add ESC key listener immediately
+    document.addEventListener('keydown', handleKeyDown);
+    
     return () => {
       clearTimeout(timeoutId);
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [showPopover]);
 
