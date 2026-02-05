@@ -235,15 +235,17 @@ function MainContent() {
 
   /**
    * Handle GitHub Pages SPA redirect.
-   * When 404.html redirects to /?redirect=/path, navigate to the correct route.
+   * When 404.html redirects, the path is stored in sessionStorage.
+   * We navigate to the correct route after React Router mounts.
    */
   useEffect(() => {
-    const redirectPath = searchParams.get("redirect");
+    const redirectPath = sessionStorage.getItem('spa_redirect');
     if (redirectPath) {
-      // Remove the redirect param from URL and navigate to the intended path
-      navigate(decodeURIComponent(redirectPath), { replace: true });
+      sessionStorage.removeItem('spa_redirect');
+      // Navigate to the intended path
+      navigate(redirectPath, { replace: true });
     }
-  }, []);
+  }, [navigate]);
 
   /**
    * Determine if a prototype is currently selected by checking if

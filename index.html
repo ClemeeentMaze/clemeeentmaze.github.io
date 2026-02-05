@@ -7,19 +7,21 @@
     <title>AI Thematic Analysis</title>
     <script>
       // Handle GitHub Pages SPA redirect from 404.html
+      // Store the redirect path for React Router to use after mounting
       (function() {
         var redirect = sessionStorage.redirect;
         delete sessionStorage.redirect;
         if (redirect && redirect !== location.href) {
           history.replaceState(null, null, redirect);
         }
-        // Also handle ?redirect= query parameter
+        // Store redirect path for React to handle
         var params = new URLSearchParams(location.search);
         var redirectPath = params.get('redirect');
         if (redirectPath) {
-          history.replaceState(null, null, redirectPath);
-          // Remove the query param from URL
-          window.history.replaceState({}, document.title, redirectPath);
+          // Store in sessionStorage for React Router to pick up
+          sessionStorage.setItem('spa_redirect', decodeURIComponent(redirectPath));
+          // Update URL immediately so browser shows correct path
+          history.replaceState(null, null, decodeURIComponent(redirectPath));
         }
       })();
     </script>
