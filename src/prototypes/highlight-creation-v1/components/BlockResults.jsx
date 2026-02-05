@@ -33,11 +33,11 @@ const MOCK_RESPONSES_BY_TYPE = {
     { id: 5, clipDuration: '0:10', participantId: '483697739', responseValue: 'Laptop', respondedAt: '17 Dec 2025, 02:44 pm' },
   ],
   input: [
-    { id: 1, clipDuration: '0:45', participantId: '483697735', responseValue: 'I would add more tooltips to explain what each button does. Some icons are not intuitive.', respondedAt: '17 Dec 2025, 06:22 pm', isNew: true },
-    { id: 2, clipDuration: null, participantId: '483697736', responseValue: 'The search feature could be more prominent. I had trouble finding it at first.', respondedAt: '17 Dec 2025, 05:18 pm', isNew: true },
-    { id: 3, clipDuration: '1:02', participantId: '483697737', responseValue: 'Overall great experience! Would love to see keyboard shortcuts for power users.', respondedAt: '17 Dec 2025, 04:54 pm', isNew: true },
-    { id: 4, clipDuration: null, participantId: '483697738', responseValue: 'Dark mode would be a nice addition.', respondedAt: '17 Dec 2025, 03:47 pm' },
-    { id: 5, clipDuration: '0:52', participantId: '483697739', responseValue: 'The loading times could be faster when switching between sections.', respondedAt: '17 Dec 2025, 02:44 pm' },
+    { id: 1, clipDuration: '0:45', participantId: '483697735', responseValue: 'I would add more tooltips to explain what each button does. Some icons are not intuitive and I had to guess what they meant.', respondedAt: '17 Dec 2025, 06:22 pm', isNew: true, highlightedText: 'more tooltips to explain what each button does' },
+    { id: 2, clipDuration: null, participantId: '483697736', responseValue: 'The search feature could be more prominent. I had trouble finding it at first but once I did it worked great.', respondedAt: '17 Dec 2025, 05:18 pm', isNew: true },
+    { id: 3, clipDuration: '1:02', participantId: '483697737', responseValue: 'Overall great experience! Would love to see keyboard shortcuts for power users to speed up common actions.', respondedAt: '17 Dec 2025, 04:54 pm', isNew: true, highlightedText: 'keyboard shortcuts for power users' },
+    { id: 4, clipDuration: null, participantId: '483697738', responseValue: 'Dark mode would be a nice addition. My eyes get tired when using the app at night.', respondedAt: '17 Dec 2025, 03:47 pm' },
+    { id: 5, clipDuration: '0:52', participantId: '483697739', responseValue: 'The loading times could be faster when switching between sections. Sometimes it takes a few seconds which breaks my flow.', respondedAt: '17 Dec 2025, 02:44 pm' },
   ],
   simple_input: [
     { id: 1, clipDuration: '0:12', participantId: '483697735', responseValue: 'sarah.johnson@gmail.com', respondedAt: '17 Dec 2025, 06:22 pm', isNew: true },
@@ -145,19 +145,19 @@ const MOCK_HIGHLIGHTS_BY_BLOCK_TYPE = {
   input: [
     {
       id: 'h4',
-      insight: "Users consistently mention wanting better onboarding documentation and tooltips for complex features.",
-      transcript: "I think the main improvement would be having more tooltips or a guided tour when you first start. Some features are hidden and not obvious...",
+      insight: "User wants better visual cues for icon meanings, suggesting tooltips would improve discoverability.",
+      transcript: "more tooltips to explain what each button does",
       themes: [],
       isNew: true,
-      participantId: '483697738',
+      participantId: '483697735',
     },
     {
       id: 'h5',
-      insight: "Multiple participants expressed desire for keyboard shortcuts to speed up their workflow.",
-      transcript: "If there were keyboard shortcuts for the common actions, that would save me a lot of time. Right now I have to click through menus...",
+      insight: "Power users would benefit from keyboard shortcuts to speed up their workflow.",
+      transcript: "keyboard shortcuts for power users",
       themes: [],
       isNew: true,
-      participantId: '483697739',
+      participantId: '483697737',
     },
   ],
 };
@@ -356,10 +356,25 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
 
   const hasVideo = response.clipDuration !== null;
 
+  // Render text with highlighted portion if exists
+  const renderResponseText = () => {
+    const text = response.responseValue;
+    const highlightText = response.highlightedText;
+    
+    if (!highlightText) return text;
+    
+    const parts = text.split(new RegExp(`(${highlightText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'));
+    return parts.map((part, i) => 
+      part.toLowerCase() === highlightText.toLowerCase() 
+        ? <span key={i} className="bg-[#0568FD] text-white px-1 rounded">{part}</span>
+        : part
+    );
+  };
+
   return (
     <div 
       ref={cardRef}
-      className={`relative p-4 rounded-lg border ${hasHighlight ? 'border-[#7C3AED]/30 bg-[#FDFBFF]' : 'border-[rgba(108,113,140,0.28)] bg-white'} mb-3`}
+      className={`relative p-4 rounded-lg border ${hasHighlight ? 'border-[#7C3AED]/30 bg-[#FDFBFF]' : 'border-[rgba(108,113,140,0.28)] bg-white'}`}
     >
       {/* Header: Participant ID + timestamp + actions */}
       <Flex alignItems="center" justifyContent="space-between" className="mb-3">
@@ -382,13 +397,13 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
           </div>
         )}
         
-        {/* Transcript/Response text - selectable for open questions */}
+        {/* Transcript/Response text - selectable for open questions, with highlighted portions */}
         <div className="flex-1">
           <Text 
             className={`text-neutral-700 leading-relaxed ${isOpenQuestion ? 'cursor-text select-text' : ''}`}
             onMouseUp={handleMouseUp}
           >
-            {response.responseValue}
+            {renderResponseText()}
           </Text>
         </div>
       </Flex>
@@ -659,7 +674,7 @@ export function BlockResults({ block, isViewed = false, generatedThemes = [], on
             <>
               {/* Use stacked cards for Open Question / AI Conversation blocks */}
               {(block.type === 'input' || block.type === 'ai_conversation') ? (
-                <div className="space-y-0">
+                <div className="flex flex-col gap-3">
                   {blockResponses.map((response) => {
                     const participantsWithHighlights = getParticipantsWithHighlights(block.type);
                     return (
