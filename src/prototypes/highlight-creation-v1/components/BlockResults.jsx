@@ -444,30 +444,10 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
     });
   };
 
-  // Render selection with handles (diamond shapes)
-  const renderSelectionWithHandles = (text) => {
+  // Render active selection with blue background
+  const renderActiveSelection = (text) => {
     return (
-      <span className="relative inline">
-        <svg 
-          width="8" 
-          height="14" 
-          viewBox="0 0 8 14" 
-          className="inline-block align-middle -ml-1 mr-0.5"
-          style={{ verticalAlign: 'middle' }}
-        >
-          <path d="M4 0L8 7L4 14L0 7L4 0Z" fill="#0568FD"/>
-        </svg>
-        <span className="bg-[#0568FD] text-white px-0.5 rounded-sm">{text}</span>
-        <svg 
-          width="8" 
-          height="14" 
-          viewBox="0 0 8 14" 
-          className="inline-block align-middle ml-0.5 -mr-1"
-          style={{ verticalAlign: 'middle' }}
-        >
-          <path d="M4 0L8 7L4 14L0 7L4 0Z" fill="#0568FD"/>
-        </svg>
-      </span>
+      <span className="bg-[#0568FD] text-white px-0.5 rounded-sm">{text}</span>
     );
   };
 
@@ -503,7 +483,7 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
         const parts = paragraph.split(new RegExp(`(${activeSelection.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'g'));
         content = parts.map((part, i) => 
           part === activeSelection 
-            ? <span key={`sel-${i}`}>{renderSelectionWithHandles(part)}</span>
+            ? <span key={`sel-${i}`}>{renderActiveSelection(part)}</span>
             : renderWordsWithHover(part)
         );
       } else if (highlightText) {
