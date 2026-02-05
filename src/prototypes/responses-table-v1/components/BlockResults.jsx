@@ -264,8 +264,21 @@ function ResponseTab({ icon: IconComponent, label, count, newCount, isActive, on
 
 /**
  * Video thumbnail with play overlay and duration badge
+ * Shows empty state when no video is available
  */
 function VideoThumbnail({ duration }) {
+  // No video - show empty state
+  if (!duration) {
+    return (
+      <div className="relative w-[100px] h-[56px] rounded-lg overflow-hidden bg-neutral-100 border border-dashed border-neutral-300 flex items-center justify-center">
+        <div className="text-center">
+          <Play size={16} className="text-neutral-400 mx-auto" />
+          <span className="text-[10px] text-neutral-400 mt-0.5 block">No video</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-[100px] h-[56px] rounded-lg overflow-hidden bg-neutral-300">
       {/* Placeholder thumbnail */}
@@ -769,7 +782,8 @@ function ResponseRow({ clipDuration, participantId, responseValue, respondedAt, 
  * Uses table layout like other blocks but with text selection capability
  * Shows full transcript with "More..." expand for content over 6 lines
  */
-function TranscriptResponseRow({ response, hasHighlight = false, onNavigateToParticipant, generatedThemes = [] }) {
+function TranscriptResponseRow({ response, blockType = 'input', hasHighlight = false, onNavigateToParticipant, generatedThemes = [] }) {
+  const isAIConversation = blockType === 'ai_conversation';
   const [selectedText, setSelectedText] = useState('');
   const [showPopover, setShowPopover] = useState(false);
   const [popoverPosition, setPopoverPosition] = useState(null);
@@ -977,7 +991,9 @@ function TranscriptResponseRow({ response, hasHighlight = false, onNavigateToPar
       
       return (
         <p key={pIndex} className="mt-2 first:mt-0">
-          <span className="font-semibold text-neutral-600">Participant:</span>{' '}
+          {isAIConversation && (
+            <><span className="font-semibold text-neutral-600">Participant:</span>{' '}</>
+          )}
           {content}
         </p>
       );
@@ -1316,6 +1332,7 @@ export function BlockResults({ block, isViewed = false, generatedThemes = [], on
                     <TranscriptResponseRow
                       key={response.id}
                       response={response}
+                      blockType={block.type}
                       hasHighlight={participantsWithHighlights.has(response.participantId)}
                       onNavigateToParticipant={() => onNavigateToParticipant?.(response.participantId)}
                       generatedThemes={generatedThemes}
