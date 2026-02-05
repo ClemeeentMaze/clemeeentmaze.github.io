@@ -384,12 +384,15 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
     const text = selection?.toString().trim();
     
     if (text && text.length > 5) {
-      setSelectedText(text);
-      
       // Get selection position to place popover below the selected text
       const range = selection.getRangeAt(0);
       const rect = range.getBoundingClientRect();
       const cardRect = cardRef.current?.getBoundingClientRect();
+      
+      // Clear browser selection so our custom rendering takes over
+      selection.removeAllRanges();
+      
+      setSelectedText(text);
       
       if (cardRect) {
         // Position popover below the selection, relative to the card
@@ -441,10 +444,39 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
     });
   };
 
+  // Render selection with handles (diamond shapes)
+  const renderSelectionWithHandles = (text) => {
+    return (
+      <span className="relative inline">
+        <svg 
+          width="8" 
+          height="14" 
+          viewBox="0 0 8 14" 
+          className="inline-block align-middle -ml-1 mr-0.5"
+          style={{ verticalAlign: 'middle' }}
+        >
+          <path d="M4 0L8 7L4 14L0 7L4 0Z" fill="#0568FD"/>
+        </svg>
+        <span className="bg-[#0568FD] text-white px-0.5 rounded-sm">{text}</span>
+        <svg 
+          width="8" 
+          height="14" 
+          viewBox="0 0 8 14" 
+          className="inline-block align-middle ml-0.5 -mr-1"
+          style={{ verticalAlign: 'middle' }}
+        >
+          <path d="M4 0L8 7L4 14L0 7L4 0Z" fill="#0568FD"/>
+        </svg>
+      </span>
+    );
+  };
+
   // Render text with highlighted portion and conversation formatting
   const renderResponseText = () => {
     const text = response.responseValue;
     const highlightText = response.highlightedText;
+    // Currently selected text for new highlight creation
+    const activeSelection = selectedText && showPopover ? selectedText : null;
     
     // Split by double newlines to get paragraphs (conversation turns)
     const paragraphs = text.split('\n\n');
@@ -463,9 +495,19 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
         );
       }
       
-      // Regular participant text - apply highlighting if needed
+      // Regular participant text - apply highlighting
       let content;
-      if (highlightText) {
+      
+      // First, check for active selection (user is creating a new highlight)
+      if (activeSelection && paragraph.includes(activeSelection)) {
+        const parts = paragraph.split(new RegExp(`(${activeSelection.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'g'));
+        content = parts.map((part, i) => 
+          part === activeSelection 
+            ? <span key={`sel-${i}`}>{renderSelectionWithHandles(part)}</span>
+            : renderWordsWithHover(part)
+        );
+      } else if (highlightText) {
+        // Existing highlight from saved data
         const parts = paragraph.split(new RegExp(`(${highlightText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'));
         content = parts.map((part, i) => 
           part.toLowerCase() === highlightText.toLowerCase() 
