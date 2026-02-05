@@ -286,7 +286,7 @@ function HighlightPopover({ selectedText, clipDuration, onCreateHighlight, onClo
   return (
     <div 
       className="absolute z-50 bg-white rounded-xl shadow-lg border border-[rgba(108,113,140,0.16)] p-4 w-[420px]"
-      style={{ top: position?.top || 0, left: position?.left || 0 }}
+      style={{ top: position?.top ? `${position.top}px` : 0, left: position?.left ? `${position.left}px` : 0 }}
     >
       {/* Note input at top with blue border when focused */}
       <textarea
@@ -386,11 +386,18 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
     if (text && text.length > 5) {
       setSelectedText(text);
       
-      // Position popover below the card
-      setPopoverPosition({
-        top: 'calc(100% + 8px)',
-        left: 0,
-      });
+      // Get selection position to place popover below the selected text
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+      const cardRect = cardRef.current?.getBoundingClientRect();
+      
+      if (cardRect) {
+        // Position popover below the selection, relative to the card
+        setPopoverPosition({
+          top: rect.bottom - cardRect.top + 8,
+          left: rect.left - cardRect.left,
+        });
+      }
       setShowPopover(true);
     }
   };
@@ -492,21 +499,6 @@ function ResponseCard({ response, blockType, hasHighlight = false, isOpenQuestio
           >
             {renderResponseText()}
           </div>
-          
-          {/* Selection handles indicator */}
-          {selectedText && showPopover && (
-            <div className="flex items-center gap-1 mt-2">
-              <svg width="8" height="12" viewBox="0 0 8 12" className="text-[#0568FD]">
-                <path d="M4 0L8 6L4 12L0 6L4 0Z" fill="currentColor"/>
-              </svg>
-              <span className="bg-[#0568FD] text-white px-2 py-0.5 rounded text-sm">
-                {selectedText.length > 50 ? selectedText.substring(0, 50) + '...' : selectedText}
-              </span>
-              <svg width="8" height="12" viewBox="0 0 8 12" className="text-[#0568FD]">
-                <path d="M4 0L8 6L4 12L0 6L4 0Z" fill="currentColor"/>
-              </svg>
-            </div>
-          )}
           
           {/* Metadata: Participant link + timestamp + highlight icon + actions */}
           <Flex alignItems="center" justifyContent="space-between">
