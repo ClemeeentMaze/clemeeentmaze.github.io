@@ -1480,34 +1480,23 @@ function TranscriptResponseRow({ response, blockType = 'input', hasHighlight = f
               {response.responseValue}
             </div>
           ) : (
-            // Preview with truncation for conversation types
-            <>
-              <div 
-                ref={textRef}
-                className="text-neutral-900 leading-relaxed overflow-hidden"
-                style={{ 
-                  maxHeight: '72px', // 3 lines at 24px
-                  ...(needsExpand ? {
-                    maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
-                    WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)'
-                  } : {})
-                }}
-              >
-                <p>
-                  {(isAIConversation || response.responseValue.includes('**Participant:**')) && (
-                    <><span className="font-semibold text-neutral-600">Participant:</span>{' '}</>
-                  )}
-                  {getPreviewText()}
-                </p>
-              </div>
-              
-              {/* More link */}
-              {needsExpand && (
-                <button className="text-[#0568FD] text-sm font-medium mt-1 underline cursor-pointer">
-                  More
-                </button>
-              )}
-            </>
+            // Preview with truncation for conversation types (3 lines max)
+            <div 
+              ref={textRef}
+              className="text-neutral-900 leading-relaxed overflow-hidden"
+              style={{ 
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
+              }}
+            >
+              <p>
+                {(isAIConversation || response.responseValue.includes('**Participant:**')) && (
+                  <><span className="font-semibold text-neutral-600">Participant:</span>{' '}</>
+                )}
+                {getPreviewText()}
+              </p>
+            </div>
           )}
         </div>
         <div className="w-[180px] px-4 pt-1">
