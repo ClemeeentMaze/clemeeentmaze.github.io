@@ -1527,11 +1527,11 @@ function TranscriptResponseRow({ response, blockType = 'input', hasHighlight = f
                 </p>
               </div>
               
-              {/* Click anywhere hint */}
+              {/* More link */}
               {needsExpand && (
-                <Text color="default.main.secondary" className="text-xs mt-1">
-                  Click to view full transcript
-                </Text>
+                <button className="text-[#0568FD] text-sm font-medium mt-1 underline cursor-pointer">
+                  More
+                </button>
               )}
             </>
           )}
