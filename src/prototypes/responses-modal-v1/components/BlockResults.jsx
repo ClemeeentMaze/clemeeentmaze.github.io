@@ -810,6 +810,7 @@ function TranscriptModal({
   const [showPopover, setShowPopover] = useState(false);
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
   const [isViewingExistingHighlight, setIsViewingExistingHighlight] = useState(false);
+  const [modalTab, setModalTab] = useState('transcript');
   const modalRef = useRef(null);
   const popoverRef = useRef(null);
   const transcriptRef = useRef(null);
@@ -1050,8 +1051,6 @@ function TranscriptModal({
   const getHighlightData = () => {
     return findMatchingHighlight(response.highlightedText);
   };
-
-  const [modalTab, setModalTab] = useState('transcript');
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-[38px]">
