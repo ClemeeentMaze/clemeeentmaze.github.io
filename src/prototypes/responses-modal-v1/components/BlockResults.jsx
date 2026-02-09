@@ -806,7 +806,6 @@ function TranscriptModal({
   generatedThemes = [],
   highlights = []
 }) {
-  const [activeTab, setActiveTab] = useState('responses');
   const [selectedText, setSelectedText] = useState('');
   const [showPopover, setShowPopover] = useState(false);
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
@@ -872,8 +871,6 @@ function TranscriptModal({
 
   const blockTypeInfo = BLOCK_TYPES[block?.type] || {};
   const isAIConversation = blockType === 'ai_conversation';
-  const responseHighlights = highlights.filter(h => h.participantId === response.participantId);
-  const highlightCount = responseHighlights.length;
 
   const closePopover = () => {
     setShowPopover(false);
@@ -1097,35 +1094,12 @@ function TranscriptModal({
 
           {/* Right: Transcript and Details */}
           <div className="flex-1 flex flex-col min-h-0">
-            {/* Tabs */}
+            {/* Header - All Responses */}
             <div className="flex items-center gap-4 px-6 border-b border-[rgba(108,113,140,0.12)]">
-              <button
-                onClick={() => setActiveTab('responses')}
-                className={`flex items-center gap-2 py-3 border-b-2 transition-colors cursor-pointer ${
-                  activeTab === 'responses'
-                    ? 'text-[#0568FD] border-[#0568FD]'
-                    : 'text-[#6C718C] border-transparent hover:text-neutral-700'
-                }`}
-              >
+              <div className="flex items-center gap-2 py-3 border-b-2 border-[#0568FD] text-[#0568FD]">
                 <Table2 size={16} />
                 <span className="font-medium">All Responses</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('highlights')}
-                className={`flex items-center gap-2 py-3 border-b-2 transition-colors cursor-pointer ${
-                  activeTab === 'highlights'
-                    ? 'text-[#0568FD] border-[#0568FD]'
-                    : 'text-[#6C718C] border-transparent hover:text-neutral-700'
-                }`}
-              >
-                <Highlighter size={16} />
-                <span className="font-medium">Highlights</span>
-                <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${
-                  activeTab === 'highlights' ? 'bg-[#E8F4FF] text-[#0568FD]' : 'bg-neutral-100 text-[#6C718C]'
-                }`}>
-                  {highlightCount}
-                </span>
-              </button>
+              </div>
             </div>
 
             {/* Participant Navigation */}
@@ -1170,68 +1144,44 @@ function TranscriptModal({
 
             {/* Content Area */}
             <div className="flex-1 overflow-y-auto p-6 relative" ref={transcriptRef}>
-              {activeTab === 'responses' ? (
-                <>
-                  {/* Response Value (for non-conversational) */}
-                  {!isAIConversation && blockType !== 'input' && (
-                    <div className="mb-4 px-3 py-2 bg-neutral-50 rounded-lg">
-                      <Text className="text-neutral-600">• {response.responseValue?.split('\n')[0]}</Text>
-                    </div>
-                  )}
+              {/* Response Value (for non-conversational) */}
+              {!isAIConversation && blockType !== 'input' && (
+                <div className="mb-4 px-3 py-2 bg-neutral-50 rounded-lg">
+                  <Text className="text-neutral-600">• {response.responseValue?.split('\n')[0]}</Text>
+                </div>
+              )}
 
-                  {/* Transcript */}
-                  <div>
-                    <Text className="font-medium text-neutral-900 mb-1">Transcript</Text>
-                    <Text color="default.main.secondary" className="text-sm mb-3">{response.clipDuration || '0:00'}</Text>
-                    <div 
-                      className="text-neutral-700 leading-relaxed cursor-text"
-                      onMouseUp={handleMouseUp}
-                    >
-                      {renderTranscript()}
-                    </div>
-                  </div>
+              {/* Transcript */}
+              <div>
+                <Text className="font-medium text-neutral-900 mb-1">Transcript</Text>
+                <Text color="default.main.secondary" className="text-sm mb-3">{response.clipDuration || '0:00'}</Text>
+                <div 
+                  className="text-neutral-700 leading-relaxed cursor-text"
+                  onMouseUp={handleMouseUp}
+                >
+                  {renderTranscript()}
+                </div>
+              </div>
 
-                  {/* Popover */}
-                  {showPopover && (
-                    <div ref={popoverRef} style={{ position: 'absolute', top: popoverPosition.top, left: popoverPosition.left, zIndex: 10 }}>
-                      {isViewingExistingHighlight ? (
-                        <HighlightViewPopover
-                          highlight={getHighlightData()}
-                          clipDuration={response.clipDuration}
-                          themes={generatedThemes.length > 0 ? HIGHLIGHT_THEME_MAPPING[getHighlightData()?.id] : []}
-                          position={{ top: 0, left: 0 }}
-                          onClose={closePopover}
-                        />
-                      ) : (
-                        <HighlightPopover
-                          selectedText={selectedText}
-                          clipDuration={response.clipDuration}
-                          onCreateHighlight={handleCreateHighlight}
-                          onClose={closePopover}
-                          position={{ top: 0, left: 0 }}
-                        />
-                      )}
-                    </div>
-                  )}
-                </>
-              ) : (
-                // Highlights tab content
-                <div>
-                  {responseHighlights.length > 0 ? (
-                    <div className="space-y-4">
-                      {responseHighlights.map(highlight => (
-                        <HighlightCard
-                          key={highlight.id}
-                          highlight={highlight}
-                          themes={generatedThemes.length > 0 ? HIGHLIGHT_THEME_MAPPING[highlight.id] : []}
-                        />
-                      ))}
-                    </div>
+              {/* Popover */}
+              {showPopover && (
+                <div ref={popoverRef} style={{ position: 'absolute', top: popoverPosition.top, left: popoverPosition.left, zIndex: 10 }}>
+                  {isViewingExistingHighlight ? (
+                    <HighlightViewPopover
+                      highlight={getHighlightData()}
+                      clipDuration={response.clipDuration}
+                      themes={generatedThemes.length > 0 ? HIGHLIGHT_THEME_MAPPING[getHighlightData()?.id] : []}
+                      position={{ top: 0, left: 0 }}
+                      onClose={closePopover}
+                    />
                   ) : (
-                    <div className="text-center py-12">
-                      <Highlighter size={32} className="text-neutral-300 mx-auto mb-3" />
-                      <Text color="default.main.secondary">No highlights for this participant</Text>
-                    </div>
+                    <HighlightPopover
+                      selectedText={selectedText}
+                      clipDuration={response.clipDuration}
+                      onCreateHighlight={handleCreateHighlight}
+                      onClose={closePopover}
+                      position={{ top: 0, left: 0 }}
+                    />
                   )}
                 </div>
               )}
