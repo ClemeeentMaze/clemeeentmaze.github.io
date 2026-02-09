@@ -21,9 +21,9 @@ import { BLOCK_TYPES } from '../data';
 export function BlockListItem({ block, isSelected, onSelect, newHighlightCount = 0 }) {
   const blockType = BLOCK_TYPES[block.type] || {};
   
-  // Badge configuration for new highlights indicator
+  // Badge configuration for new highlights indicator (purple/featured color)
   const badgeConfig = newHighlightCount > 0 ? {
-    sentiment: 'awake',
+    sentiment: 'featured',
     label: String(newHighlightCount),
     borderColor: 'default.main.background'
   } : undefined;
