@@ -1055,150 +1055,157 @@ function TranscriptModal({
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
       <div 
         ref={modalRef}
-        className="bg-white rounded-xl shadow-2xl w-[900px] max-h-[85vh] flex flex-col overflow-hidden"
+        className="bg-white rounded-xl overflow-hidden flex flex-row w-[960px] max-h-[85vh]"
+        style={{ boxShadow: '0px 4px 48px rgba(108, 113, 140, 0.24)' }}
       >
-        {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[rgba(108,113,140,0.12)]">
-          <Flex alignItems="center" gap="MD">
-            <IconFigure 
-              name={blockTypeInfo.iconName || 'question'} 
-              color={blockTypeInfo.arianeColor || 'neutral'} 
-              size="MD" 
-              mode="dark"
-              shape="squared"
-            />
-            <Text className="font-medium text-neutral-900">{block?.title || 'Response'}</Text>
-          </Flex>
-          <button 
-            onClick={onClose}
-            className="p-2 hover:bg-neutral-100 rounded-lg cursor-pointer transition-colors"
-          >
-            <X size={20} className="text-[#6C718C]" />
-          </button>
-        </div>
-
-        {/* Modal Content */}
-        <div className="flex flex-1 min-h-0">
-          {/* Left: Video Player Placeholder */}
-          <div className="w-[400px] bg-neutral-900 flex-shrink-0 flex items-center justify-center">
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-full bg-neutral-800 flex items-center justify-center mx-auto mb-3">
-                <Play size={28} className="text-neutral-500 ml-1" />
+        {/* Left: Video Player Placeholder with gradient background */}
+        <div 
+          className="w-[440px] flex-shrink-0 flex flex-col"
+          style={{ 
+            background: 'linear-gradient(180deg, #E8F4FF 0%, #F0F7FF 50%, #FAFBFC 100%)'
+          }}
+        >
+          {/* Video placeholder */}
+          <div className="flex-1 flex items-center justify-center p-8">
+            <div 
+              className="w-full aspect-video rounded-lg bg-neutral-900 flex items-center justify-center"
+              style={{ boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.12)' }}
+            >
+              <div className="text-center">
+                <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-2 backdrop-blur-sm">
+                  <Play size={24} className="text-white ml-0.5" />
+                </div>
+                {response.clipDuration && (
+                  <Text className="text-white/70 text-sm">{response.clipDuration}</Text>
+                )}
               </div>
-              <Text className="text-neutral-500 text-sm">Video recording</Text>
-              {response.clipDuration && (
-                <Text className="text-neutral-600 text-xs mt-1">{response.clipDuration}</Text>
-              )}
             </div>
           </div>
+        </div>
 
-          {/* Right: Transcript and Details */}
-          <div className="flex-1 flex flex-col min-h-0">
-            {/* Header - All Responses */}
-            <div className="flex items-center gap-4 px-6 border-b border-[rgba(108,113,140,0.12)]">
-              <div className="flex items-center gap-2 py-3 border-b-2 border-[#0568FD] text-[#0568FD]">
-                <Table2 size={16} />
-                <span className="font-medium">All Responses</span>
+        {/* Right: Content Panel */}
+        <div className="flex-1 flex flex-col min-h-0 bg-white">
+          {/* Header with close button */}
+          <div className="flex items-center justify-between px-6 py-4 border-b border-[rgba(108,113,140,0.12)]">
+            <Flex alignItems="center" gap="MD">
+              <IconFigure 
+                name={blockTypeInfo.iconName || 'question'} 
+                color={blockTypeInfo.arianeColor || 'neutral'} 
+                size="MD" 
+                mode="dark"
+                shape="squared"
+              />
+              <Text className="font-medium text-neutral-900">{block?.title || 'Response'}</Text>
+            </Flex>
+            <button 
+              onClick={onClose}
+              className="p-2 hover:bg-neutral-100 rounded-lg cursor-pointer transition-colors"
+            >
+              <X size={20} className="text-[#6C718C]" />
+            </button>
+          </div>
+
+          {/* Participant Navigation Bar */}
+          <div className="flex items-center justify-between px-6 py-3 bg-[#FAFBFC] border-b border-[rgba(108,113,140,0.08)]">
+            <Flex alignItems="center" gap="SM">
+              {/* Participant avatar with color */}
+              <div className="w-10 h-10 rounded-full bg-[#0568FD] flex items-center justify-center text-white font-medium text-sm">
+                P{response.participantId?.slice(-2)}
               </div>
-            </div>
-
-            {/* Participant Navigation */}
-            <div className="flex items-center justify-between px-6 py-3 border-b border-[rgba(108,113,140,0.12)]">
-              <Flex alignItems="center" gap="SM">
-                <div className="w-8 h-8 rounded-full bg-[#E8F4FF] flex items-center justify-center">
-                  <MessageCircle size={16} className="text-[#0568FD]" />
-                </div>
-                <div>
+              <div>
+                <Flex alignItems="center" gap="XS">
                   <Text className="font-medium text-neutral-900">Participant {response.participantId}</Text>
                   {response.highlightedText && (
-                    <Flex alignItems="center" gap="XS" className="mt-0.5">
-                      <Highlighter size={12} className="text-[#7C3AED]" />
-                    </Flex>
+                    <Highlighter size={14} className="text-[#7C3AED]" />
                   )}
-                </div>
-              </Flex>
-              <Flex alignItems="center" gap="SM">
-                <button
-                  onClick={() => onNavigate(currentIndex - 1)}
-                  disabled={currentIndex <= 0}
-                  className={`p-1.5 rounded border border-[rgba(108,113,140,0.28)] ${
-                    currentIndex <= 0 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-neutral-50 cursor-pointer'
-                  }`}
-                >
-                  <ChevronLeft size={16} className="text-[#6C718C]" />
-                </button>
-                <button
-                  onClick={() => onNavigate(currentIndex + 1)}
-                  disabled={currentIndex >= responses.length - 1}
-                  className={`p-1.5 rounded border border-[rgba(108,113,140,0.28)] ${
-                    currentIndex >= responses.length - 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-neutral-50 cursor-pointer'
-                  }`}
-                >
-                  <ChevronRight size={16} className="text-[#6C718C]" />
-                </button>
-                <button className="px-3 py-1.5 text-sm font-medium text-[#0568FD] hover:bg-[#E8F4FF] rounded cursor-pointer transition-colors">
-                  View session
-                </button>
-              </Flex>
-            </div>
-
-            {/* Content Area */}
-            <div className="flex-1 overflow-y-auto p-6 relative" ref={transcriptRef}>
-              {/* Response Value (for non-conversational) */}
-              {!isAIConversation && blockType !== 'input' && (
-                <div className="mb-4 px-3 py-2 bg-neutral-50 rounded-lg">
-                  <Text className="text-neutral-600">• {response.responseValue?.split('\n')[0]}</Text>
-                </div>
-              )}
-
-              {/* Transcript */}
-              <div>
-                <Text className="font-medium text-neutral-900 mb-1">Transcript</Text>
-                <Text color="default.main.secondary" className="text-sm mb-3">{response.clipDuration || '0:00'}</Text>
-                <div 
-                  className="text-neutral-700 leading-relaxed cursor-text"
-                  onMouseUp={handleMouseUp}
-                >
-                  {renderTranscript()}
-                </div>
-              </div>
-
-              {/* Popover */}
-              {showPopover && (
-                <div ref={popoverRef} style={{ position: 'absolute', top: popoverPosition.top, left: popoverPosition.left, zIndex: 10 }}>
-                  {isViewingExistingHighlight ? (
-                    <HighlightViewPopover
-                      highlight={getHighlightData()}
-                      clipDuration={response.clipDuration}
-                      themes={generatedThemes.length > 0 ? HIGHLIGHT_THEME_MAPPING[getHighlightData()?.id] : []}
-                      position={{ top: 0, left: 0 }}
-                      onClose={closePopover}
-                    />
-                  ) : (
-                    <HighlightPopover
-                      selectedText={selectedText}
-                      clipDuration={response.clipDuration}
-                      onCreateHighlight={handleCreateHighlight}
-                      onClose={closePopover}
-                      position={{ top: 0, left: 0 }}
-                    />
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Footer Actions */}
-            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[rgba(108,113,140,0.12)]">
-              <ActionButton emphasis="secondary" size="SM" icon={<Icon name="share" />}>
-                Share
-              </ActionButton>
-              <CTAButton emphasis="secondary" size="SM">
-                <Flex alignItems="center" gap="XS">
-                  <Pencil size={14} />
-                  <span>Highlight</span>
                 </Flex>
-              </CTAButton>
+                <Text color="default.main.secondary" className="text-xs">{response.respondedAt}</Text>
+              </div>
+            </Flex>
+            <Flex alignItems="center" gap="SM">
+              <Flex alignItems="center" gap="XS" className="mr-2">
+                <Text color="default.main.secondary" className="text-sm">{currentIndex + 1} / {responses.length}</Text>
+              </Flex>
+              <button
+                onClick={() => onNavigate(currentIndex - 1)}
+                disabled={currentIndex <= 0}
+                className={`p-1.5 rounded-lg border border-[rgba(108,113,140,0.28)] ${
+                  currentIndex <= 0 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-white hover:border-[#0568FD] cursor-pointer'
+                } transition-colors`}
+              >
+                <ChevronLeft size={18} className="text-[#6C718C]" />
+              </button>
+              <button
+                onClick={() => onNavigate(currentIndex + 1)}
+                disabled={currentIndex >= responses.length - 1}
+                className={`p-1.5 rounded-lg border border-[rgba(108,113,140,0.28)] ${
+                  currentIndex >= responses.length - 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-white hover:border-[#0568FD] cursor-pointer'
+                } transition-colors`}
+              >
+                <ChevronRight size={18} className="text-[#6C718C]" />
+              </button>
+              <button className="ml-2 px-3 py-1.5 text-sm font-medium text-[#0568FD] hover:bg-[#E8F4FF] rounded-lg cursor-pointer transition-colors">
+                View session
+              </button>
+            </Flex>
+          </div>
+
+          {/* Transcript Content - Quote Style */}
+          <div className="flex-1 overflow-y-auto p-6 relative" ref={transcriptRef}>
+            {/* Transcript in quote-style container */}
+            <div 
+              className="rounded-lg p-4"
+              style={{ backgroundColor: '#F8F8FB' }}
+            >
+              <Flex alignItems="center" gap="XS" className="mb-3">
+                <Text className="font-medium text-neutral-900">Transcript</Text>
+                {response.clipDuration && (
+                  <Text color="default.main.secondary" className="text-sm">• {response.clipDuration}</Text>
+                )}
+              </Flex>
+              <div 
+                className="text-neutral-700 leading-relaxed cursor-text"
+                onMouseUp={handleMouseUp}
+              >
+                {renderTranscript()}
+              </div>
             </div>
+
+            {/* Popover */}
+            {showPopover && (
+              <div ref={popoverRef} style={{ position: 'absolute', top: popoverPosition.top, left: popoverPosition.left, zIndex: 10 }}>
+                {isViewingExistingHighlight ? (
+                  <HighlightViewPopover
+                    highlight={getHighlightData()}
+                    clipDuration={response.clipDuration}
+                    themes={generatedThemes.length > 0 ? HIGHLIGHT_THEME_MAPPING[getHighlightData()?.id] : []}
+                    position={{ top: 0, left: 0 }}
+                    onClose={closePopover}
+                  />
+                ) : (
+                  <HighlightPopover
+                    selectedText={selectedText}
+                    clipDuration={response.clipDuration}
+                    onCreateHighlight={handleCreateHighlight}
+                    onClose={closePopover}
+                    position={{ top: 0, left: 0 }}
+                  />
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Footer Actions */}
+          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[rgba(108,113,140,0.12)]">
+            <ActionButton emphasis="tertiary" size="SM" icon={<Icon name="share" />}>
+              Share
+            </ActionButton>
+            <CTAButton emphasis="secondary" size="SM">
+              <Flex alignItems="center" gap="XS">
+                <Pencil size={14} />
+                <span>Highlight</span>
+              </Flex>
+            </CTAButton>
           </div>
         </div>
       </div>
