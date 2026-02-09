@@ -1258,10 +1258,15 @@ function TranscriptModal({
 
 /**
  * Transcript Response Row - Table row with preview text for Open Question/AI Conversation
- * Shows 2-3 lines preview with "More..." button that opens modal
+ * - Simple Open Question (no follow-up): shows full content, no modal
+ * - Open Question with follow-up / AI Conversation: shows preview, row click opens modal
  */
 function TranscriptResponseRow({ response, blockType = 'input', hasHighlight = false, onNavigateToParticipant, generatedThemes = [], block, allResponses = [], highlights = [] }) {
   const isAIConversation = blockType === 'ai_conversation';
+  // Check if this is a simple Open Question (no follow-up conversation)
+  const isSimpleOpenQuestion = blockType === 'input' && !response.responseValue.includes('**Follow-up:**') && !response.responseValue.includes('**Participant:**');
+  const shouldOpenModal = !isSimpleOpenQuestion; // Modal for AI conversation and Open Question with follow-up
+  
   const [showModal, setShowModal] = useState(false);
   const [selectedText, setSelectedText] = useState('');
   const [showPopover, setShowPopover] = useState(false);
@@ -1275,15 +1280,15 @@ function TranscriptResponseRow({ response, blockType = 'input', hasHighlight = f
   // Current response index for modal navigation
   const currentIndex = allResponses.findIndex(r => r.id === response.id);
 
-  // Check if content exceeds 2-3 lines (approximately 72px at 24px line height)
+  // Check if content exceeds the line limit
   useEffect(() => {
     if (textRef.current) {
       const lineHeight = 24;
-      const maxLines = 3;
+      const maxLines = isSimpleOpenQuestion ? 999 : 3; // No limit for simple open question
       const maxHeight = lineHeight * maxLines;
       setNeedsExpand(textRef.current.scrollHeight > maxHeight);
     }
-  }, [response.responseValue]);
+  }, [response.responseValue, isSimpleOpenQuestion]);
 
   const handleNavigateInModal = (newIndex) => {
     if (newIndex >= 0 && newIndex < allResponses.length) {
@@ -1459,11 +1464,21 @@ function TranscriptResponseRow({ response, blockType = 'input', hasHighlight = f
     }
   };
 
+  // Handle row click - open modal for conversation types
+  const handleRowClick = (e) => {
+    // Don't open modal if clicking on interactive elements
+    if (e.target.closest('button') || e.target.closest('a')) return;
+    if (shouldOpenModal) {
+      handleOpenModal();
+    }
+  };
+
   return (
     <>
       <div 
         ref={rowRef}
-        className="flex items-start py-4 border-b border-[rgba(108,113,140,0.12)] hover:bg-neutral-50 relative"
+        className={`flex items-start py-4 border-b border-[rgba(108,113,140,0.12)] hover:bg-neutral-50 relative ${shouldOpenModal ? 'cursor-pointer' : ''}`}
+        onClick={handleRowClick}
       >
         <div className="w-[140px] px-4 relative pt-1">
           <VideoThumbnail duration={response.clipDuration} />
@@ -1472,7 +1487,10 @@ function TranscriptResponseRow({ response, blockType = 'input', hasHighlight = f
           <Flex alignItems="center" gap="XS">
             <button 
               className="text-[#0568FD] font-medium hover:underline cursor-pointer"
-              onClick={onNavigateToParticipant}
+              onClick={(e) => {
+                e.stopPropagation();
+                onNavigateToParticipant();
+              }}
             >
               {response.participantId}
             </button>
@@ -1482,32 +1500,40 @@ function TranscriptResponseRow({ response, blockType = 'input', hasHighlight = f
           </Flex>
         </div>
         <div className="flex-1 px-4">
-          {/* Preview text with truncation */}
-          <div 
-            ref={textRef}
-            className="text-neutral-900 leading-relaxed overflow-hidden"
-            style={{ 
-              maxHeight: '72px', // 3 lines at 24px
-              ...(needsExpand ? {
-                maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
-                WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)'
-              } : {})
-            }}
-          >
-            <p>
-              {isAIConversation && <><span className="font-semibold text-neutral-600">Participant:</span>{' '}</>}
-              {getPreviewText()}
-            </p>
-          </div>
-          
-          {/* More button - opens modal */}
-          {needsExpand && (
-            <button
-              onClick={handleOpenModal}
-              className="text-[#0568FD] text-sm font-medium mt-1 hover:underline cursor-pointer"
-            >
-              More...
-            </button>
+          {isSimpleOpenQuestion ? (
+            // Full content for simple Open Question
+            <div className="text-neutral-900 leading-relaxed">
+              {response.responseValue}
+            </div>
+          ) : (
+            // Preview with truncation for conversation types
+            <>
+              <div 
+                ref={textRef}
+                className="text-neutral-900 leading-relaxed overflow-hidden"
+                style={{ 
+                  maxHeight: '72px', // 3 lines at 24px
+                  ...(needsExpand ? {
+                    maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+                    WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)'
+                  } : {})
+                }}
+              >
+                <p>
+                  {(isAIConversation || response.responseValue.includes('**Participant:**')) && (
+                    <><span className="font-semibold text-neutral-600">Participant:</span>{' '}</>
+                  )}
+                  {getPreviewText()}
+                </p>
+              </div>
+              
+              {/* Click anywhere hint */}
+              {needsExpand && (
+                <Text color="default.main.secondary" className="text-xs mt-1">
+                  Click to view full transcript
+                </Text>
+              )}
+            </>
           )}
         </div>
         <div className="w-[180px] px-4 pt-1">
@@ -1518,19 +1544,21 @@ function TranscriptResponseRow({ response, blockType = 'input', hasHighlight = f
         </div>
       </div>
 
-      {/* Transcript Modal */}
-      <TranscriptModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        block={block}
-        response={allResponses[modalResponseIndex] || response}
-        responses={allResponses}
-        currentIndex={modalResponseIndex}
-        onNavigate={handleModalNavigate}
-        blockType={blockType}
-        generatedThemes={generatedThemes}
-        highlights={highlights}
-      />
+      {/* Transcript Modal - only for conversation types */}
+      {shouldOpenModal && (
+        <TranscriptModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          block={block}
+          response={allResponses[modalResponseIndex] || response}
+          responses={allResponses}
+          currentIndex={modalResponseIndex}
+          onNavigate={handleModalNavigate}
+          blockType={blockType}
+          generatedThemes={generatedThemes}
+          highlights={highlights}
+        />
+      )}
     </>
   );
 }
