@@ -7,7 +7,6 @@
  * Based on: Figma design "beta-builder-bar" component
  */
 import { Flex, Box, Text, IconFigure } from '@framework/components/ariane';
-import { Sparkles } from 'lucide-react';
 import { BLOCK_TYPES } from '../data';
 
 /**
@@ -22,6 +21,13 @@ import { BLOCK_TYPES } from '../data';
 export function BlockListItem({ block, isSelected, onSelect, newHighlightCount = 0 }) {
   const blockType = BLOCK_TYPES[block.type] || {};
   
+  // Badge configuration for new highlights indicator
+  const badgeConfig = newHighlightCount > 0 ? {
+    sentiment: 'awake',
+    label: String(newHighlightCount),
+    borderColor: 'default.main.background'
+  } : undefined;
+  
   return (
     <Box
       onClick={() => onSelect(block.id)}
@@ -35,22 +41,15 @@ export function BlockListItem({ block, isSelected, onSelect, newHighlightCount =
         hover:shadow-[0px_2px_4px_rgba(108,113,140,0.12),inset_0px_0px_0px_0.5px_rgba(108,113,140,0.4)]
       `}
     >
-      {/* New highlights badge - lighter purple color with sparkle icon */}
-      {newHighlightCount > 0 && (
-        <div className="absolute -top-1.5 -right-1.5 px-1.5 py-0.5 bg-[#F9F7FF] text-[#6B5BEE] text-[10px] font-semibold rounded-full whitespace-nowrap flex items-center gap-1">
-          <Sparkles size={10} />
-          New highlights
-        </div>
-      )}
-      
       <Flex gap="SM" alignItems="center">
-        {/* Block Icon - 40x40px squared figure with icon */}
+        {/* Block Icon - 40x40px squared figure with icon and optional badge */}
         <IconFigure 
           name={blockType.iconName || 'block'}
           color={blockType.arianeColor || 'primary'}
           mode="dark"
           size="MDPlus"
           shape="squared"
+          badge={badgeConfig}
         />
         
         {/* Block Content */}
