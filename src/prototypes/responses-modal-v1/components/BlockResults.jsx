@@ -8,7 +8,7 @@
  * - AI-generated highlights with new indicators
  */
 import { useState, useRef, useEffect } from 'react';
-import { Flex, Box, Text, Heading, IconFigure, ScrollContainer, ActionButton, CTAButton, Icon, Select, SelectTrigger, SelectContent, SelectItem, SelectValue, SegmentControl } from '@framework/components/ariane';
+import { Flex, Box, Text, Heading, IconFigure, ScrollContainer, ActionButton, CTAButton, Icon, Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@framework/components/ariane';
 import { MoreHorizontal, Filter, Play, ChevronLeft, ChevronRight, Table2, Highlighter, Tag, Info, Plus, Sparkles, Pencil, X, MessageCircle } from 'lucide-react';
 import { BLOCK_TYPES } from '../data';
 import { HighlightCard } from './HighlightCard';
@@ -1052,12 +1052,6 @@ function TranscriptModal({
     return findMatchingHighlight(response.highlightedText);
   };
 
-  // Tab options for SegmentControl
-  const tabOptions = [
-    { id: 'transcript', label: 'All Responses' },
-    { id: 'highlights', label: 'Highlights 0' },
-  ];
-
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-[38px]">
       <div 
@@ -1142,14 +1136,47 @@ function TranscriptModal({
 
           {/* Right: Content Panel - 40% width */}
           <div className="flex-1 flex flex-col min-h-0 bg-white border-l border-[rgba(108,113,140,0.12)]">
-            {/* Tabs using SegmentControl - AT THE TOP */}
-            <div className="px-4 py-3 border-b border-[rgba(108,113,140,0.12)]">
-              <SegmentControl
-                options={tabOptions}
-                selected={modalTab}
-                onChange={(id) => setModalTab(id)}
-                size="SM"
-              />
+            {/* Tabs - underline style matching responses table */}
+            <div className="flex border-b border-[rgba(108,113,140,0.12)]">
+              <button
+                onClick={() => setModalTab('transcript')}
+                className={`
+                  flex items-center gap-2 px-4 py-3
+                  font-['Inter'] text-[14px] leading-5 font-medium
+                  transition-all duration-150 cursor-pointer border-b-2 -mb-[1px]
+                  ${modalTab === 'transcript' 
+                    ? 'text-[#0568FD] border-[#0568FD]' 
+                    : 'text-[#6C718C] border-transparent hover:text-[#535a74]'
+                  }
+                `}
+              >
+                <Table2 size={16} />
+                <span>All Responses</span>
+              </button>
+              <button
+                onClick={() => setModalTab('highlights')}
+                className={`
+                  flex items-center gap-2 px-4 py-3
+                  font-['Inter'] text-[14px] leading-5 font-medium
+                  transition-all duration-150 cursor-pointer border-b-2 -mb-[1px]
+                  ${modalTab === 'highlights' 
+                    ? 'text-[#0568FD] border-[#0568FD]' 
+                    : 'text-[#6C718C] border-transparent hover:text-[#535a74]'
+                  }
+                `}
+              >
+                <Highlighter size={16} />
+                <span>Highlights</span>
+                <span className={`
+                  ml-1 px-1.5 py-0.5 rounded text-xs font-medium
+                  ${modalTab === 'highlights' 
+                    ? 'bg-[#E8F4FF] text-[#0568FD]' 
+                    : 'bg-neutral-100 text-[#6C718C]'
+                  }
+                `}>
+                  0
+                </span>
+              </button>
             </div>
 
             {/* Participant Info */}
