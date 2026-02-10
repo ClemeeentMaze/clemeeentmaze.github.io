@@ -571,23 +571,6 @@ function ResultsView({ themes, onRunNewAnalysis }) {
       </Flex>
 
       <Flex flexDirection="column" gap="SM">
-        {/* Report generated card */}
-        <Flex 
-          padding="MD" 
-          justifyContent="space-between" 
-          alignItems="center" 
-          boxShadow="divider.all" 
-          borderRadius="8px"
-        >
-          <Flex alignItems="center" gap="SM">
-            <IconFigure name="tag" size="MD" color="secondary" />
-            <Text>Report generated</Text>
-          </Flex>
-          <CTAButton size="SM">
-            See report
-          </CTAButton>
-        </Flex>
-
         {/* Highlights analyzed card */}
         <Flex 
           padding="MD" 
