@@ -1091,7 +1091,7 @@ function TranscriptModal({
         {/* Main Content - Two Columns (video wider ~60/40) */}
         <div className="flex flex-1 min-h-0">
           {/* Left: Video Player Column - 60% width */}
-          <div className="flex flex-col bg-[#0D0D0D]" style={{ flex: '0 0 60%' }}>
+          <div className="flex flex-col" style={{ flex: '0 0 60%', backgroundColor: 'rgb(248, 248, 251)' }}>
             {/* Video Player Container - 16:9 ratio, centered vertically */}
             <div className="flex-1 flex flex-col justify-center px-0">
               <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
