@@ -1060,7 +1060,7 @@ function TranscriptModal({
         style={{ boxShadow: '0px 4px 48px rgba(108, 113, 140, 0.24)' }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[rgba(108,113,140,0.12)]">
+        <div className="flex items-center justify-between px-6 py-3 border-b border-[rgba(108,113,140,0.12)]">
           <Flex alignItems="center" gap="MD">
             <IconFigure 
               name={blockTypeInfo.iconName || 'question'} 
@@ -1071,123 +1071,149 @@ function TranscriptModal({
             />
             <span className="font-bold text-[20px] text-neutral-900">{block?.title || 'Response'}</span>
           </Flex>
-          <Flex alignItems="center" gap="SM">
-            {/* Action icons */}
-            <ActionButton emphasis="tertiary" size="SM" icon={<Icon name="share" />} iconOnly>
-              Share
-            </ActionButton>
-            <ActionButton emphasis="tertiary" size="SM" icon={<Icon name="highlight" />} iconOnly>
-              Highlight
-            </ActionButton>
-            <div className="w-px h-6 bg-[rgba(108,113,140,0.16)] mx-1" />
-            <button 
-              onClick={onClose}
-              className="p-2 hover:bg-neutral-100 rounded-lg cursor-pointer transition-colors"
-            >
-              <X size={20} className="text-[#6C718C]" />
-            </button>
-          </Flex>
+          <button 
+            onClick={onClose}
+            className="p-2 hover:bg-neutral-100 rounded-lg cursor-pointer transition-colors"
+          >
+            <X size={20} className="text-[#6C718C]" />
+          </button>
         </div>
 
-        {/* Main Content - Two Columns */}
+        {/* Main Content - Two Columns (video wider ~60/40) */}
         <div className="flex flex-1 min-h-0">
-          {/* Left: Video Player */}
-          <div className="w-1/2 flex-shrink-0 bg-[#1A1A1A] flex items-center justify-center">
-            <div className="text-center">
-              <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-4">
-                <Play size={36} className="text-white ml-1" />
+          {/* Left: Video Player Column */}
+          <div className="flex flex-col" style={{ flex: '0 0 60%' }}>
+            {/* Video Player with 16:9 ratio */}
+            <div className="bg-[#1A1A1A] flex-1 flex flex-col">
+              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-3">
+                      <Play size={28} className="text-white ml-1" />
+                    </div>
+                    {response.clipDuration && (
+                      <Text className="text-white/60 text-sm">{response.clipDuration}</Text>
+                    )}
+                  </div>
+                </div>
               </div>
-              {response.clipDuration && (
-                <Text className="text-white/60 text-base">{response.clipDuration}</Text>
-              )}
+              {/* Video Controls Bar */}
+              <div className="px-4 py-3 bg-[#1A1A1A] flex items-center gap-3">
+                <button className="text-white/80 hover:text-white">
+                  <Play size={18} />
+                </button>
+                <div className="flex-1 h-1 bg-white/20 rounded-full">
+                  <div className="h-full w-0 bg-[#0568FD] rounded-full" />
+                </div>
+                <Text className="text-white/60 text-xs">0:00 / {response.clipDuration || '0:00'}</Text>
+              </div>
+            </div>
+            
+            {/* Action Buttons below video */}
+            <div className="px-4 py-3 bg-white border-t border-[rgba(108,113,140,0.12)] flex justify-end gap-2">
+              <ActionButton emphasis="tertiary" size="SM" icon={<Icon name="share" />}>
+                Share
+              </ActionButton>
+              <ActionButton emphasis="tertiary" size="SM" icon={<Icon name="highlight" />}>
+                Highlight
+              </ActionButton>
             </div>
           </div>
 
           {/* Right: Content Panel */}
-          <div className="flex-1 flex flex-col min-h-0 bg-white">
-            {/* Participant Info */}
-            <div className="px-6 py-5 border-b border-[rgba(108,113,140,0.08)]">
-              <Flex alignItems="center" justifyContent="space-between">
-                <Flex alignItems="center" gap="MD">
-                  {/* Participant avatar */}
-                  <div className="w-10 h-10 rounded-full bg-[#7C3AED] flex items-center justify-center text-white font-semibold text-sm">
-                    {response.participantId?.slice(-2)}
-                  </div>
-                  <span className="font-bold text-[18px] text-neutral-900">Participant {response.participantId}</span>
-                </Flex>
-                <button className="px-4 py-2 text-sm font-medium text-[#0568FD] hover:bg-[#E8F4FF] rounded-lg cursor-pointer transition-colors">
-                  View session
-                </button>
-              </Flex>
-              
-              {/* Navigation */}
-              <Flex alignItems="center" gap="SM" className="mt-4">
-                <button
-                  onClick={() => onNavigate(currentIndex - 1)}
-                  disabled={currentIndex <= 0}
-                  className={`p-1.5 rounded-lg border border-[rgba(108,113,140,0.28)] ${
-                    currentIndex <= 0 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-neutral-50 cursor-pointer'
-                  } transition-colors`}
-                >
-                  <ChevronLeft size={18} className="text-[#6C718C]" />
-                </button>
-                <Text color="default.main.secondary" className="text-sm">{currentIndex + 1} of {responses.length}</Text>
-                <button
-                  onClick={() => onNavigate(currentIndex + 1)}
-                  disabled={currentIndex >= responses.length - 1}
-                  className={`p-1.5 rounded-lg border border-[rgba(108,113,140,0.28)] ${
-                    currentIndex >= responses.length - 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-neutral-50 cursor-pointer'
-                  } transition-colors`}
-                >
-                  <ChevronRight size={18} className="text-[#6C718C]" />
-                </button>
-              </Flex>
-            </div>
-
-            {/* Tabs: Transcript / Highlights */}
-            <div className="flex items-center gap-6 px-6 border-b border-[rgba(108,113,140,0.12)]">
+          <div className="flex-1 flex flex-col min-h-0 bg-white border-l border-[rgba(108,113,140,0.12)]">
+            {/* Tabs: All Responses / Highlights - AT THE TOP */}
+            <div className="flex items-center gap-1 px-4 py-2 border-b border-[rgba(108,113,140,0.12)]">
               <button
                 onClick={() => setModalTab('transcript')}
-                className={`py-3 text-sm font-medium border-b-2 transition-colors ${
+                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   modalTab === 'transcript'
-                    ? 'border-[#0568FD] text-[#0568FD]'
-                    : 'border-transparent text-[#6C718C] hover:text-neutral-900'
+                    ? 'bg-[#F0F4FF] text-[#0568FD]'
+                    : 'text-[#6C718C] hover:bg-neutral-50'
                 }`}
               >
-                Transcript
+                <Flex alignItems="center" gap="XS">
+                  <Icon name="table" size="SM" />
+                  <span>All Responses</span>
+                </Flex>
               </button>
               <button
                 onClick={() => setModalTab('highlights')}
-                className={`py-3 text-sm font-medium border-b-2 transition-colors ${
+                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   modalTab === 'highlights'
-                    ? 'border-[#0568FD] text-[#0568FD]'
-                    : 'border-transparent text-[#6C718C] hover:text-neutral-900'
+                    ? 'bg-[#F0F4FF] text-[#0568FD]'
+                    : 'text-[#6C718C] hover:bg-neutral-50'
                 }`}
               >
-                Highlights
+                <Flex alignItems="center" gap="XS">
+                  <Icon name="highlight" size="SM" />
+                  <span>Highlights</span>
+                  <span className="text-[#6C718C]">0</span>
+                </Flex>
               </button>
             </div>
 
+            {/* Participant Info */}
+            <div className="px-4 py-3 border-b border-[rgba(108,113,140,0.08)]">
+              <Flex alignItems="center" justifyContent="space-between">
+                <Flex alignItems="center" gap="SM">
+                  {/* Participant avatar */}
+                  <div className="w-8 h-8 rounded-full bg-[#6C718C] flex items-center justify-center text-white text-xs">
+                    <Icon name="user" size="SM" />
+                  </div>
+                  <span className="font-semibold text-[15px] text-neutral-900">Participant {response.participantId}</span>
+                </Flex>
+                <Flex alignItems="center" gap="XS">
+                  {/* Navigation arrows */}
+                  <ActionButton
+                    emphasis="tertiary"
+                    size="SM"
+                    icon={<ChevronLeft size={16} />}
+                    iconOnly
+                    onClick={() => onNavigate(currentIndex - 1)}
+                    disabled={currentIndex <= 0}
+                  >
+                    Previous
+                  </ActionButton>
+                  <ActionButton
+                    emphasis="tertiary"
+                    size="SM"
+                    icon={<ChevronRight size={16} />}
+                    iconOnly
+                    onClick={() => onNavigate(currentIndex + 1)}
+                    disabled={currentIndex >= responses.length - 1}
+                  >
+                    Next
+                  </ActionButton>
+                  <Text color="default.main.secondary" className="text-sm mx-1">⦿</Text>
+                  <button className="text-sm font-medium text-[#0568FD] hover:underline cursor-pointer">
+                    View session
+                  </button>
+                </Flex>
+              </Flex>
+            </div>
+
             {/* Tab Content */}
-            <div className="flex-1 overflow-y-auto px-6 py-5 relative" ref={transcriptRef}>
+            <div className="flex-1 overflow-y-auto px-4 py-4 relative" ref={transcriptRef}>
               {modalTab === 'transcript' ? (
                 <>
-                  {/* Transcript Header */}
-                  <Flex alignItems="center" gap="SM" className="mb-4">
-                    <Text className="font-semibold text-neutral-900">Transcript</Text>
-                    {response.clipDuration && (
-                      <Text color="default.main.secondary">{response.clipDuration}</Text>
-                    )}
-                  </Flex>
+                  {/* Duration badge */}
+                  {response.clipDuration && (
+                    <Flex alignItems="center" gap="XS" className="mb-3">
+                      <Icon name="clock" size="SM" className="text-[#6C718C]" />
+                      <Text color="default.main.secondary" className="text-sm">{response.clipDuration}</Text>
+                    </Flex>
+                  )}
                   
-                  {/* Transcript Content - Quote style with left border */}
-                  <div className="pl-4 border-l-2 border-[#E0E0E6]">
-                    <div 
-                      className="text-neutral-600 leading-relaxed cursor-text"
-                      onMouseUp={handleMouseUp}
-                    >
-                      {renderTranscript()}
-                    </div>
+                  {/* Transcript Header */}
+                  <Text className="font-semibold text-neutral-900 mb-3">Transcript</Text>
+                  
+                  {/* Transcript Content - plain text with timestamps, NO border */}
+                  <div 
+                    className="text-neutral-700 text-sm leading-relaxed cursor-text space-y-4"
+                    onMouseUp={handleMouseUp}
+                  >
+                    {renderTranscript()}
                   </div>
                 </>
               ) : (
