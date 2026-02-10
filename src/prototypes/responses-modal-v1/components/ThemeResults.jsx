@@ -4,12 +4,13 @@
  * Displays thematic analysis results with a 3-step flow:
  * 1. Initial view with confidence progress and "Start analysis" button
  * 2. Theme method selection (AI vs manual)
- * 3. Analyzing animation
+ * 3. Analyzing animation (using Rive animation from monorepo)
  * 4. Results view with generated themes
  */
-import { useState, useEffect } from 'react';
-import { Flex, Box, Text, Heading, ScrollContainer, CTAButton, ActionButton } from '@framework/components/ariane';
-import { Play, Check, Star, Highlighter, LayoutGrid, FileText, Sparkles, Tag, RefreshCw, EyeOff, Share2, Download, Copy, Pencil, MoreHorizontal } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Flex, Box, Text, Heading, ScrollContainer, CTAButton, ActionButton, IconFigure } from '@framework/components/ariane';
+import { Play, Check, Star, Highlighter, LayoutGrid, FileText, Sparkles, Tag, RefreshCw, EyeOff, Share2, Download, Copy, Pencil, MoreHorizontal, ChevronRight } from 'lucide-react';
+import { useRive } from '@rive-app/react-webgl2';
 import { HighlightCard } from './HighlightCard';
 
 /**
@@ -124,84 +125,127 @@ const GENERATED_THEMES = [
 ];
 
 /**
- * Feature list item with icon
+ * Feature list item with icon - matches monorepo ThematicAnalysisBullets pattern
  */
-function FeatureItem({ icon: IconComponent, children }) {
+function FeatureItem({ iconName, children }) {
   return (
-    <Flex alignItems="center" gap="SM" className="py-2">
-      <div className="w-8 h-8 rounded-lg bg-[#E6F7F0] flex items-center justify-center flex-shrink-0">
-        <IconComponent size={16} className="text-[#10B981]" />
-      </div>
-      <Text color="default.main.primary">{children}</Text>
+    <Flex alignItems="center" gap="SM" className="py-1">
+      <IconFigure size="SM" color="success" name={iconName} />
+      <Text>{children}</Text>
     </Flex>
   );
 }
 
 /**
- * Confidence progress bar
+ * Gradient Progress Bar - matches monorepo GradientProgressBar.tsx
+ */
+function GradientProgressBar({ progress, fromColor = '#10B981', toColor = '#10B981' }) {
+  return (
+    <div className="flex-1 h-2 bg-neutral-200 rounded-full relative overflow-hidden">
+      <div 
+        className="absolute left-0 top-0 h-full rounded-full transition-all duration-500 ease-out"
+        style={{ 
+          width: `${Math.min(progress, 100)}%`,
+          background: `linear-gradient(90deg, ${fromColor} 0%, ${toColor} 100%)`
+        }}
+      />
+    </div>
+  );
+}
+
+/**
+ * Confidence progress bar - matches monorepo DataReadinessProgress.tsx pattern
  */
 function ConfidenceProgress({ currentSessions = 5 }) {
-  const progress = Math.min((currentSessions / 10) * 100, 100);
-  const isPast5 = currentSessions >= 5;
-  const isPast10 = currentSessions >= 10;
+  const threshold1 = 5;
+  const threshold2 = 10;
+  
+  const isPast5 = currentSessions >= threshold1;
+  const isPast10 = currentSessions >= threshold2;
+  
+  // Calculate progress for each segment
+  const progress1 = Math.min((currentSessions / threshold1) * 100, 100);
+  const progress2 = isPast5 ? Math.min(((currentSessions - threshold1) / (threshold2 - threshold1)) * 100, 100) : 0;
   
   const getConfidenceLevel = () => {
     if (currentSessions >= 10) return 'HIGH ANALYSIS CONFIDENCE';
     if (currentSessions >= 5) return 'MEDIUM ANALYSIS CONFIDENCE';
     return 'LOW ANALYSIS CONFIDENCE';
   };
+  
+  const getConfidenceColor = () => {
+    if (currentSessions >= 10) return 'success';
+    if (currentSessions >= 5) return 'warning';
+    return 'neutral';
+  };
 
   return (
-    <div className="p-6 border border-[rgba(108,113,140,0.16)] rounded-xl">
-      <Flex justifyContent="space-between" alignItems="center" className="mb-6">
-        <Text className="text-xs font-semibold text-[#6C718C] uppercase tracking-wide">
+    <div 
+      className="p-5 rounded-xl"
+      style={{ 
+        boxShadow: 'inset 0 0 0 1px rgba(108, 113, 140, 0.16)',
+        background: 'linear-gradient(180deg, #FAFBFC 0%, #FFFFFF 100%)'
+      }}
+    >
+      <Flex justifyContent="space-between" alignItems="center" className="mb-5">
+        <Text className="text-xs font-semibold text-[#6C718C] uppercase tracking-wider">
           {getConfidenceLevel()}
         </Text>
-        <span className="px-2 py-1 border border-[#10B981] text-[#10B981] rounded text-xs font-medium">
+        <span className={`
+          px-2.5 py-1 rounded-md text-xs font-semibold
+          ${isPast10 ? 'bg-[#D1FAE5] text-[#059669]' : isPast5 ? 'bg-[#FEF3C7] text-[#D97706]' : 'bg-neutral-100 text-neutral-600'}
+        `}>
           {currentSessions} SESSION{currentSessions !== 1 ? 'S' : ''}
         </span>
       </Flex>
 
       <Flex alignItems="center" gap="SM">
+        {/* Start icon */}
         <Flex flexDirection="column" alignItems="center" className="flex-shrink-0">
-          <div className="w-8 h-8 rounded-full bg-[#E5E7EB] flex items-center justify-center">
-            <Play size={14} className="text-[#6C718C] ml-0.5" fill="currentColor" />
+          <div className="w-9 h-9 rounded-full bg-neutral-100 flex items-center justify-center">
+            <ChevronRight size={18} className="text-neutral-500" />
           </div>
-          <Text type="caption" color="default.main.secondary" className="mt-1">1</Text>
+          <Text type="caption" color="default.main.secondary" className="mt-1.5 font-medium">1</Text>
         </Flex>
 
-        <div className="flex-1 h-1 bg-neutral-200 rounded-full relative">
-          <div 
-            className="absolute left-0 top-0 h-full bg-[#10B981] rounded-full transition-all duration-300"
-            style={{ width: `${Math.min(progress * 2, 100)}%` }}
-          />
-        </div>
+        {/* First progress bar */}
+        <GradientProgressBar 
+          progress={progress1} 
+          fromColor="#6EE7B7" 
+          toColor="#10B981" 
+        />
 
+        {/* Threshold 1 icon */}
         <Flex flexDirection="column" alignItems="center" className="flex-shrink-0">
           <div className={`
-            w-8 h-8 rounded-full flex items-center justify-center
-            ${isPast5 ? 'bg-[#10B981] text-white' : 'bg-white border-2 border-neutral-300 text-[#6C718C]'}
+            w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300
+            ${isPast5 
+              ? 'bg-[#10B981] text-white shadow-sm' 
+              : 'bg-white border-2 border-neutral-200 text-neutral-400'}
           `}>
-            <Check size={16} />
+            <Check size={18} strokeWidth={2.5} />
           </div>
-          <Text type="caption" color="default.main.secondary" className="mt-1">5</Text>
+          <Text type="caption" color="default.main.secondary" className="mt-1.5 font-medium">5</Text>
         </Flex>
 
-        <div className="flex-1 h-1 bg-neutral-200 rounded-full relative">
-          <div 
-            className="absolute left-0 top-0 h-full bg-[#10B981] rounded-full transition-all duration-300"
-            style={{ width: isPast5 ? `${Math.min((progress - 50) * 2, 100)}%` : '0%' }}
-          />
-        </div>
+        {/* Second progress bar */}
+        <GradientProgressBar 
+          progress={progress2} 
+          fromColor="#10B981" 
+          toColor="#FBBF24" 
+        />
 
+        {/* Threshold 2 icon */}
         <Flex flexDirection="column" alignItems="center" className="flex-shrink-0">
           <div className={`
-            w-8 h-8 rounded-full flex items-center justify-center border-2
-            ${isPast10 ? 'bg-amber-400 border-amber-400 text-white' : 'bg-white border-neutral-300 text-[#6C718C]'}
+            w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300
+            ${isPast10 
+              ? 'bg-[#FBBF24] text-white shadow-sm' 
+              : 'bg-white border-2 border-neutral-200 text-neutral-400'}
           `}>
-            <Star size={16} />
+            <Star size={18} fill={isPast10 ? 'currentColor' : 'none'} />
           </div>
-          <Text type="caption" color="default.main.secondary" className="mt-1">+10</Text>
+          <Text type="caption" color="default.main.secondary" className="mt-1.5 font-medium">10+</Text>
         </Flex>
       </Flex>
     </div>
@@ -228,17 +272,17 @@ function InitialView({ onStartAnalysis }) {
         </Text>
       </Box>
 
-      <Box className="mt-6">
-        <FeatureItem icon={Highlighter}>
+      <Flex flexDirection="column" gap="MD" className="mt-6">
+        <FeatureItem iconName="highlight">
           Generate and assign themes to highlights
         </FeatureItem>
-        <FeatureItem icon={LayoutGrid}>
+        <FeatureItem iconName="summary">
           Get a summary and key takeaways for each theme
         </FeatureItem>
-        <FeatureItem icon={FileText}>
+        <FeatureItem iconName="screen-clip">
           Generate a report ready to share and present
         </FeatureItem>
-      </Box>
+      </Flex>
 
       <Flex justifyContent="flex-end" className="mt-auto pt-8">
         <CTAButton emphasis="primary" size="MD" onClick={onStartAnalysis}>
@@ -251,79 +295,91 @@ function InitialView({ onStartAnalysis }) {
 
 /**
  * Step 2: Theme method selection
+ * Matches monorepo ThematicAnalysisConfig.tsx pattern
  */
 function MethodSelectionView({ onCancel, onAnalyze }) {
   const [selectedMethod, setSelectedMethod] = useState('ai');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  const handleAnalyze = () => {
+    setIsAnalyzing(true);
+    onAnalyze();
+  };
 
   return (
     <>
-      <Text color="default.main.secondary" className="mb-8">
+      <Heading level={1} color="default.main.primary" className="mb-4">
+        Thematic analysis
+      </Heading>
+      
+      <Text color="default.main.secondary" className="mb-6">
         Your session highlights will be automatically organized into themes. You can run the analysis from scratch with AI-generated themes, or using your own themes.
       </Text>
 
-      <Text className="font-semibold text-neutral-900 mb-4">Starting themes</Text>
+      <Flex flexDirection="column" gap="SM" className="mb-2">
+        <Text className="font-semibold text-neutral-900">Starting themes</Text>
+        <Text type="caption" color="default.main.secondary">
+          You can generate themes using AI or manually add them.
+        </Text>
+      </Flex>
 
-      <Flex gap="MD" className="mb-4">
-        {/* AI Option - uses same border as block list items */}
+      <Flex gap="MD" className="mb-6">
+        {/* AI Option */}
         <button
           onClick={() => setSelectedMethod('ai')}
           className={`
-            flex-1 p-4 rounded-lg cursor-pointer transition-all bg-white
+            flex-1 p-4 rounded-xl cursor-pointer transition-all bg-white
             ${selectedMethod === 'ai' 
-              ? 'shadow-[inset_0px_0px_0px_1px_#0568fd]' 
-              : 'shadow-[inset_0px_0px_0px_0.5px_rgba(108,113,140,0.28)] hover:shadow-[inset_0px_0px_0px_0.5px_rgba(108,113,140,0.5)]'
+              ? 'shadow-[inset_0px_0px_0px_2px_#0568fd] bg-[#F0F7FF]' 
+              : 'shadow-[inset_0px_0px_0px_1px_rgba(108,113,140,0.16)] hover:shadow-[inset_0px_0px_0px_1px_rgba(108,113,140,0.32)]'
             }
           `}
         >
-          <Flex alignItems="center" gap="SM">
+          <Flex alignItems="center" gap="SM" className="mb-3">
             <div className={`
-              w-5 h-5 rounded-full border-2 flex items-center justify-center
+              w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors
               ${selectedMethod === 'ai' ? 'border-[#0568FD]' : 'border-neutral-300'}
             `}>
               {selectedMethod === 'ai' && (
                 <div className="w-2.5 h-2.5 rounded-full bg-[#0568FD]" />
               )}
             </div>
-            <Sparkles size={20} className="text-[#6C718C]" />
+            <IconFigure name="sparkles" size="SM" color="featured" />
           </Flex>
-          <Text className="mt-2 font-medium text-left">Find themes with AI</Text>
+          <Text className="font-medium text-left">Find themes with AI</Text>
         </button>
 
-        {/* Manual Option - uses same border as block list items */}
+        {/* Manual Option */}
         <button
           onClick={() => setSelectedMethod('manual')}
           className={`
-            flex-1 p-4 rounded-lg cursor-pointer transition-all bg-white
+            flex-1 p-4 rounded-xl cursor-pointer transition-all bg-white
             ${selectedMethod === 'manual' 
-              ? 'shadow-[inset_0px_0px_0px_1px_#0568fd]' 
-              : 'shadow-[inset_0px_0px_0px_0.5px_rgba(108,113,140,0.28)] hover:shadow-[inset_0px_0px_0px_0.5px_rgba(108,113,140,0.5)]'
+              ? 'shadow-[inset_0px_0px_0px_2px_#0568fd] bg-[#F0F7FF]' 
+              : 'shadow-[inset_0px_0px_0px_1px_rgba(108,113,140,0.16)] hover:shadow-[inset_0px_0px_0px_1px_rgba(108,113,140,0.32)]'
             }
           `}
         >
-          <Flex alignItems="center" gap="SM">
+          <Flex alignItems="center" gap="SM" className="mb-3">
             <div className={`
-              w-5 h-5 rounded-full border-2 flex items-center justify-center
+              w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors
               ${selectedMethod === 'manual' ? 'border-[#0568FD]' : 'border-neutral-300'}
             `}>
               {selectedMethod === 'manual' && (
                 <div className="w-2.5 h-2.5 rounded-full bg-[#0568FD]" />
               )}
             </div>
-            <Tag size={20} className="text-[#6C718C]" />
+            <IconFigure name="tag" size="SM" color="neutral" />
           </Flex>
-          <Text className="mt-2 font-medium text-left">My own themes</Text>
+          <Text className="font-medium text-left">My own themes</Text>
         </button>
       </Flex>
 
-      <Text color="default.main.secondary" className="text-sm">
-        You can generate themes using AI or manually add them.
-      </Text>
-
-      <Flex justifyContent="space-between" className="mt-auto pt-8">
-        <ActionButton emphasis="secondary" size="MD" onClick={onCancel}>
+      <Flex justifyContent="space-between" className="mt-auto pt-6">
+        <CTAButton emphasis="tertiary" onClick={onCancel}>
           Cancel
-        </ActionButton>
-        <CTAButton emphasis="primary" size="MD" onClick={onAnalyze}>
+        </CTAButton>
+        <CTAButton emphasis="primary" waiting={isAnalyzing} onClick={handleAnalyze}>
           Analyze
         </CTAButton>
       </Flex>
@@ -332,51 +388,48 @@ function MethodSelectionView({ onCancel, onAnalyze }) {
 }
 
 /**
- * Step 3: Analyzing animation view
+ * Step 3: Analyzing animation view - uses Rive animation from monorepo
+ * Matches ThematicAnalysisPending.tsx pattern
  */
 function AnalyzingView() {
+  const containerRef = useRef(null);
+  const { RiveComponent } = useRive({
+    useOffscreenRenderer: true,
+    src: '/animations/thematic-analysis-loading.riv',
+    autoplay: true,
+  });
+
+  useEffect(() => {
+    if (containerRef.current) {
+      // Find the canvas element inside the container and apply border radius
+      const canvas = containerRef.current.querySelector('canvas');
+      if (canvas) {
+        canvas.style.borderRadius = '12px';
+      }
+    }
+  }, []);
+
   return (
-    <Flex flexDirection="column" alignItems="center" justifyContent="center" className="flex-1 py-12">
-      <Heading level={2} className="text-2xl font-semibold mb-8">
+    <Flex flexDirection="column" gap="LG" className="flex-1">
+      <Heading level={1} color="default.main.primary">
         Analyzing highlights...
       </Heading>
-
-      {/* Animated illustration */}
-      <div className="relative w-full max-w-[600px] h-[300px] rounded-xl overflow-hidden mb-8">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#7C3AED] via-[#A78BFA] to-[#F0ABFC]" />
-        
-        {/* Floating cards */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px]">
-          {/* Card 1 - animating up */}
-          <div className="bg-white rounded-lg p-4 shadow-lg mb-3 animate-pulse">
-            <div className="h-3 bg-neutral-200 rounded w-3/4 mb-2" />
-            <div className="h-3 bg-neutral-200 rounded w-full mb-2" />
-            <div className="h-3 bg-neutral-200 rounded w-1/2" />
-          </div>
-          {/* Card 2 */}
-          <div className="bg-white rounded-lg p-4 shadow-lg mb-3 animate-pulse" style={{ animationDelay: '0.2s' }}>
-            <div className="h-3 bg-neutral-200 rounded w-full mb-2" />
-            <div className="h-3 bg-neutral-200 rounded w-2/3" />
-          </div>
-          {/* Card 3 */}
-          <div className="bg-white rounded-lg p-4 shadow-lg animate-pulse" style={{ animationDelay: '0.4s' }}>
-            <div className="h-3 bg-neutral-200 rounded w-full mb-2" />
-            <div className="h-3 bg-neutral-200 rounded w-3/4 mb-2" />
-            <div className="h-3 bg-neutral-200 rounded w-1/2" />
-          </div>
-        </div>
-
-        {/* Sparkle icon */}
-        <div className="absolute right-[20%] top-1/2 -translate-y-1/2">
-          <Sparkles size={32} className="text-[#7C3AED] animate-bounce" />
-        </div>
-
-        {/* Horizontal line */}
-        <div className="absolute left-0 right-0 top-1/2 h-1 bg-[#7C3AED]" />
-      </div>
-
-      <Text color="default.main.secondary" className="text-center max-w-md">
+      
+      {/* Rive Animation Container */}
+      <Box
+        position="relative"
+        width="100%"
+        height="293px"
+        boxShadow="divider.all"
+        borderRadius="12px"
+        overflow="hidden"
+        p="0.5px"
+        ref={containerRef}
+      >
+        <RiveComponent style={{ height: '293px', width: '100%' }} />
+      </Box>
+      
+      <Text color="default.main.secondary">
         The analysis may take a few minutes. No need to wait here; you can safely return to this page later.
       </Text>
     </Flex>
@@ -402,56 +455,78 @@ function ThemeTag({ name, color }) {
 
 /**
  * Step 4: Results view with generated themes
+ * Matches monorepo ThematicAnalysisResults.tsx pattern
  */
 function ResultsView({ themes, onRunNewAnalysis }) {
   return (
     <>
       {/* Header */}
-      <Flex justifyContent="space-between" alignItems="flex-start" className="mb-2">
-        <Heading level={1} className="text-2xl font-semibold">
-          Analysis results
-        </Heading>
-        <ActionButton emphasis="secondary" size="SM" onClick={onRunNewAnalysis}>
-          Run new analysis
-        </ActionButton>
-      </Flex>
-      <Text color="default.main.secondary" className="mb-6">
-        Latest analysis: 20 hours ago
-      </Text>
-
-      {/* Report generated card */}
-      <div className="p-4 border border-[rgba(108,113,140,0.16)] rounded-xl mb-4">
+      <Flex gap="SM" flexDirection="column" className="mb-4">
         <Flex alignItems="center" justifyContent="space-between">
-          <Flex alignItems="center" gap="MD">
-            <Tag size={20} className="text-[#6C718C]" />
-            <Text className="font-medium">Report generated</Text>
+          <Heading level={1} color="default.main.primary">
+            Analysis results
+          </Heading>
+          <CTAButton size="SM" emphasis="tertiary" onClick={onRunNewAnalysis}>
+            Run new analysis
+          </CTAButton>
+        </Flex>
+        <Text type="caption" color="default.main.secondary">
+          Latest analysis: 20 hours ago
+        </Text>
+      </Flex>
+
+      <Flex flexDirection="column" gap="SM">
+        {/* Report generated card */}
+        <Flex 
+          padding="MD" 
+          justifyContent="space-between" 
+          alignItems="center" 
+          boxShadow="divider.all" 
+          borderRadius="8px"
+        >
+          <Flex alignItems="center" gap="SM">
+            <IconFigure name="tag" size="MD" color="secondary" />
+            <Text>Report generated</Text>
           </Flex>
-          <CTAButton emphasis="primary" size="SM">
+          <CTAButton size="SM">
             See report
           </CTAButton>
         </Flex>
-      </div>
 
-      {/* Highlights analyzed card */}
-      <div className="p-4 border border-[rgba(108,113,140,0.16)] rounded-xl mb-4">
-        <Flex alignItems="center" gap="MD">
-          <Highlighter size={20} className="text-[#6C718C]" />
-          <Text className="font-medium">8 highlights analyzed</Text>
+        {/* Highlights analyzed card */}
+        <Flex 
+          padding="MD" 
+          justifyContent="start" 
+          alignItems="center" 
+          boxShadow="divider.all" 
+          borderRadius="8px"
+        >
+          <Flex alignItems="center" gap="SM">
+            <IconFigure name="highlight" size="MD" color="secondary" />
+            <Text>8 highlights analyzed</Text>
+          </Flex>
         </Flex>
-      </div>
 
-      {/* Themes found card */}
-      <div className="p-4 border border-[rgba(108,113,140,0.16)] rounded-xl">
-        <Flex alignItems="center" gap="MD" className="mb-4">
-          <Tag size={20} className="text-[#6C718C]" />
-          <Text className="font-medium">{themes.length} themes found</Text>
+        {/* Themes found card */}
+        <Flex 
+          padding="MD" 
+          flexDirection="column" 
+          justifyContent="start" 
+          boxShadow="divider.all" 
+          borderRadius="8px" 
+          gap="SM"
+        >
+          <Flex alignItems="center" gap="SM">
+            <IconFigure name="tag" size="MD" color="secondary" />
+            <Text>{themes.length} themes found</Text>
+          </Flex>
+          <Flex gap="SM" flexWrap="wrap">
+            {themes.map((theme) => (
+              <ThemeTag key={theme.id} name={theme.name} color={theme.color} />
+            ))}
+          </Flex>
         </Flex>
-        <div className="flex flex-wrap">
-          {themes.map((theme) => (
-            <ThemeTag key={theme.id} name={theme.name} color={theme.color} />
-          ))}
-        </div>
-      </div>
+      </Flex>
     </>
   );
 }
