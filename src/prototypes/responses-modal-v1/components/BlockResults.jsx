@@ -8,7 +8,7 @@
  * - AI-generated highlights with new indicators
  */
 import { useState, useRef, useEffect } from 'react';
-import { Flex, Box, Text, Heading, IconFigure, ScrollContainer, ActionButton, CTAButton, Icon, Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@framework/components/ariane';
+import { Flex, Box, Text, Heading, IconFigure, ScrollContainer, ActionButton, CTAButton, Icon, Select, SelectTrigger, SelectContent, SelectItem, SelectValue, SegmentControl } from '@framework/components/ariane';
 import { MoreHorizontal, Filter, Play, ChevronLeft, ChevronRight, Table2, Highlighter, Tag, Info, Plus, Sparkles, Pencil, X, MessageCircle } from 'lucide-react';
 import { BLOCK_TYPES } from '../data';
 import { HighlightCard } from './HighlightCard';
@@ -1052,6 +1052,12 @@ function TranscriptModal({
     return findMatchingHighlight(response.highlightedText);
   };
 
+  // Tab options for SegmentControl
+  const tabOptions = [
+    { id: 'transcript', label: 'All Responses' },
+    { id: 'highlights', label: 'Highlights 0' },
+  ];
+
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-[38px]">
       <div 
@@ -1071,86 +1077,79 @@ function TranscriptModal({
             />
             <span className="font-bold text-[20px] text-neutral-900">{block?.title || 'Response'}</span>
           </Flex>
-          <button 
+          <ActionButton 
+            emphasis="tertiary"
+            size="SM"
+            icon={<X size={18} />}
+            iconOnly
             onClick={onClose}
-            className="p-2 hover:bg-neutral-100 rounded-lg cursor-pointer transition-colors"
           >
-            <X size={20} className="text-[#6C718C]" />
-          </button>
+            Close
+          </ActionButton>
         </div>
 
         {/* Main Content - Two Columns (video wider ~60/40) */}
         <div className="flex flex-1 min-h-0">
-          {/* Left: Video Player Column */}
-          <div className="flex flex-col" style={{ flex: '0 0 60%' }}>
-            {/* Video Player with 16:9 ratio */}
-            <div className="bg-[#1A1A1A] flex-1 flex flex-col">
+          {/* Left: Video Player Column - 60% width */}
+          <div className="flex flex-col bg-[#0D0D0D]" style={{ flex: '0 0 60%' }}>
+            {/* Video Player Container - 16:9 ratio, centered vertically */}
+            <div className="flex-1 flex flex-col justify-center px-0">
               <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                <div className="absolute inset-0 flex items-center justify-center">
+                <div className="absolute inset-0 bg-[#1A1A1A] flex items-center justify-center">
+                  {/* Play button overlay */}
                   <div className="text-center">
-                    <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-3">
+                    <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mx-auto">
                       <Play size={28} className="text-white ml-1" />
                     </div>
-                    {response.clipDuration && (
-                      <Text className="text-white/60 text-sm">{response.clipDuration}</Text>
-                    )}
                   </div>
                 </div>
               </div>
+              
               {/* Video Controls Bar */}
-              <div className="px-4 py-3 bg-[#1A1A1A] flex items-center gap-3">
-                <button className="text-white/80 hover:text-white">
-                  <Play size={18} />
+              <div className="px-4 py-2 flex items-center gap-3">
+                <button className="text-white/80 hover:text-white cursor-pointer">
+                  <Play size={16} />
                 </button>
-                <div className="flex-1 h-1 bg-white/20 rounded-full">
-                  <div className="h-full w-0 bg-[#0568FD] rounded-full" />
+                <button className="text-white/80 hover:text-white cursor-pointer">
+                  <Icon name="volume" size="SM" />
+                </button>
+                <Text className="text-white/60 text-xs">0:00 / {response.clipDuration || '2:52'}</Text>
+                <div className="flex-1 h-1 bg-white/20 rounded-full mx-2">
+                  <div className="h-full w-1/4 bg-[#0568FD] rounded-full relative">
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-[#0568FD] rounded-full" />
+                  </div>
                 </div>
-                <Text className="text-white/60 text-xs">0:00 / {response.clipDuration || '0:00'}</Text>
+                <button className="text-white/80 hover:text-white cursor-pointer">
+                  <Icon name="download" size="SM" />
+                </button>
+                <Text className="text-white/60 text-xs">1x</Text>
+                <button className="text-white/80 hover:text-white cursor-pointer">
+                  <Icon name="fullscreen" size="SM" />
+                </button>
               </div>
             </div>
             
             {/* Action Buttons below video */}
-            <div className="px-4 py-3 bg-white border-t border-[rgba(108,113,140,0.12)] flex justify-end gap-2">
+            <div className="px-4 py-3 bg-white flex justify-end gap-2">
               <ActionButton emphasis="tertiary" size="SM" icon={<Icon name="share" />}>
                 Share
               </ActionButton>
-              <ActionButton emphasis="tertiary" size="SM" icon={<Icon name="highlight" />}>
+              <ActionButton emphasis="primary" size="SM" icon={<Icon name="highlight" />}>
                 Highlight
               </ActionButton>
             </div>
           </div>
 
-          {/* Right: Content Panel */}
+          {/* Right: Content Panel - 40% width */}
           <div className="flex-1 flex flex-col min-h-0 bg-white border-l border-[rgba(108,113,140,0.12)]">
-            {/* Tabs: All Responses / Highlights - AT THE TOP */}
-            <div className="flex items-center gap-1 px-4 py-2 border-b border-[rgba(108,113,140,0.12)]">
-              <button
-                onClick={() => setModalTab('transcript')}
-                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                  modalTab === 'transcript'
-                    ? 'bg-[#F0F4FF] text-[#0568FD]'
-                    : 'text-[#6C718C] hover:bg-neutral-50'
-                }`}
-              >
-                <Flex alignItems="center" gap="XS">
-                  <Icon name="table" size="SM" />
-                  <span>All Responses</span>
-                </Flex>
-              </button>
-              <button
-                onClick={() => setModalTab('highlights')}
-                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                  modalTab === 'highlights'
-                    ? 'bg-[#F0F4FF] text-[#0568FD]'
-                    : 'text-[#6C718C] hover:bg-neutral-50'
-                }`}
-              >
-                <Flex alignItems="center" gap="XS">
-                  <Icon name="highlight" size="SM" />
-                  <span>Highlights</span>
-                  <span className="text-[#6C718C]">0</span>
-                </Flex>
-              </button>
+            {/* Tabs using SegmentControl - AT THE TOP */}
+            <div className="px-4 py-3 border-b border-[rgba(108,113,140,0.12)]">
+              <SegmentControl
+                options={tabOptions}
+                selected={modalTab}
+                onChange={(id) => setModalTab(id)}
+                size="SM"
+              />
             </div>
 
             {/* Participant Info */}
@@ -1161,10 +1160,10 @@ function TranscriptModal({
                   <div className="w-8 h-8 rounded-full bg-[#6C718C] flex items-center justify-center text-white text-xs">
                     <Icon name="user" size="SM" />
                   </div>
-                  <span className="font-semibold text-[15px] text-neutral-900">Participant {response.participantId}</span>
+                  <Text className="font-semibold text-[15px]">Participant {response.participantId}</Text>
                 </Flex>
                 <Flex alignItems="center" gap="XS">
-                  {/* Navigation arrows */}
+                  {/* Navigation arrows using ActionButton */}
                   <ActionButton
                     emphasis="tertiary"
                     size="SM"
@@ -1185,10 +1184,14 @@ function TranscriptModal({
                   >
                     Next
                   </ActionButton>
-                  <Text color="default.main.secondary" className="text-sm mx-1">⦿</Text>
-                  <button className="text-sm font-medium text-[#0568FD] hover:underline cursor-pointer">
+                  {/* View session using ActionButton */}
+                  <ActionButton
+                    emphasis="tertiary"
+                    size="SM"
+                    icon={<Icon name="eye" size="SM" />}
+                  >
                     View session
-                  </button>
+                  </ActionButton>
                 </Flex>
               </Flex>
             </div>
@@ -1208,7 +1211,7 @@ function TranscriptModal({
                   {/* Transcript Header */}
                   <Text className="font-semibold text-neutral-900 mb-3">Transcript</Text>
                   
-                  {/* Transcript Content - plain text with timestamps, NO border */}
+                  {/* Transcript Content - plain text, NO border */}
                   <div 
                     className="text-neutral-700 text-sm leading-relaxed cursor-text space-y-4"
                     onMouseUp={handleMouseUp}
