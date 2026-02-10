@@ -154,30 +154,59 @@ function GradientProgressBar({ progress, fromColor = '#10B981', toColor = '#10B9
 }
 
 /**
- * Confidence progress bar - matches monorepo DataReadinessProgress.tsx pattern
+ * Confidence levels for unmoderated studies
+ * Thresholds: <5 (low), 5-20 (medium), 21-100 (high), 100+ (extra-high)
  */
-function ConfidenceProgress({ currentSessions = 5 }) {
+const CONFIDENCE_LEVELS = {
+  low: {
+    label: 'LOW CONFIDENCE',
+    color: 'bg-[#FEE2E2] text-[#DC2626]',
+    threshold: 5,
+  },
+  medium: {
+    label: 'COMMON ISSUES UNCOVERED', 
+    color: 'bg-[#FEF3C7] text-[#D97706]',
+    threshold: 20,
+  },
+  high: {
+    label: 'HIGH CONFIDENCE',
+    color: 'bg-[#E0E7FF] text-[#7C3AED]',
+    threshold: 100,
+  },
+  extraHigh: {
+    label: 'GREAT CONFIDENCE',
+    color: 'bg-[#DBEAFE] text-[#2563EB]',
+    threshold: Infinity,
+  },
+};
+
+const getConfidenceLevel = (responses) => {
+  if (responses >= 100) return 'extraHigh';
+  if (responses >= 21) return 'high';
+  if (responses >= 5) return 'medium';
+  return 'low';
+};
+
+/**
+ * Confidence progress bar - adapted for unmoderated study thresholds
+ * Thresholds: 5, 20, 100+
+ */
+function ConfidenceProgress({ currentResponses = 42 }) {
   const threshold1 = 5;
-  const threshold2 = 10;
+  const threshold2 = 20;
+  const threshold3 = 100;
   
-  const isPast5 = currentSessions >= threshold1;
-  const isPast10 = currentSessions >= threshold2;
+  const isPast5 = currentResponses >= threshold1;
+  const isPast20 = currentResponses >= threshold2;
+  const isPast100 = currentResponses >= threshold3;
   
   // Calculate progress for each segment
-  const progress1 = Math.min((currentSessions / threshold1) * 100, 100);
-  const progress2 = isPast5 ? Math.min(((currentSessions - threshold1) / (threshold2 - threshold1)) * 100, 100) : 0;
+  const progress1 = Math.min((currentResponses / threshold1) * 100, 100);
+  const progress2 = isPast5 ? Math.min(((currentResponses - threshold1) / (threshold2 - threshold1)) * 100, 100) : 0;
+  const progress3 = isPast20 ? Math.min(((currentResponses - threshold2) / (threshold3 - threshold2)) * 100, 100) : 0;
   
-  const getConfidenceLevel = () => {
-    if (currentSessions >= 10) return 'HIGH ANALYSIS CONFIDENCE';
-    if (currentSessions >= 5) return 'MEDIUM ANALYSIS CONFIDENCE';
-    return 'LOW ANALYSIS CONFIDENCE';
-  };
-  
-  const getConfidenceColor = () => {
-    if (currentSessions >= 10) return 'success';
-    if (currentSessions >= 5) return 'warning';
-    return 'neutral';
-  };
+  const confidenceLevel = getConfidenceLevel(currentResponses);
+  const levelConfig = CONFIDENCE_LEVELS[confidenceLevel];
 
   return (
     <div 
@@ -189,63 +218,80 @@ function ConfidenceProgress({ currentSessions = 5 }) {
     >
       <Flex justifyContent="space-between" alignItems="center" className="mb-5">
         <Text className="text-xs font-semibold text-[#6C718C] uppercase tracking-wider">
-          {getConfidenceLevel()}
+          {levelConfig.label}
         </Text>
-        <span className={`
-          px-2.5 py-1 rounded-md text-xs font-semibold
-          ${isPast10 ? 'bg-[#D1FAE5] text-[#059669]' : isPast5 ? 'bg-[#FEF3C7] text-[#D97706]' : 'bg-neutral-100 text-neutral-600'}
-        `}>
-          {currentSessions} SESSION{currentSessions !== 1 ? 'S' : ''}
+        <span className={`px-2.5 py-1 rounded-md text-xs font-semibold ${levelConfig.color}`}>
+          {currentResponses} RESPONSE{currentResponses !== 1 ? 'S' : ''}
         </span>
       </Flex>
 
-      <Flex alignItems="center" gap="SM">
+      <Flex alignItems="center" gap="XS">
         {/* Start icon */}
         <Flex flexDirection="column" alignItems="center" className="flex-shrink-0">
-          <div className="w-9 h-9 rounded-full bg-neutral-100 flex items-center justify-center">
-            <ChevronRight size={18} className="text-neutral-500" />
+          <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
+            <ChevronRight size={16} className="text-neutral-500" />
           </div>
-          <Text type="caption" color="default.main.secondary" className="mt-1.5 font-medium">1</Text>
+          <Text type="caption" color="default.main.secondary" className="mt-1 text-xs">1</Text>
         </Flex>
 
-        {/* First progress bar */}
+        {/* First progress bar (1 → 5) */}
         <GradientProgressBar 
           progress={progress1} 
-          fromColor="#6EE7B7" 
-          toColor="#10B981" 
+          fromColor="#FCA5A5" 
+          toColor="#F59E0B" 
         />
 
-        {/* Threshold 1 icon */}
+        {/* Threshold 1: 5 responses */}
         <Flex flexDirection="column" alignItems="center" className="flex-shrink-0">
           <div className={`
-            w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300
+            w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300
             ${isPast5 
-              ? 'bg-[#10B981] text-white shadow-sm' 
+              ? 'bg-[#F59E0B] text-white shadow-sm' 
               : 'bg-white border-2 border-neutral-200 text-neutral-400'}
           `}>
-            <Check size={18} strokeWidth={2.5} />
+            <Check size={16} strokeWidth={2.5} />
           </div>
-          <Text type="caption" color="default.main.secondary" className="mt-1.5 font-medium">5</Text>
+          <Text type="caption" color="default.main.secondary" className="mt-1 text-xs">5</Text>
         </Flex>
 
-        {/* Second progress bar */}
+        {/* Second progress bar (5 → 20) */}
         <GradientProgressBar 
           progress={progress2} 
-          fromColor="#10B981" 
-          toColor="#FBBF24" 
+          fromColor="#F59E0B" 
+          toColor="#8B5CF6" 
         />
 
-        {/* Threshold 2 icon */}
+        {/* Threshold 2: 20 responses */}
         <Flex flexDirection="column" alignItems="center" className="flex-shrink-0">
           <div className={`
-            w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300
-            ${isPast10 
-              ? 'bg-[#FBBF24] text-white shadow-sm' 
+            w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300
+            ${isPast20 
+              ? 'bg-[#8B5CF6] text-white shadow-sm' 
               : 'bg-white border-2 border-neutral-200 text-neutral-400'}
           `}>
-            <Star size={18} fill={isPast10 ? 'currentColor' : 'none'} />
+            <Check size={16} strokeWidth={2.5} />
           </div>
-          <Text type="caption" color="default.main.secondary" className="mt-1.5 font-medium">10+</Text>
+          <Text type="caption" color="default.main.secondary" className="mt-1 text-xs">20</Text>
+        </Flex>
+
+        {/* Third progress bar (20 → 100) */}
+        <GradientProgressBar 
+          progress={progress3} 
+          fromColor="#8B5CF6" 
+          toColor="#3B82F6" 
+        />
+
+        {/* Threshold 3: 100+ responses */}
+        <Flex flexDirection="column" alignItems="center" className="flex-shrink-0">
+          <div className={`
+            w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300
+            ${isPast100 
+              ? 'bg-[#3B82F6] text-white shadow-sm' 
+              : 'bg-white border-2 border-neutral-200 text-neutral-400'}
+          `}>
+            <Star size={16} fill={isPast100 ? 'currentColor' : 'none'} />
+          </div>
+          <Text type="caption" color="default.main.secondary" className="mt-1 text-xs">100+</Text>
         </Flex>
       </Flex>
     </div>
@@ -253,39 +299,88 @@ function ConfidenceProgress({ currentSessions = 5 }) {
 }
 
 /**
+ * Get copy based on response count for unmoderated studies
+ * Following Maze's UX writing patterns from useTestersLevel.ts
+ */
+const getInitialViewCopy = (responseCount) => {
+  if (responseCount >= 100) {
+    return {
+      title: 'Great job collecting responses!',
+      description: 'More responses means greater confidence that all problems have been found. You can run the analysis now or keep collecting.',
+      ctaEmphasis: 'primary',
+      showBullets: true,
+    };
+  }
+  if (responseCount >= 21) {
+    return {
+      title: 'Ready for reliable insights',
+      description: 'Keep up the pace to discover undetected issues in your designs—increasing the number of responses can uncover all usability problems.',
+      ctaEmphasis: 'primary',
+      showBullets: true,
+    };
+  }
+  if (responseCount >= 5) {
+    return {
+      title: 'Common issues uncovered',
+      description: (
+        <>
+          At this level, you uncover the most common issues and learn how your designs perform. For more reliable insights, aim for <strong>20 responses or more</strong>.
+        </>
+      ),
+      ctaEmphasis: 'primary',
+      showBullets: true,
+    };
+  }
+  return {
+    title: 'Not quite there yet',
+    description: (
+      <>
+        Test your maze with <strong>at least 5 people</strong> to start learning how your designs perform with real users.
+      </>
+    ),
+    ctaEmphasis: 'tertiary',
+    showBullets: false,
+  };
+};
+
+/**
  * Step 1: Initial view with Start Analysis button
+ * Copy adapted for unmoderated studies following Maze UX writing patterns
  */
 function InitialView({ onStartAnalysis }) {
+  const responseCount = 42; // Mock response count
+  const copy = getInitialViewCopy(responseCount);
+
   return (
     <>
-      <ConfidenceProgress currentSessions={8} />
+      <ConfidenceProgress currentResponses={responseCount} />
 
-      <Box className="mt-8">
-        <Text className="font-semibold text-neutral-900 mb-2">
-          Panel order completed
-        </Text>
-        <Text color="default.main.secondary" className="mb-1">
-          Your order of 8 participants is complete. Results may still shift as more data comes in. For more reliable insights, <span className="font-semibold text-neutral-900">aim for 10 sessions or more</span>.{' '}
+      <Flex flexDirection="column" gap="MD" className="mt-6">
+        <Heading level={4}>{copy.title}</Heading>
+        <Text color="default.main.secondary">
+          {copy.description}{' '}
           <a href="#" className="text-[#0568FD] font-medium hover:underline">
             Learn more about thematic analysis
           </a>
         </Text>
-      </Box>
-
-      <Flex flexDirection="column" gap="MD" className="mt-6">
-        <FeatureItem iconName="highlight">
-          Generate and assign themes to highlights
-        </FeatureItem>
-        <FeatureItem iconName="summary">
-          Get a summary and key takeaways for each theme
-        </FeatureItem>
-        <FeatureItem iconName="screen-clip">
-          Generate a report ready to share and present
-        </FeatureItem>
       </Flex>
 
+      {copy.showBullets && (
+        <Flex flexDirection="column" gap="MD" className="mt-6">
+          <FeatureItem iconName="highlight">
+            Generate and assign themes to highlights
+          </FeatureItem>
+          <FeatureItem iconName="summary">
+            Get a summary and key takeaways for each theme
+          </FeatureItem>
+          <FeatureItem iconName="screen-clip">
+            Generate a report ready to share and present
+          </FeatureItem>
+        </Flex>
+      )}
+
       <Flex justifyContent="flex-end" className="mt-auto pt-8">
-        <CTAButton emphasis="primary" size="MD" onClick={onStartAnalysis}>
+        <CTAButton emphasis={copy.ctaEmphasis} size="MD" onClick={onStartAnalysis}>
           Start analysis
         </CTAButton>
       </Flex>
@@ -503,7 +598,7 @@ function ResultsView({ themes, onRunNewAnalysis }) {
         >
           <Flex alignItems="center" gap="SM">
             <IconFigure name="highlight" size="MD" color="secondary" />
-            <Text>8 highlights analyzed</Text>
+            <Text>42 highlights analyzed</Text>
           </Flex>
         </Flex>
 
