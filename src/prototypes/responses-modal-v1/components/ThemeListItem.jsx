@@ -80,9 +80,9 @@ export function ThemeListItem({ theme, isSelected, onSelect }) {
                 {theme.highlightCount} highlights
               </Text>
             ) : isThematicAnalysis && theme.analysisComplete ? (
-              <Text type="caption" className="text-[#10B981] font-medium">
+              <span className="text-[13px] leading-5 text-[#10B981] font-medium">
                 Analysis complete
-              </Text>
+              </span>
             ) : isThematicAnalysis ? (
               <Text type="caption" color="default.main.secondary">
                 Ready for analysis
