@@ -38,18 +38,26 @@ export function ThemeListItem({ theme, isSelected, onSelect }) {
       `}
     >
       <Flex gap="SM" alignItems="center">
-        {/* Theme Icon - colored for generated themes, does NOT change on selection */}
-        <div 
-          className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-          style={{ 
-            backgroundColor: isGeneratedTheme ? themeColors.bg : '#F5F5F5'
-          }}
-        >
-          <Tag 
-            size={20} 
-            style={{ color: isGeneratedTheme ? themeColors.primary : '#6C718C' }}
+        {/* Theme Icon - custom image for thematic analysis, colored for generated themes */}
+        {isThematicAnalysis ? (
+          <img 
+            src="/images/thematic-analysis-icon.png" 
+            alt="Thematic Analysis"
+            className="w-10 h-10 rounded-lg flex-shrink-0 object-cover"
           />
-        </div>
+        ) : (
+          <div 
+            className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+            style={{ 
+              backgroundColor: isGeneratedTheme ? themeColors.bg : '#F5F5F5'
+            }}
+          >
+            <Tag 
+              size={20} 
+              style={{ color: isGeneratedTheme ? themeColors.primary : '#6C718C' }}
+            />
+          </div>
+        )}
         
         {/* Theme Content */}
         <Box className="flex-1 min-w-0 overflow-hidden">
@@ -74,6 +82,10 @@ export function ThemeListItem({ theme, isSelected, onSelect }) {
             ) : isThematicAnalysis && theme.analysisComplete ? (
               <Text type="caption" className="text-[#10B981] font-medium">
                 Analysis complete
+              </Text>
+            ) : isThematicAnalysis ? (
+              <Text type="caption" color="default.main.secondary">
+                Ready for analysis
               </Text>
             ) : (
               <Text type="caption" color="default.main.secondary">

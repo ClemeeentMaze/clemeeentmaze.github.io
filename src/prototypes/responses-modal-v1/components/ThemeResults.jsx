@@ -403,10 +403,6 @@ function MethodSelectionView({ onCancel, onAnalyze }) {
 
   return (
     <>
-      <Heading level={1} color="default.main.primary" className="mb-4">
-        Thematic analysis
-      </Heading>
-      
       <Text color="default.main.secondary" className="mb-6">
         Your session highlights will be automatically organized into themes. You can run the analysis from scratch with AI-generated themes, or using your own themes.
       </Text>

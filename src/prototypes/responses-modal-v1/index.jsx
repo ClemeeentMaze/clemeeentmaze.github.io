@@ -38,9 +38,7 @@ function NewHighlightsToast({ onNavigateToThemes, onDismiss }) {
   return (
     <div className="absolute top-4 right-6 z-[9999] animate-slide-down">
       <div className="flex gap-3 bg-white rounded-xl shadow-lg border border-[rgba(108,113,140,0.16)] px-4 py-3">
-        <div className="w-10 h-10 rounded-lg bg-[#F0FAFF] flex items-center justify-center flex-shrink-0">
-          <Tag size={20} className="text-[#0568FD]" />
-        </div>
+        <Tag size={16} className="text-[#0568FD] flex-shrink-0 mt-0.5" />
         <div className="flex-1 flex flex-col gap-2">
           <div className="flex items-start justify-between gap-4">
             <div>
@@ -53,7 +51,7 @@ function NewHighlightsToast({ onNavigateToThemes, onDismiss }) {
               onClick={onDismiss}
               className="text-[#6C718C] hover:text-neutral-900 p-1 cursor-pointer flex-shrink-0"
             >
-              <X size={20} />
+              <X size={16} />
             </button>
           </div>
           <CTAButton 

@@ -16,17 +16,9 @@ import { BLOCK_TYPES } from '../data';
  * @param {Object} props.block - Block data object
  * @param {boolean} props.isSelected - Whether this block is currently selected
  * @param {Function} props.onSelect - Callback when block is clicked
- * @param {number} props.newHighlightCount - Number of new highlights for this block
  */
-export function BlockListItem({ block, isSelected, onSelect, newHighlightCount = 0 }) {
+export function BlockListItem({ block, isSelected, onSelect }) {
   const blockType = BLOCK_TYPES[block.type] || {};
-  
-  // Badge configuration for new highlights indicator (purple/featured color)
-  const badgeConfig = newHighlightCount > 0 ? {
-    sentiment: 'featured',
-    label: String(newHighlightCount),
-    borderColor: 'default.main.background'
-  } : undefined;
   
   return (
     <Box
@@ -42,14 +34,13 @@ export function BlockListItem({ block, isSelected, onSelect, newHighlightCount =
       `}
     >
       <Flex gap="SM" alignItems="center">
-        {/* Block Icon - 40x40px squared figure with icon and optional badge */}
+        {/* Block Icon - 40x40px squared figure */}
         <IconFigure 
           name={blockType.iconName || 'block'}
           color={blockType.arianeColor || 'primary'}
           mode="dark"
           size="MDPlus"
           shape="squared"
-          badge={badgeConfig}
         />
         
         {/* Block Content */}
